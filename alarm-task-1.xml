@@ -1,0 +1,22 @@
+<task id="set-alarm">
+    <title>Set An Alarm</title>
+    <shortdesc>The instructions explain how to set an alarm.
+    </shortdesc>
+ <taskbody>
+  <context>put some context info here.</context>
+  <prereq>Here are some prerequisites.
+    <ul><li>The alarm</li>
+        <li>Batteries</li>
+    </ul>
+  </prereq>
+ <steps>
+   <step><cmd>Press the function selection button (5) to set the alarm clock position.</cmd></step>
+   <step><cmd>Press the button when the transfer/transfer month (1) to the desired setting time.</cmd></step>
+   <step><cmd>To adjust to the required set of minutes by adjusting the button (2)</cmd></step>
+   <step><cmd>Set the function selection button (5) to the locked position</cmd></step>
+   <step><cmd>Activate the alarm.</cmd></step>
+  </steps>
+  <result>Now you set your alarm.</result>
+  <postreq>There are no post requirements.</postreq>
+ </taskbody>
+</task>

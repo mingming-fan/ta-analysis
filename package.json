@@ -1,0 +1,102 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "recordrtc-nodejs",
+        "scope": null,
+        "escapedName": "recordrtc-nodejs",
+        "name": "recordrtc-nodejs",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "C:\\Users\\mfan\\NodeJS"
+    ]
+  ],
+  "_from": "recordrtc-nodejs@latest",
+  "_inCache": true,
+  "_location": "/recordrtc-nodejs",
+  "_nodeVersion": "7.5.0",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/recordrtc-nodejs-1.0.6.tgz_1492867663799_0.4748761912342161"
+  },
+  "_npmUser": {
+    "name": "muaz-khan",
+    "email": "muazkh@gmail.com"
+  },
+  "_npmVersion": "4.1.2",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "recordrtc-nodejs",
+    "scope": null,
+    "escapedName": "recordrtc-nodejs",
+    "name": "recordrtc-nodejs",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/recordrtc-nodejs/-/recordrtc-nodejs-1.0.6.tgz",
+  "_shasum": "37d8b76c47e4400635cd8089b0724280a719c24b",
+  "_shrinkwrap": null,
+  "_spec": "recordrtc-nodejs",
+  "_where": "C:\\Users\\mfan\\NodeJS",
+  "analyze": false,
+  "author": "Muaz Khan <muazkh@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/muaz-khan/WebRTC-Experiment/issues"
+  },
+  "contributors": [
+    "Muaz Khan <muazkh@gmail.com>"
+  ],
+  "dependencies": {
+    "formidable": "^1.1.1",
+    "mime": "latest",
+    "recordrtc": "latest",
+    "request": "^2.81.0"
+  },
+  "description": "Records audio/video separately as wav/webm. POST both files in single HttpPost-Request to Node.js (FormData). Node.js code saves both files into disk. Node.js code invokes ffmpeg to merge wav/webm in single webm file. The merged webm file's URL is returne",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "37d8b76c47e4400635cd8089b0724280a719c24b",
+    "tarball": "https://registry.npmjs.org/recordrtc-nodejs/-/recordrtc-nodejs-1.0.6.tgz"
+  },
+  "engines": {
+    "node": ">=0.6"
+  },
+  "homepage": "https://github.com/muaz-khan/RecordRTC/tree/master/RecordRTC-to-Nodejs",
+  "keywords": [
+    "webrtc",
+    "javascript",
+    "RecordRTC",
+    "Node.js",
+    "ffmpeg",
+    "audio-recording",
+    "video-recording",
+    "gif-recording",
+    "audio/video recording",
+    "webp",
+    "webm",
+    "wav"
+  ],
+  "license": "MIT",
+  "main": "./server.js",
+  "maintainers": [
+    "muaz-khan <muazkh@gmail.com>"
+  ],
+  "name": "recordrtc-nodejs",
+  "optionalDependencies": {},
+  "preferGlobal": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/muaz-khan/RecordRTC.git"
+  },
+  "scripts": {
+    "start": "node record.js"
+  },
+  "version": "1.0.6"
+}

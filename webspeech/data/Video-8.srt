@@ -1,0 +1,50 @@
+1
+00:00:05,082 --> 00:00:21,186
+I need to make sure the radio is off. Because I cannot hear anything and the display shows the current time 9:50 p.m. the radio is off.
+
+2
+00:00:22,345 --> 00:00:35,935
+ Now I will press and hold the first alarm button until the display flashes. 
+
+3
+00:00:35,935 --> 00:00:47,205
+ now I will press the hour button. I can see the hour is increasing. current time is in p.m., because PM light on the left side is on.  
+
+4
+00:00:47,311 --> 00:00:57,364
+ I will keep pressing the button until the p.m. light is on and the number is 8.
+
+5
+00:00:57,782 --> 00:01:05,760
+ Now I will press the minute button to increase the minute.
+
+6
+00:01:05,760 --> 00:01:20,097
+ Because I want to set the alarm at 8 o'clock so I keep increasing the minute until I see the time is 8 o'clock.
+
+7
+00:01:20,172 --> 00:01:32,066
+ Now the time changes back to the current time. What I need to do next is to set ringtone as buzzer.
+
+8
+00:01:32,066 --> 00:01:51,294
+ Now it uses the radio as the ringtone, because now the display shows a green dot on the music icon.
+
+9
+00:01:51,294 --> 00:01:56,246
+ Now I need to change the ringtone.
+
+10
+00:01:56,246 --> 00:02:18,712
+ I wll press and hold the first alarm button until the display flashes. Then I will press the alarm button until the green light besides the alarm symbol is on.
+
+
+11
+00:02:18,712 --> 00:02:22,011
+ Now The ringtone is set.
+
+12
+00:02:23,102 --> 00:02:25,873
+ So, the task is now.
+
+
