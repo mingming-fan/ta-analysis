@@ -81,6 +81,8 @@
   }
 </style>
 <h1 class="center" id="headline">Think-Aloud Sessions' Speech Recognition</h1>
+
+
 <div id="info">
   <p id="info_start">Click on the microphone icon and begin speaking.</p>
   <p id="info_speak_now">Speak now.</p>
@@ -99,22 +101,32 @@
      Upgrade to <a href="//www.google.com/chrome">Chrome</a>
      version 25 or later.</p>
 </div>
+
+
 <div class="right">
   <button id="start_button" onclick="startButton(event)">
     <img id="start_img" src="mic.gif" alt="Start"></button>
 </div>
+
 <div id="results">
-  <span id="final_span" class="final"></span>
-  <span id="interim_span" class="interim"></span>
-  <p>
+    <span id="final_span" class="final"></span>
+    <span id="interim_span" class="interim"></span>
+    <p>
 </div>
+
 <div class="center">
   <video width="320" height="240" controls>
-  <source src="../uploads/2017_8_4_10_48_29_621.webm" type="video/webm">
+  <source src="./data/Video-8.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 </div>
+
+
 <div class="center">
+  <div class = "center">
+    <button id="save_button"  onclick="saveButton()">
+      Save</button>
+  </div>
   <div class="sidebyside" style="text-align:right">
     <button id="copy_button" class="button" onclick="copyButton()">
       Copy and Paste</button>
@@ -131,12 +143,14 @@
     </div>
   </div>
   <p>
+
   <div id="div_language">
     <select id="select_language" onchange="updateCountry()"></select>
     &nbsp;&nbsp;
     <select id="select_dialect"></select>
   </div>
 </div>
+<script src = "./FileSaver.js"> </script>
 <script>
 var langs =
 [['Afrikaans',       ['af-ZA']],
@@ -309,7 +323,7 @@ if (!('webkitSpeechRecognition' in window)) {
           current_sentence = event.results[i][0].transcript.trim();
           if(current_sentence.startsWith(words[j]))
           {
-            console.log("test", current_sentence)
+            //console.log("test", current_sentence)
             question = true;
             break;
           }
@@ -359,6 +373,13 @@ function createEmail() {
   var subject = encodeURI(final_transcript.substring(0, n));
   var body = encodeURI(final_transcript.substring(n + 1));
   window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
+
+function saveButton() {
+  var text = final_span.innerHTML
+  var filename = "trascripts.txt"
+  var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
+  saveAs(blob, filename);
 }
 
 function copyButton() {

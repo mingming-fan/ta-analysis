@@ -237,7 +237,7 @@
                     btnPrevious.disabled = false;
                   //instruction_d == 0 means that the overview of the instruction steps.
                   document.getElementById('instructions').innerHTML = instruction_steps[instruction_id];
-                  
+
                   if (recording_status == true)
                   {
                     //terminate the current recording and upload the file
@@ -284,7 +284,6 @@
                   btnNext.disabled = true;
                 }
             };
-
 
             btnPrevious.onclick = function() {
                 step_id ++;
