@@ -52,8 +52,7 @@
         </div>
 
         <hr />
-        -->
-
+      -->
         <div id="instructions">
         </div>
 
@@ -84,7 +83,7 @@
 
             //var videoElement  = document.querySelector('video');
 
-            var progressBar = document.querySelector('#progress-bar');
+            //var progressBar = document.querySelector('#progress-bar');
             var percentage = document.querySelector('#percentage');
 
             var recorder;
@@ -93,6 +92,11 @@
             var step_id = -1; //before the overview screen; 0: overview screen
             var instruction_id = -1; //the id for the instruction step
             var instruction_steps = [];
+
+            var startrecordingtime = -1;
+            var stepstarttime = -1;
+            var stependtime = -1;
+            var fileName = "";
 
 
            function loadTaskFromXMLDoc(){
@@ -123,17 +127,14 @@
                 //var fileName = generateRandomString() + '.webm';
                 var currentdate = new Date();
                 var month = currentdate.getMonth() + 1;
-                var fileName = currentdate.getFullYear()+'_'+ month +"_" + currentdate.getDate() + "_" + currentdate.getHours() + "_" + currentdate.getMinutes() + "_" + currentdate.getSeconds() + "_" + currentdate.getMilliseconds() + '.avi';
-
-                var session_data = {"file_name": fileName, "step_id": step_id-1, "instruction_id": instruction_id-1}
-                sessions_data[sessions_data.length] = session_data
-
+                fileName = currentdate.getFullYear()+'_'+ month +"_" + currentdate.getDate() + "_" + currentdate.getHours() + "_" + currentdate.getMinutes() + "_" + currentdate.getSeconds() + "_" + currentdate.getMilliseconds() + '.mp4';
 
                 var file = new File([blob], fileName, {
-                    type: 'video/avi'
+                    type: 'video/mp4'
                 });
                 //console.info('fileName', fileName);
                 //console.info('fileName2:', file)
+
                 //videoElement.src = '';
                 //videoElement.poster = '/ajax-loader.gif';
                 xhr('/uploadFile', file, function(responseText) {
@@ -147,11 +148,13 @@
                 });
 
                 if(mediaStream) mediaStream.stop();
+
+                postMetaFile();
             }
 
 
             function postMetaFile(){
-              ux_data={"data": sessions_data}
+              ux_data={"videofile": fileName,"data": sessions_data}
               var jsonData = JSON.stringify(ux_data);
 
               var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
@@ -171,20 +174,22 @@
                 };
 
                 request.upload.onprogress = function(event) {
-                  //  progressBar.max = event.total;
-                  //  progressBar.value = event.loaded;
-                  //  progressBar.innerHTML = 'Upload Progress ' + Math.round(event.loaded / event.total * 100) + "%";
+                    //progressBar.max = event.total;
+                    //progressBar.value = event.loaded;
+                    //progressBar.innerHTML = 'Upload Progress ' + Math.round(event.loaded / event.total * 100) + "%";
                 };
 
                 request.upload.onload = function() {
-                  //  percentage.style.display = 'none';
-                  //  progressBar.style.display = 'none';
+                    //percentage.style.display = 'none';
+                    //progressBar.style.display = 'none';
                 };
+
                 request.open('POST', url);
                 var formData = new FormData();
                 formData.append('file', data);
                 request.send(formData);
             }
+
 
             var mediaStream = null;
             // reusable getUserMedia
@@ -199,15 +204,22 @@
                     console.error(error);
                 });
             }
+
+
             // UI events handling
             btnStartRecording.onclick = function() {
               btnNext.disabled = false;
               btnStopRecording.disabled = false;
-          };
+            };
 
             btnStopRecording.onclick = function() {
               //send the meta data to the server
-              postMetaFile();
+              if (recording_status == true)
+              {
+                recorder.stopRecording(postFiles);
+                recording_status = false;
+              }
+
             };
 
             window.onbeforeunload = function() {
@@ -229,38 +241,51 @@
                   if (recording_status == true)
                   {
                     //terminate the current recording and upload the file
-                    recorder.stopRecording(postFiles);
-                    recording_status = false;
+                    var d = new Date();
+                    currenttime = d.getTime();
+                    stependtime = currenttime - startrecordingtime;
+
+                    //record the data into the data file
+                    var session_data = {"step_id": step_id-1, "instruction_id": instruction_id-1, "starttime": stepstarttime, "endtime": stependtime}
+                    sessions_data[sessions_data.length] = session_data
+
+                    stepstarttime = stependtime;
                   }
-
-                  captureUserMedia(function(stream) {
-                      mediaStream = stream;
-
-                      //videoElement.src = window.URL.createObjectURL(stream);
-                      //videoElement.play();
-                      //videoElement.muted = true;
-                      //videoElement.controls = false;
-
-                      recorder = RecordRTC(stream, {
-                          type: 'video'
-                      });
-
-                      recorder.startRecording();
-                      recording_status = true;
-                  });
+                  else
+                  {
+                    captureUserMedia(function(stream) {
+                        mediaStream = stream;
+                        var options = {
+                          recorderType: MediaStreamRecorder,
+                          mimeType: 'video/mp4\;codecs=vp9'
+                        };
+                        recorder = RecordRTC(stream, options);
+                        recorder.startRecording();
+                        recording_status = true;
+                        var d = new Date();
+                        startrecordingtime = d.getTime();
+                        stepstarttime = 0;
+                    });
+                  }
                 }
                 else {
-                  //now this is the last instruction; stop the recording and upload the file
-                  //but do not start recording any more
+                  document.getElementById('instructions').innerHTML = instruction_steps[instruction_id-1];
                   if (recording_status == true)
                   {
-                    recorder.stopRecording(postFiles);
-                    recording_status = false;
+                    //terminate the current recording and upload the file
+                    var d = new Date();
+                    currenttime = d.getTime();
+                    stependtime = currenttime - startrecordingtime;
+
+                    //record the data into the data file
+                    var session_data = {"step_id": step_id-1, "instruction_id": instruction_id, "starttime": stepstarttime, "endtime": stependtime}
+                    sessions_data[sessions_data.length] = session_data
+
+                    stepstarttime = stependtime;
                   }
                   btnNext.disabled = true;
                 }
             };
-
 
             btnPrevious.onclick = function() {
                 step_id ++;
@@ -271,34 +296,20 @@
 
                   if (recording_status == true)
                   {
-                    recorder.stopRecording(postFiles);
-                    recording_status = false;
+                    //terminate the current recording and upload the file
+                    var d = new Date();
+                    currenttime = d.getTime();
+                    stependtime = currenttime - startrecordingtime;
+
+                    //record the data into the data file
+                    var session_data = {"step_id": step_id-1, "instruction_id": instruction_id-1, "starttime": stepstarttime, "endtime": stependtime}
+                    sessions_data[sessions_data.length] = session_data
+
+                    stepstarttime = stependtime;
                   }
-
-                  captureUserMedia(function(stream) {
-                      mediaStream = stream;
-
-                      //videoElement.src = window.URL.createObjectURL(stream);
-                      //videoElement.play();
-                      //videoElement.muted = true;
-                      //videoElement.controls = false;
-
-                      recorder = RecordRTC(stream, {
-                          type: 'video'
-                      });
-
-                      recorder.startRecording();
-                      recording_status = true;
-                  });
                 }
                 else {
-
                   btnPrevious.disabled = false;
-                  if (recording_status == true)
-                  {
-                    recorder.stopRecording(postFiles);
-                    recording_status = false;
-                  }
                 }
             };
 
