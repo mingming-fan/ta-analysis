@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <link rel="stylesheet" href="style2.css" type="text/css">
+      <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+      <script src="https://www.amcharts.com/lib/3/serial.js"></script>
+      <script src="https://www.amcharts.com/lib/3/amstock.js"></script>
+      <script src="https://www.amcharts.com/lib/3/plugins/dataloader/dataloader.min.js"></script>
+      <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+      <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+<script>
+
+
+function generateChartData(dataset_url) {
+  var chartData = [];
+  var firstDate = new Date( 2012, 0, 1 );
+  firstDate.setDate( firstDate.getDate() - 1000 );
+  firstDate.setHours( 0, 0, 0, 0 );
+
+  AmCharts.loadFile(dataset_url, {}, function(data) {
+     inputdata = AmCharts.parseJSON(data);
+      //console.log(chartData1); // this will output an array
+      for(var i = 0; i < inputdata.length; i++){
+        //var seconds = parseInt(Math.floor(parseFloat(inputdata[i].time)));
+        //var millseconds = parseInt(parseFloat(inputdata[i].time) * 1000 - seconds * 1000);
+        var millseconds = parseInt(parseFloat(inputdata[i].time) * 1000);
+        //console.log("seconds: " + seconds + "; milliseconds: " + millseconds);
+        var newDate = new Date(firstDate);
+        //newDate.setHours(0,0, seconds, millseconds);
+        newDate.setHours(0,0, 0, millseconds);
+        var value = parseFloat(inputdata[i].data);
+        console.log("time: " + millseconds + "; data: " + value);
+        chartData.push({"time": newDate, "data":value, "volume": value});
+      }
+  });
+  return chartData;
+}
+
+console.log("loading loudness data...")
+var chartData1 = generateChartData("thinkaloud_loudness2.json");
+
+console.log("loading pitch data...")
+var chartData2 = generateChartData("thinkaloud_pitch2.json");
+
+AmCharts.makeChart("chartdiv", {
+    "type": "stock",
+    "theme": "light",
+    "categoryAxesSettings": {
+      "minPeriod": "fff", // set minimum to milliseconds
+      "groupToPeriods": [ 'fff', 'ss' ] // specify period grouping
+    },
+    "dataSets": [{
+            "color": "#b0de09",
+            //"title": "Loudness",
+            "fieldMappings": [{
+                "fromField": "data",
+                "toField": "data"
+            },{
+                "fromField": "volume",
+                "toField": "volume"
+            }],
+            "dataProvider": chartData1,
+            "categoryField": "time"
+        }
+    ],
+    "panels": [ {
+        "showCategoryAxis": false,
+        "title": "Value",
+        "percentHeight": 70,
+
+        "stockGraphs": [ {
+          "id": "g1",
+          "valueField": "data",
+          "type": "smoothedLine",
+          "lineThickness": 2,
+          "bullet": "round"
+        } ],
+
+
+        "stockLegend": {
+          "valueTextRegular": " ",
+          "markerType": "none"
+        }
+      },
+
+      {
+        "title": "Volume",
+        "percentHeight": 30,
+        "stockGraphs": [ {
+          "valueField": "volume",
+          "type": "column",
+          "cornerRadiusTop": 2,
+          "fillAlphas": 1
+        } ],
+
+        "stockLegend": {
+          "valueTextRegular": " ",
+          "markerType": "none"
+        }
+      }
+    ],
+
+    "chartScrollbarSettings": {
+      "graph": "g1",
+      "usePeriod": "fff",
+      "position": "left"
+    },
+
+    "chartCursorSettings": {
+      "valueBalloonsEnabled": true,
+      "categoryBalloonDateFormats": [ {
+        "period": "ss",
+        "format": "NN:SS"
+      }, {
+        "period": "fff",
+        "format": "NN:SS:QQQ"
+      } ]
+    },
+    "periodSelector": {
+      "position": "left",
+      "dateFormat": "NN:SS:QQQ", // date format with milliseconds
+      "inputFieldWidth": 150,
+      "periods": [ {
+        "period": "fff",
+        "count": 10,
+        "label": "10 ms",
+        "selected": true
+      }, {
+        "period": "fff",
+        "count": 50,
+        "label": "50 ms"
+      }, {
+        "period": "ss",
+        "count": 1,
+        "label": "1 second"
+      }, {
+        "period": "mm",
+        "count": 1,
+        "label": "1 minute"
+      }, {
+        "period": "hh",
+        "count": 1,
+        "label": "1 hour"
+      }, {
+        "period": "MAX",
+        "label": "MAX"
+      } ]
+    },
+    "panelsSettings": {
+      "usePrefixes": true
+    }
+});
+</script>
+
+    </head>
+    <body>
+        <div id="chartdiv"></div>
+    </body>
+
+</html>
