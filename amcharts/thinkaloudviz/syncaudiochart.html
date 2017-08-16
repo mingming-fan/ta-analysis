@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <link rel="stylesheet" href="style2.css" type="text/css">
+      <script src="../amcharts/amcharts.js"></script>
+      <script src="../amcharts/serial.js"></script>
+      <script src="../amcharts/themes/light.js"></script>
+      <script src="../../amstockchart/amcharts/amstock.js"></script>
+      <script src="../amcharts/plugins/dataloader/dataloader.min.js"></script>
+      <script src="../amcharts/plugins/export/export.min.js"></script>
+</head>
+<body>
+<div id="chartdiv"></div>
+<audio id="chart-audio" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/t-160/Kevin%20Macleod%20-%20Easy%20Lemon%2030%20second.mp3"  preload="auto" controls>
+</audio>
+<pre>
+"Easy Lemon (30 second)" Kevin MacLeod (incompetech.com)
+Licensed under Creative Commons: By Attribution 3.0 License
+http://creativecommons.org/licenses/by/3.0/
+</pre>
+
+<script>
+AmCharts.useUTC = true; //needed for millisecond timestamps
+var chart = AmCharts.makeChart("chartdiv", {
+  "type": "serial",
+  "theme": "light",
+  "dataProvider": [{
+    "y": 0.0,
+    "x": 0
+  }, {
+    "y": 0.01745240643728351,
+    "x": 1000
+  }, {
+    "y": 0.03489949670250097,
+    "x": 2000
+  }, {
+    "y": 0.052335956242943835,
+    "x": 3000
+  }, {
+    "y": 0.0697564737441253,
+    "x": 4000
+  }, {
+    "y": 0.08715574274765817,
+    "x": 5000
+  }, {
+    "y": 0.10452846326765347,
+    "x": 6000
+  }, {
+    "y": 0.12186934340514748,
+    "x": 7000
+  }, {
+    "y": 0.13917310096006544,
+    "x": 8000
+  }, {
+    "y": 0.15643446504023087,
+    "x": 9000
+  }, {
+    "y": 0.17364817766693033,
+    "x": 10000
+  }, {
+    "y": 0.1908089953765448,
+    "x": 11000
+  }, {
+    "y": 0.20791169081775934,
+    "x": 12000
+  }, {
+    "y": 0.224951054343865,
+    "x": 13000
+  }, {
+    "y": 0.24192189559966773,
+    "x": 14000
+  }, {
+    "y": 0.25881904510252074,
+    "x": 15000
+  }, {
+    "y": 0.27563735581699916,
+    "x": 16000
+  }, {
+    "y": 0.29237170472273677,
+    "x": 17000
+  }, {
+    "y": 0.3090169943749474,
+    "x": 18000
+  }, {
+    "y": 0.3255681544571567,
+    "x": 19000
+  }, {
+    "y": 0.3420201433256687,
+    "x": 20000
+  }, {
+    "y": 0.35836794954530027,
+    "x": 21000
+  }, {
+    "y": 0.374606593415912,
+    "x": 22000
+  }, {
+    "y": 0.39073112848927377,
+    "x": 23000
+  }, {
+    "y": 0.4067366430758002,
+    "x": 24000
+  }, {
+    "y": 0.42261826174069944,
+    "x": 25000
+  }, {
+    "y": 0.4383711467890774,
+    "x": 26000
+  }, {
+    "y": 0.4539904997395468,
+    "x": 27000
+  }, {
+    "y": 0.4694715627858908,
+    "x": 28000
+  }, {
+    "y": 0.48480962024633706,
+    "x": 29000
+  }, {
+    "y": 0.49999999999999994,
+    "x": 30000
+  }, {
+    "y": 0.5150380749100542,
+    "x": 31000
+  }],
+  "graphs": [{
+    "balloonText": "[[category]]: [[value]]",
+    "bullet": "circle",
+    "valueField": "y",
+  }],
+  "categoryField": "x",
+  "categoryAxis": {
+    "parseDates": true,
+    "boldPeriodBeginning": false,
+    "dateFormats": [{
+      "period": "fff",
+      "format": "JJ:NN:SS"
+    }, {
+      "period": "ss",
+      "format": "JJ:NN:SS"
+    }, {
+      "period": "mm",
+      "format": "JJ:NN:SS"
+    }, {
+      "period": "hh",
+      "format": "JJ:NN:SS"
+    }, {
+      "period": "DD",
+      "format": "MMM DD"
+    }, {
+      "period": "WW",
+      "format": "MMM DD"
+    }, {
+      "period": "MM",
+      "format": "MMM"
+    }, {
+      "period": "YYYY",
+      "format": "YYYY"
+    }],
+    "equalSpacing": true,
+    "minPeriod": "ss"
+  },
+  "chartCursor": {
+    "categoryBalloonDateFormat": "JJ:NN:SS",
+  },
+});
+
+var audio = document.getElementById("chart-audio");
+
+audio.addEventListener("timeupdate", function(e) {
+  chart.chartCursor.showCursorAt(new Date(Math.floor(e.target.currentTime * 1000))); //convert currentTime to milliseconds
+});
+</script>
+</body>
+</html>

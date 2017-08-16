@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <link rel="stylesheet" href="style2.css" type="text/css">
+      <script src="../amcharts/amcharts.js"></script>
+      <script src="../amcharts/serial.js"></script>
+      <script src="../amcharts/themes/light.js"></script>
+      <script src="../../amstockchart/amcharts/amstock.js"></script>
+      <script src="../amcharts/plugins/dataloader/dataloader.min.js"></script>
+      <script src="../amcharts/plugins/export/export.min.js"></script>
+    </head>
+    <body>
+       <div id="div">
+         <h1>Think-Aloud Usability Analysis</h1>
+       </div>
+        <div id="chartdiv"></div>
+        <div id="audiodiv">
+        <audio id="audiocontrol" src = "thinkaloud.wav" type="audio/wav" preload = "auto" controls>Your browser does not support this audio element. </audio>
+        </div>
+        <br>
+        <br>
+        <div id="div">
+          <h2>
+            Create Analysis Notes
+          </h2>
+          <form>
+            The selected audio segment's start time: <input type="text" id="start" size="4"> s<br/>
+            The selected audio segment's stop time: <input type="text" id="end" size="4"> s
+            <br/>
+            <br/>
+            <fieldset id="audio-features-fieldset">
+                <legend>Audio Features</legend>
+                <input type="checkbox" name="silence" value="silence" />silence
+                <input type="checkbox" name="loudness" value="loudness" />loudness
+                <input type="checkbox" name="pitch" value="pitch" />pitch<br/>
+            </fieldset>
+            <br/>
+            Describe this analysis note: <br/>
+            <textarea type="text" id= "annotation" style = "width:100%;" rows = "5"></textarea>
+            <br/>
+            <br/>
+            <input value="Creat this note" type="submit">
+            <br/>
+          </form>
+        </div>
+              <script>
+              var mAudio = null;
+              AmCharts.useUTC = true;
+              var mChart = null;
+              window.onload = function(){
+                //load the audio when the UI is displayed
+                mAudio = document.getElementById("audiocontrol");
+              };
+
+              //load the data from the external sources
+              function generateChartData(dataset_url) {
+                var chartData = [];
+                AmCharts.loadFile(dataset_url, {}, function(data) {
+                   inputdata = AmCharts.parseJSON(data);
+                    //console.log(chartData1); // this will output an array
+                    for(var i = 0; i < inputdata.length; i++){
+                      //var seconds = parseInt(Math.floor(parseFloat(inputdata[i].time)));
+                      //var millseconds = parseInt(parseFloat(inputdata[i].time) * 1000 - seconds * 1000);
+                      var millseconds = parseInt(parseFloat(inputdata[i].time) * 1000);
+                      //console.log("seconds: " + seconds + "; milliseconds: " + millseconds);
+                      //console.log("converted date info: " + newDate);
+                      var value = parseFloat(inputdata[i].data);
+                      //console.log("time: " + millseconds + "; data: " + value);
+                      //chartData.push({"time": newDate, "data":value});
+                      chartData.push({"time": millseconds, "data":value});
+                    }
+                });
+                return  chartData;
+              }
+
+
+              function loadSilenceFromAlignedTranscriptData(dataset_url) {
+                var chartData = [];
+                AmCharts.loadFile(dataset_url, {}, function(data) {
+                   inputdata = AmCharts.parseJSON(data);
+                    for(var i = 0; i < inputdata.length; i++){
+                      var start = parseInt(parseFloat(inputdata[i].start) * 1000);
+                      var end = parseInt(parseFloat(inputdata[i].end) * 1000);
+                      var value = inputdata[i].word;
+                      //console.log("word: " + String(value).trim());
+                      var diff = end - start;
+                      //console.log("diff: " + diff);
+                      //if( String(value).trim().localeCompare("sp") == 0 && end - start > 1000)
+                      if( String(value).trim().localeCompare("sp") == 0)
+                      {
+                        //console.log("time: " + millseconds + "; data: " + value);
+                        //chartData.push({"time": startDate, "data":1});
+                        //chartData.push({"time": endDate, "word":1});
+                        chartData.push({"time": start, "data":1});
+                        chartData.push({"time": end, "word":1});
+                      }
+                      else {
+                        //chartData.push({"time": startDate, "data":0});
+                        //chartData.push({"time": endDate, "word":0});
+                        chartData.push({"time": start, "data":0});
+                        chartData.push({"time": end, "word":0});
+                      }
+                    }
+                });
+                return  chartData;
+              }
+
+              function loadAlignedTranscriptData(dataset_url) {
+                var chartData = [];
+                AmCharts.loadFile(dataset_url, {}, function(data) {
+                   inputdata = AmCharts.parseJSON(data);
+                    //console.log(chartData1); // this will output an array
+                    for(var i = 0; i < inputdata.length; i++){
+                      //var seconds = parseInt(Math.floor(parseFloat(inputdata[i].time)));
+                      //var millseconds = parseInt(parseFloat(inputdata[i].time) * 1000 - seconds * 1000);
+                      var start = parseInt(parseFloat(inputdata[i].start) * 1000);
+                      //console.log("seconds: " + seconds + "; milliseconds: " + millseconds);
+
+                      var end = parseInt(parseFloat(inputdata[i].end) * 1000);
+                      //console.log("seconds: " + seconds + "; milliseconds: " + millseconds);
+
+                      var value = inputdata[i].word;
+                      //console.log("time: " + millseconds + "; data: " + value);
+                      chartData.push({"start": start, "end": end, "word":value});
+                    }
+                });
+                return  chartData;
+              }
+
+              //console.log("loading loudness data...")
+              var chartData1 = generateChartData("thinkaloud_loudness.json");
+              //console.log("loading pitch data...")
+              var chartData2 = generateChartData("thinkaloud_pitch.json");
+              var chartData3 = loadSilenceFromAlignedTranscriptData("thinkaloud-aligned.json");
+
+
+              //console.log("after calling the generateChartData function");
+              setTimeout(myTimer, 500);
+              function myTimer() {
+                if( chartData1.length != 0 && chartData2.length != 0)
+                {
+                  console.log("data is ready");
+                  mChart = drawCharts();
+                }
+                else {
+                  setTimeout(myTimer, 500);
+                }
+              }
+
+              //console.log("after checking if the data is ready");
+
+              function drawCharts(){
+                var chart = null;
+
+                chart = AmCharts.makeChart("chartdiv", {
+                    "type": "stock",
+                    "theme": "light",
+                    "dataSets": [{
+                            "title": "Loudness",
+                            "fieldMappings": [{
+                                "fromField": "data",
+                                "toField": "data"
+                            }],
+                            "dataProvider": chartData1,
+                            "categoryField": "time"
+                        },
+                        {
+                            "title": "Pitch",
+                            "fieldMappings": [{
+                                "fromField": "data",
+                                "toField": "data2"
+                            }],
+                            "dataProvider": chartData2,
+                            "categoryField": "time",
+                            "compared": true
+                        },
+                        {
+                            "title": "Silence",
+                            "fieldMappings": [{
+                                "fromField": "data",
+                                "toField": "data3"
+                            }],
+                            "dataProvider": chartData3,
+                            "categoryField": "time",
+                            "compared": true
+                        }
+                    ],
+                    "panels": [ {
+                        "showCategoryAxis": false,
+                        "title": "Loudness",
+                        "stockGraphs": [ {
+                          "id": "g1",
+                          "type":"smoothedLine",
+                          "valueField": "data",
+                          "comparable": true,
+                          "lineColorField": "lineColor",
+                        } ],
+
+                        "stockLegend": {
+                        }
+                      },
+                      {
+                        "showCategoryAxis": false,
+                        "title": "Pitch",
+                        "stockGraphs": [ {
+                            "id": "g2",
+                          "type":"smoothedLine",
+                          "valueField": "data2",
+                          "compareField": "data2",
+                            "comparable": true,
+                            "lineColorField": "lineColor",
+                        } ],
+                        "stockLegend": {
+                        }
+                      },
+                      {
+                        "showCategoryAxis": true,
+                        "title": "Silence",
+                        "stockGraphs": [ {
+                            "id": "g3",
+                            "type":"smoothedLine",
+                          "valueField": "data3",
+                          "compareField": "data3",
+                            "comparable": true,
+                            "visibleInLegend": true,
+                            "lineColorField": "lineColor",
+                        } ],
+                        "stockLegend": {
+                        }
+                      }
+                    ],
+                    "categoryAxesSettings": {
+                      "groupToPeriods": [ 'fff', 'ss' ], // specify period grouping
+                      "parseDates": true,
+                      "boldPeriodBeginning": false,
+                      "dateFormats": [{
+                        "period": "fff",
+                        "format": "JJ:NN:SS"
+                      }, {
+                        "period": "ss",
+                        "format": "JJ:NN:SS"
+                      }, {
+                        "period": "mm",
+                        "format": "JJ:NN:SS"
+                      }, {
+                        "period": "hh",
+                        "format": "JJ:NN:SS"
+                      }, {
+                        "period": "DD",
+                        "format": "MMM DD"
+                      }, {
+                        "period": "WW",
+                        "format": "MMM DD"
+                      }, {
+                        "period": "MM",
+                        "format": "MMM"
+                      }, {
+                        "period": "YYYY",
+                        "format": "YYYY"
+                      }],
+                      //"equalSpacing": true,
+                      "minPeriod": "fff"
+                    },
+                    "chartScrollbarSettings": {
+                      "graph": "g1",
+                      "usePeriod": "fff",
+                      "position": "top"
+                    },
+                    "chartCursor":{
+                      "categoryBalloonDateFormat": "JJ:NN:SS",
+                    },
+                    "chartCursorSettings": {
+                      "valueBalloonsEnabled": true,
+                      "fullWidth":false,
+                      "cursorAlpha":0.7,
+                      "selectWithoutZooming": true
+                    },
+                    "periodSelector": {
+                      "position": "top",
+                      "dateFormat": "JJ:NN:SS", // date format with milliseconds "NN:SS:QQQ"
+                      "inputFieldsEnabled": true,
+                      "inputFieldWidth": 100,
+                      "periods": [{
+                        "period": "ss",
+                        "count": 15,
+                        "label": "15 seconds"
+                      }, {
+                        "period": "ss",
+                        "count": 30,
+                        "label": "30 seconds"
+                      }, {
+                        "period": "ss",
+                        "count": 60,
+                        "label": "60 seconds"
+                      }, {
+                        "period": "MAX",
+                        "label": "Show all",
+                        "selected": true
+                      } ]
+                    },
+                    "panelsSettings": {
+                      "usePrefixes": true
+                    }
+                });
+                return chart;
+              }
+
+              setTimeout(myTimer2, 500);
+
+              function myTimer2() {
+                if(mChart != null && mAudio != null)
+                {
+                  console.log("charts and the audio control are both ready...");
+                  connectAudioCharts();
+                  connectMouseEvents();
+                }
+                else {
+                  setTimeout(myTimer2, 500);
+                }
+              }
+
+              function connectAudioCharts(){
+                mAudio.addEventListener("timeupdate", function(e) {
+                //console.log("time: " + e.target.currentTime);
+                var currentDate = new Date(Math.floor(e.target.currentTime * 1000));
+                for(var x in mChart.panels){
+                  mChart.panels[x].chartCursor.showCursorAt(currentDate);
+                }
+                mChart.validateData();
+                });
+              }
+
+              function connectMouseEvents(){
+                console.log("connecting mouse events... ");
+                for(var x in mChart.panels){
+                  //console.log("set panel  " + x);
+                  mChart.panels[x].chartCursor.addListener("changed", AmCharts.myHandleMove);
+                  mChart.panels[x].chartDiv.onclick = AmCharts.myHandleClick;
+                  mChart.panels[x].chartCursor.addListener("selected", handleSelection);
+                }
+
+              }
+
+              //this variable is to mark whether the mouse select operation is executed so that it can be distinguished from click
+              var selection = false;
+
+              AmCharts.myCurrentPosition;
+              AmCharts.myHandleMove = function(event) {
+                if (undefined === event.index )
+                  return;
+                AmCharts.myCurrentPosition = event.chart.dataProvider[event.index].time;
+              }
+
+              AmCharts.myHandleClick = function(event){
+                if(selection === false)
+                {
+                  for(var x in mChart.panels){
+                    //console.log("time: " + AmCharts.myCurrentPosition.getTime());
+                    mAudio.currentTime = AmCharts.myCurrentPosition.getTime()/1000; //convert the miliseconds into seconds
+                    mAudio.addEventListener('canplaythrough', function(){
+                      this.play();
+                    });
+                  }
+                  mChart.validateData();
+                }
+                else {
+                  selection = false;
+                }
+              }
+
+              function handleSelection(event){
+                selection = true;
+                //console.log("event.start: " + event.start);
+                //console.log("event.end: " + event.end);
+                for(var x in mChart.panels){
+                  //console.log("dataprovider: " + x.dataProvider);
+                  for (var y in mChart.panels[x].dataProvider)
+                  {
+                    var datapoint = mChart.panels[x].dataProvider[y];
+                    var time = datapoint.time;
+                    //console.log("date: " + time);
+                    //console.log("time: " + time.getTime());
+                    document.getElementById("start").value = parseFloat(event.start/1000); //convert the miliseconds into seconds
+                    document.getElementById("end").value = parseFloat((event.end+1)/1000); //convert the miliseconds into seconds
+                  }
+                }
+                mChart.validateData();
+              }
+
+
+
+              </script>
+    </body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <link rel="stylesheet" href="style2.css" type="text/css">
+      <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+      <script src="https://www.amcharts.com/lib/3/serial.js"></script>
+      <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+      <script src="https://www.amcharts.com/lib/3/amstock.js"></script>
+      <script src="https://www.amcharts.com/lib/3/plugins/dataloader/dataloader.min.js"></script>
+      <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+
+
+<script>
+function generateChartData(dataset_url) {
+  var chartData = [];
+  var firstDate = new Date( 2012, 0, 1 );
+  firstDate.setDate( firstDate.getDate() - 1000 );
+  firstDate.setHours( 0, 0, 0, 0 );
+
+  AmCharts.loadFile(dataset_url, {}, function(data) {
+     inputdata = AmCharts.parseJSON(data);
+      //console.log(chartData1); // this will output an array
+      for(var i = 0; i < inputdata.length; i++){
+        //var seconds = parseInt(Math.floor(parseFloat(inputdata[i].time)));
+        //var millseconds = parseInt(parseFloat(inputdata[i].time) * 1000 - seconds * 1000);
+        var millseconds = parseInt(parseFloat(inputdata[i].time) * 1000);
+        //console.log("seconds: " + seconds + "; milliseconds: " + millseconds);
+        var newDate = new Date(firstDate);
+        //newDate.setHours(0,0, seconds, millseconds);
+        newDate.setHours(0,0, 0, millseconds);
+        var value = parseFloat(inputdata[i].data);
+        //console.log("time: " + millseconds + "; data: " + value);
+        chartData.push({"time": newDate, "data":value});
+      }
+  });
+  return  chartData;
+}
+
+
+function loadSilenceFromAlignedTranscriptData(dataset_url) {
+  var chartData = [];
+  var firstDate = new Date( 2012, 0, 1 );
+  firstDate.setDate( firstDate.getDate() - 1000 );
+  firstDate.setHours( 0, 0, 0, 0 );
+
+  AmCharts.loadFile(dataset_url, {}, function(data) {
+     inputdata = AmCharts.parseJSON(data);
+      for(var i = 0; i < inputdata.length; i++){
+        var start = parseInt(parseFloat(inputdata[i].start) * 1000);
+        var startDate = new Date(firstDate);
+        startDate.setHours(0,0, 0, start);
+
+        var end = parseInt(parseFloat(inputdata[i].end) * 1000);
+        var endDate = new Date(firstDate);
+        endDate.setHours(0,0, 0, end-1);
+        var value = inputdata[i].word;
+        //console.log("word: " + String(value).trim());
+        var diff = end - start;
+        console.log("diff: " + diff);
+        if( String(value).trim().localeCompare("sp") == 0 && end - start > 1000)
+        {
+          //console.log("time: " + millseconds + "; data: " + value);
+          chartData.push({"time": startDate, "data":1});
+          chartData.push({"time": endDate, "word":1});
+        }
+        else {
+          chartData.push({"time": startDate, "data":0});
+          chartData.push({"time": endDate, "word":0});
+        }
+      }
+  });
+  return  chartData;
+}
+
+function loadAlignedTranscriptData(dataset_url) {
+  var chartData = [];
+  var firstDate = new Date( 2012, 0, 1 );
+  firstDate.setDate( firstDate.getDate() - 1000 );
+  firstDate.setHours( 0, 0, 0, 0 );
+
+  AmCharts.loadFile(dataset_url, {}, function(data) {
+     inputdata = AmCharts.parseJSON(data);
+      //console.log(chartData1); // this will output an array
+      for(var i = 0; i < inputdata.length; i++){
+        //var seconds = parseInt(Math.floor(parseFloat(inputdata[i].time)));
+        //var millseconds = parseInt(parseFloat(inputdata[i].time) * 1000 - seconds * 1000);
+        var start = parseInt(parseFloat(inputdata[i].start) * 1000);
+        //console.log("seconds: " + seconds + "; milliseconds: " + millseconds);
+        var startDate = new Date(firstDate);
+        //newDate.setHours(0,0, seconds, millseconds);
+        startDate.setHours(0,0, 0, start);
+
+        var end = parseInt(parseFloat(inputdata[i].end) * 1000);
+        //console.log("seconds: " + seconds + "; milliseconds: " + millseconds);
+        var endDate = new Date(firstDate);
+        //newDate.setHours(0,0, seconds, millseconds);
+        endDate.setHours(0,0, 0, end);
+        var value = inputdata[i].word;
+        //console.log("time: " + millseconds + "; data: " + value);
+        chartData.push({"start": startDate, "end": endDate, "word":value});
+      }
+  });
+  return  chartData;
+}
+
+//console.log("loading loudness data...")
+var chartData1 = generateChartData("thinkaloud_loudness.json");
+
+//console.log("loading pitch data...")
+var chartData2 = generateChartData("thinkaloud_pitch.json");
+
+var chartData3 = loadSilenceFromAlignedTranscriptData("thinkaloud-aligned.json");
+
+//console.log("after calling the generateChartData function");
+setTimeout(myTimer, 500);
+function myTimer() {
+  if( chartData1.length != 0 && chartData2.length != 0)
+  {
+    console.log("data is ready");
+    drawCharts();
+  }
+  else {
+    setTimeout(myTimer, 500);
+  }
+}
+
+//console.log("after checking if the data is ready");
+
+function drawCharts(){
+  AmCharts.makeChart("chartdiv", {
+      "type": "stock",
+      "theme": "light",
+      "categoryAxesSettings": {
+        "minPeriod": "fff", // set minimum to milliseconds
+        "groupToPeriods": [ 'fff', 'ss' ] // specify period grouping
+      },
+      "dataSets": [{
+              //"color": "#b0de09",
+              "title": "Loudness",
+              "fieldMappings": [{
+                  "fromField": "data",
+                  "toField": "data"
+              }],
+              "dataProvider": chartData1,
+              "categoryField": "time"
+          },
+          {
+              "title": "Pitch",
+              "fieldMappings": [{
+                  "fromField": "data",
+                  "toField": "data2"
+              }],
+              "dataProvider": chartData2,
+              "categoryField": "time",
+              "compared": true
+          },
+          {
+              "title": "Silence ( > 3 seconds)",
+              "fieldMappings": [{
+                  "fromField": "data",
+                  "toField": "data3"
+              }],
+              "dataProvider": chartData3,
+              "categoryField": "time",
+              "compared": true
+          }
+      ],
+      "panels": [ {
+          "showCategoryAxis": false,
+          "title": "Loudness",
+          "stockGraphs": [ {
+            "id": "g1",
+            "valueField": "data",
+            "comparable": true
+          } ],
+
+          "stockLegend": {
+          }
+        },
+        {
+          "showCategoryAxis": false,
+          "title": "Pitch",
+          "stockGraphs": [ {
+              "id": "g2",
+            "valueField": "data2",
+            "compareField": "data2",
+              "comparable": true,
+          } ],
+          "stockLegend": {
+          }
+        },
+        {
+          "showCategoryAxis": true,
+          "title": "Silence",
+          "stockGraphs": [ {
+              "id": "g3",
+            "valueField": "data3",
+            "compareField": "data3",
+              "comparable": true,
+              "visibleInLegend": true
+          } ],
+          "stockLegend": {
+          }
+        }
+      ],
+
+      "chartScrollbarSettings": {
+        "graph": "g1",
+        "usePeriod": "fff",
+        "position": "left"
+      },
+
+      "chartCursorSettings": {
+        "valueBalloonsEnabled": true,
+        "fullWidth":false,
+        "cursorAlpha":1
+      },
+      "periodSelector": {
+        "position": "bottom",
+        "dateFormat": "NN:SS", // date format with milliseconds "NN:SS:QQQ"
+        "inputFieldsEnabled": true,
+        "inputFieldWidth": 100,
+        "periods": [{
+          "period": "ss",
+          "count": 10,
+          "label": "10 seconds"
+        }, {
+          "period": "ss",
+          "count": 20,
+          "label": "20 seconds"
+        }, {
+          "period": "ss",
+          "count": 50,
+          "label": "50 seconds"
+        }, {
+          "period": "MAX",
+          "label": "Show all",
+          "selected": true
+        } ]
+      },
+      "panelsSettings": {
+        "usePrefixes": true
+      }
+  });
+}
+</script>
+
+    </head>
+    <body>
+        <div id="chartdiv"></div>
+    </body>
+
+</html>
