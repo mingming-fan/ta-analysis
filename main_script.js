@@ -43,10 +43,6 @@ function loadTaskFromXMLDoc(){
 loadTaskFromXMLDoc();
 console.log("instructions:", instruction_steps);
 
-$.each(instruction_steps, function (index, instruction) {
-  $("#instructions").append("<div class='test' id='ins_" + index + "''>"+ instruction +"</div>");
-});
-
 var sessions_data = []
 
 // this function submits recorded blob to nodejs server
