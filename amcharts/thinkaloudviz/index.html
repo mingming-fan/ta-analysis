@@ -3,6 +3,13 @@
     <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
       <link rel="stylesheet" href="style2.css" type="text/css">
+      <!--script type="text/javascript" src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+<script type="text/javascript" src="https://www.amcharts.com/lib/3/serial.js"></script>
+<script type="text/javascript" src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+<script type="text/javascript" src="https://www.amcharts.com/lib/3/amstock.js"></script>
+<script src="https://www.amcharts.com/lib/3/plugins/dataloader/dataloader.min.js"></script>
+<script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script-->
+
       <script src="../amcharts/amcharts.js"></script>
       <script src="../amcharts/serial.js"></script>
       <script src="../amcharts/themes/light.js"></script>
@@ -26,6 +33,7 @@
             Silence Filter (s):
               <input type="radio" name="filter" value="0" onclick="applyFilters(this.value)">show all
               <input type="radio" name="filter" value="1" onclick="applyFilters(this.value)">>=1s
+              <input type="radio" name="filter" value="3" onclick="applyFilters(this.value)">>=3s
               <input type="radio" name="filter" value="5" onclick="applyFilters(this.value)">>=5s
               <input type="radio" name="filter" value="10" onclick="applyFilters(this.value)">>=10s
               <input type="radio" name="filter" value="15" onclick="applyFilters(this.value)">>=15s
@@ -74,6 +82,8 @@
           </form>
         </div>
               <script>
+              var silenceBubbleText = ["","","silence"];
+
               var mAudio = null;
               AmCharts.useUTC = true;
               var mChart = null;
@@ -107,7 +117,7 @@
                       var value = parseFloat(inputdata[i].data);
                       //console.log("time: " + millseconds + "; data: " + value);
                       //chartData.push({"time": newDate, "data":value});
-                      chartData.push({"time": millseconds, "data":value, "color": undefined, "label": "undefined"});
+                      chartData.push({"time": millseconds, "data":value, "legendColor": AmCharts.randomColor, "label": "undefined"});
                     }
                 });
                 return  chartData;
@@ -126,19 +136,24 @@
                       //var diff = end - start;
                       //console.log("diff: " + diff);
                       //if( String(value).trim().localeCompare("sp") == 0 && end - start > 1000)
+                      //longer than 1 seconds
                       if( String(value).trim().localeCompare("sp") === 0)
                       {
                         //console.log("time: " + millseconds + "; data: " + value);
                         //chartData.push({"time": startDate, "data":1});
                         //chartData.push({"time": endDate, "word":1});
-                        chartData.push({"time": start, "data":1, "color": undefined, "label": "undefined"});
-                        chartData.push({"time": end-1, "data":1, "color": undefined, "label": "undefined"});
+                        for (var j = 0; j < end-start; j++){
+                          chartData.push({"time": start+j, "data":2, "duration": end-start, "legendColor": AmCharts.randomColor, "label": "undefined"});
+                        //chartData.push({"time": end-1, "data":1, "duration": end-start, "color": undefined, "label": "undefined"});
+                        }
                       }
                       else {
                         //chartData.push({"time": startDate, "data":0});
                         //chartData.push({"time": endDate, "word":0});
-                        chartData.push({"time": start, "data":0, "color": undefined, "label": "undefined"});
-                        chartData.push({"time": end-1, "data":0, "color": undefined, "label": "undefined"});
+                          for (var j = 0; j < end-start; j++){
+                            chartData.push({"time": start+j, "data":1, "duration": end-start, "legendColor": AmCharts.randomColor, "label": "undefined"});
+                            //chartData.push({"time": end-1, "data":0, "duration": end-start, "color": undefined, "label": "undefined"});
+                          }
                       }
                     }
                 });
@@ -153,8 +168,8 @@
                     for(var i = 0; i < inputdata.length; i++){
                       var start = parseInt(parseFloat(inputdata[i].start) * 1000);
                       var end = parseInt(parseFloat(inputdata[i].end) * 1000);
-                      chartData.push({"time": start, "data": inputdata[i].data, "color": undefined, "label": "undefined"});
-                      chartData.push({"time": end, "data":inputdata[i].data, "color": undefined, "label": "undefined"});
+                      chartData.push({"time": start, "data": inputdata[i].data, "duration": end-start, "legendColor": AmCharts.randomColor, "label": "undefined"});
+                      chartData.push({"time": end-1, "data":inputdata[i].data, "duration": end-start, "legendColor": AmCharts.randomColor, "label": "undefined"});
                     }
                 });
                 return  chartData;
@@ -176,7 +191,7 @@
 
                       var value = inputdata[i].word;
                       //console.log("time: " + millseconds + "; data: " + value);
-                      chartData.push({"start": start, "end": end, "word":value, "color": undefined, "label": "undefined"});
+                      chartData.push({"start": start, "end": end, "word":value, "legendColor": AmCharts.randomColor, "label": "undefined"});
                     }
                 });
                 return  chartData;
@@ -210,7 +225,7 @@
                         default:
                           break;
                       }
-                      chartData.push({"startTime": start, "endTime": end, "label":String(label).trim(), "color": color});
+                      chartData.push({"startTime": start, "endTime": end, "label":String(label).trim(), "legendColor": color});
                     }
                 });
                 return  chartData;
@@ -248,8 +263,8 @@
                         default:
                           break;
                       }
-                      chartData.push({"time": start, "data":data, "color": color, "label": String(label).trim()});
-                      chartData.push({"time": end-1000, "data":data, "color": color, "label": String(label).trim()});
+                      chartData.push({"time": start, "data":data, "legendColor": color, "label": String(label).trim()});
+                      chartData.push({"time": end-1000, "data":data, "legendColor": color, "label": String(label).trim()});
                     }
                 });
                 return  chartData;
@@ -285,7 +300,7 @@
                   "startDuration": 1,
                   "graphs": [{
                       "balloonText": "<b>[[category]]</b><br>starts at [[startTime]]<br>ends at [[endTime]]",
-                      "colorField": "color",
+                      "colorField": "legendColor",
                       "fillAlphas": 0.8,
                       "lineAlpha": 0,
                       "openField": "startTime",
@@ -313,291 +328,279 @@
               function drawCharts(){
                 var chart = null;
                 chart = AmCharts.makeChart("chartdiv", {
-                    "type": "stock",
+                    type: "stock",
                     "theme": "light",
-                    "dataSets": [{
-                            "title": "Loudness",
-                            "fieldMappings": [{
-                                "fromField": "data",
-                                "toField": "data1"
+                    dataSets: [{
+                            fieldMappings: [{
+                                fromField: "data",
+                                toField: "data1"
                             },
                             {
-                                "fromField": "color",
-                                "toField": "color1"
-                            },
-                            {
-                                "fromField": "label",
-                                "toField": "label1"
+                                fromField: "label",
+                                toField: "label1"
                             }
                             ],
-                            "dataProvider": loudnessData,
-                            "colorField": "color",
-                            "categoryField": "time"
+                            dataProvider: loudnessData,
+                            categoryField: "time"
                         },
                         {
-                            "title": "Pitch",
-                            "fieldMappings": [{
-                                "fromField": "data",
-                                "toField": "data2"
+                            fieldMappings: [{
+                                fromField: "data",
+                                toField: "data2"
                             },
                             {
-                                "fromField": "color",
-                                "toField": "color2"
-                            },
-                            {
-                                "fromField": "label",
-                                "toField": "label2"
+                                fromField: "label",
+                                toField: "label2"
                             }
                             ],
-                            "dataProvider": pitchData,
-                            "categoryField": "time",
-                            "colorField": "color",
-                            "compared": true
+                            dataProvider: pitchData,
+                            categoryField: "time",
+                            compared: true
                         },
                         {
-                            "title": "Silence",
-                            "fieldMappings": [{
-                                "fromField": "data",
-                                "toField": "data3"
+                            fieldMappings: [{
+                                fromField: "data",
+                                toField: "data3"
                             },
                             {
-                                "fromField": "color",
-                                "toField": "color3"
-                            },
-                            {
-                                "fromField": "label",
-                                "toField": "label3"
+                                fromField: "label",
+                                toField: "label3"
                             }
                             ],
-                            "dataProvider": silenceData,
-                            "categoryField": "time",
-                            "colorField": "color",
-                            "compared": true
+                            dataProvider: silenceData,
+                            categoryField: "time",
+                            compared: true
                         },
                         {
-                            "title": "category",
-                            "fieldMappings": [{
-                                "fromField": "data",
-                                "toField": "data4"
+                            fieldMappings: [{
+                                fromField: "data",
+                                toField: "data4"
                             },
                             {
-                                "fromField": "color",
-                                "toField": "color4"
-                            },
-                            {
-                                "fromField": "label",
-                                "toField": "label4"
+                                fromField: "label",
+                                toField: "label4"
                             }
                           ],
-                            "dataProvider": categoryData,
-                            "categoryField": "time",
-                            "compared": true,
-                            "lineColorField": "lineColor",
-                        }
-                        ,
+                            dataProvider: categoryData,
+                            categoryField: "time",
+                            compared: true,
+
+                        },
                         {
-                            "title": "sentiment",
-                            "fieldMappings": [{
-                                "fromField": "data",
-                                "toField": "data5"
+                            fieldMappings: [{
+                                fromField: "data",
+                                toField: "data5"
                             },
                             {
-                                "fromField": "color",
-                                "toField": "color5"
-                            },
-
+                                fromField: "legendColor",
+                                toField: "legendColor"
+                            }
                             ],
-                            "dataProvider": sentimentData,
-                            "categoryField": "time",
-                            "colorField": "color",
-                            "compared": true
+                            dataProvider: sentimentData,
+                            categoryField: "time",
+
+                            compared: true
                         },
                     ],
-                    "panels": [ {
-                        "showCategoryAxis": false,
-                        "title": "Loudness",
-                        "allowTurningOff": false,
-                        "stockGraphs": [ {
-                          "id": "g1",
-                          "type":"smoothedLine",
-                          "valueField": "data1",
-                          "comparable": true,
+
+                    panels: [ {
+                        showCategoryAxis: false,
+                        title: "Loudness (dB)",
+                        allowTurningOff: false,
+                        stockGraphs: [ {
+                          id: "g1",
+                          type:"smoothedLine",
+                          valueField: "data1",
+                          comparable: false,
+                          compareField: "data1",
+                          useDataSetColors: true,
+                          colorField: "legendColor",
+                          lineColor: "legendColor",
+                          legendColorField: "legendColor",
+                          lineColorField: "legendColor",
                         } ],
-                        "stockLegend": {
-                            "enabled": true,
-                          "markType": "none",
-                          "markSize": 0
+                        stockLegend: {
+                            enabled: true,
+                          markType: "none",
+                          markSize: 0
                         }
                       },
                       {
-                        "showCategoryAxis": false,
-                        "title": "Pitch",
-                        "allowTurningOff": false,
-                        "stockGraphs": [ {
-                            "id": "g2",
-                          "type":"smoothedLine",
-                          "valueField": "data2",
-                          "compareField": "data2",
-                            "comparable": true,
-                            "lineColorField": "lineColor",
+                        showCategoryAxis: false,
+                        title: "Pitch (HZ)",
+                        allowTurningOff: false,
+                        stockGraphs: [ {
+                            id: "g2",
+                          compareGraphType:"smoothedLine",
+                          valueField: "data2",
+                          compareField: "data2",
+                          comparable: true,
+                          useDataSetColors: false,
+                          lineColor: "legendColor",
+                          legendColorField: "legendColor",
+                          lineColorField: "legendColor",
+
                         } ],
-                        "stockLegend": {
-                            "enabled": true,
-                          "markType": "none",
-                          "markSize": 0
+                        stockLegend: {
+                            enabled: true,
+                          markType: "none",
+                          markSize: 0
                         }
                       },
                       {
-                        "showCategoryAxis": false,
-                        "title": "Silence",
-                        "allowTurningOff": false,
-                        "stockGraphs": [ {
-                            "id": "g3",
-                            "compareGraphType":"step",
-                          "valueField": "data3",
-                          "compareField": "data3",
-                            "comparable": true,
-                            "visibleInLegend": true,
-                            "useDataSetColors": false,
-                            //"fillColorField": "color3",
-                            "lineColorField": "lineColor",
+                        showCategoryAxis: false,
+                        title: "Silence",
+                        allowTurningOff: false,
+                        stockGraphs: [ {
+                            id: "g3",
+                          compareGraphType:"step",
+                          valueField: "data3",
+                          compareField: "data3",
+                            comparable: true,
+                            visibleInLegend: true,
+                            useDataSetColors: false,
+                            lineColor: "legendColor",
+                            legendColorField: "legendColor",
+                            lineColorField: "legendColor",
                         } ],
-                        "stockLegend": {
-                            "enabled": true,
-                          "markType": "none",
-                          "markSize": 0
+                        stockLegend: {
+                            enabled: true,
+                          markType: "none",
+                          markSize: 0
                         }
                       },
                       {
-                        "showCategoryAxis": false,
-                        "title": "Category",
-                        "allowTurningOff": false,
-                        "stockGraphs": [ {
-                            "id": "g4",
-                            "compareGraphType":"step",
-                            "showBalloon": true,
-                            "fillAlphas": 1,
-                            "valueField": "data4",
-                            "compareField": "data4",
-                            "comparable": true,
-                            "visibleInLegend": false,
-                            "useDataSetColors": false,
-                            //"fillColorField": "color4",
-                            "lineColorField": "lineColor",
-                            //"compareGraphFillColors":  "color4", //"#1ABC9C",
-                            //"compareGraphLineColor": "color4",
+                        showCategoryAxis: false,
+                        title: "Category",
+                        allowTurningOff: false,
+                        stockGraphs: [ {
+                            id: "g4",
+                            compareGraphType:"step",
+
+                            fillAlphas: 1,
+                            valueField: "data4",
+                            compareField: "data4",
+                            comparable: true,
+                            visibleInLegend: false,
+                            useDataSetColors: false,
+                            colorField: "lengendColor",
+                            legendColorField: "legendColor",
+                            lineColorField: "legendColor",
+                            lineColor:"lengendColor", //"#FABC9C"
+                            //compareGraphFillColors: "lengendColor",
+                            //compareGraphLineColor: "lengendColor"
                         } ],
-                        "stockLegend": {
-                            "enabled": true,
-                          "markType": "none",
-                          "markSize": 0
+                        stockLegend: {
+                            enabled: true,
+                          markType: "none",
+                          markSize: 0
                         }
                       },
                       {
-                        "showCategoryAxis": true,
-                        "title": "Sentiment",
-                        "allowTurningOff": false,
-                        "stockGraphs": [ {
-                            "id": "g5",
-                            "compareGraphType":"step",
-                            "showBalloon": true,
-                            "fillAlphas": 1,
-                            "valueField": "data5",
-                            "compareField": "data5",
-                            "comparable": true,
-                            "visibleInLegend": false,
-                            "useDataSetColors": false,
-                            //"fillColorField": "color4",
-                            "lineColorField": "lineColor",
-                            //"compareGraphFillColors":  "color4", //"#1ABC9C",
-                            //"compareGraphLineColor": "color4",
+                        showCategoryAxis: true,
+                        title: "Sentiment",
+                        allowTurningOff: false,
+                        stockGraphs: [ {
+                            id: "g5",
+                            compareGraphType:"step",
+                            lineThickness: 3,
+                            showBalloon: true,
+                            fillAlphas: 1,
+                            valueField: "data5",
+                            compareField: "data5",
+                            comparable: true,
+                            visibleInLegend: false,
+                            useDataSetColors: true,
+                            colorField: "lengendColor",
+                            lineColor: "lengendColor", //"#1ABC9C",
+
                         } ],
-                        "stockLegend": {
-                          "enabled": false,
-                          "markType": "none",
-                          "markSize": 0
+                        stockLegend: {
+                          enabled: true,
+                          markType: "none",
+                          markSize: 0
                         }
                       }
                     ],
-                    "valueAxesSettings":{
-                      "labelsEnabled": false,
-                      
+                    valueAxesSettings:{
+                      labelsEnabled: false,
                     },
-                    "categoryAxesSettings": {
-                      "groupToPeriods": [ 'fff', 'ss' ], // specify period grouping
-                      "parseDates": true,
-                      "boldPeriodBeginning": false,
-                      "autoGridCount": false,
-                      "dateFormats": [{
-                        "period": "fff",
-                        "format": "JJ:NN:SS"
+                    categoryAxesSettings: {
+                      groupToPeriods: [ 'fff', 'ss' ], // specify period grouping
+                      parseDates: true,
+
+                      autoGridCount: false,
+                      dateFormats: [{
+                        period: "fff",
+                        format: "JJ:NN:SS"
                       }, {
-                        "period": "ss",
-                        "format": "JJ:NN:SS"
+                        period: "ss",
+                        format: "JJ:NN:SS"
                       }, {
-                        "period": "mm",
-                        "format": "JJ:NN:SS"
+                        period: "mm",
+                        format: "JJ:NN:SS"
                       }, {
-                        "period": "hh",
-                        "format": "JJ:NN:SS"
+                        period: "hh",
+                        format: "JJ:NN:SS"
                       }, {
-                        "period": "DD",
-                        "format": "MMM DD"
+                        period: "DD",
+                        format: "MMM DD"
                       }, {
-                        "period": "WW",
-                        "format": "MMM DD"
+                        period: "WW",
+                        format: "MMM DD"
                       }, {
-                        "period": "MM",
-                        "format": "MMM"
+                        period: "MM",
+                        format: "MMM"
                       }, {
-                        "period": "YYYY",
-                        "format": "YYYY"
+                        period: "YYYY",
+                        format: "YYYY"
                       }],
                       //"equalSpacing": true,
-                      "minPeriod": "fff"
+                      minPeriod: "fff"
                     },
-                    "chartScrollbarSettings": {
-                      "enabled": false,
-                      "graph": "g1",
-                      "usePeriod": "fff",
-                      "position": "top",
-                      "dragIcon": "dragIconRectSmall",
+                    chartScrollbarSettings: {
+                      enabled: false,
+                      graph: "g1",
+                      usePeriod: "fff",
+                      position: "top",
+                      dragIcon: "dragIconRectSmall",
+                      selectedGraphLineColor:"#888888",
                     },
-                    "chartCursor":{
-                      "categoryBalloonDateFormat": "JJ:NN:SS",
+                    chartCursor:{
+                      categoryBalloonDateFormat: "JJ:NN:SS",
                     },
-                    "chartCursorSettings": {
-                      "valueBalloonsEnabled": true,
-                      "fullWidth":false,
-                      "cursorAlpha":0.6,
-                      "selectWithoutZooming": true
+                    chartCursorSettings: {
+                      valueBalloonsEnabled: true,
+                      fullWidth:false,
+                      cursorAlpha:0.6,
+                      selectWithoutZooming: true
                     },
-                    "legend":{
-                      "enabled":false
+                    legend:{
+                      enabled:false
                     }
                     ,
-                    "periodSelector": {
-                      "labelStyle": 'hidden',
-                      "position": "top",
-                      "dateFormat": "JJ:NN:SS", // date format with milliseconds "NN:SS:QQQ"
-                      "inputFieldsEnabled": true,
-                      "inputFieldWidth": 100,
-                      "periods": [{
-                        "period": "ss",
-                        "count": 15,
-                        "label": "15 seconds"
+                    periodSelector: {
+                      labelStyle: 'hidden',
+                      position: "top",
+                      dateFormat: "JJ:NN:SS", // date format with milliseconds "NN:SS:QQQ"
+                      inputFieldsEnabled: false,
+                      inputFieldWidth: 100,
+                      periods: [{
+                        period: "ss",
+                        count: 15,
+                        label: "15 seconds"
                       }, {
-                        "period": "ss",
-                        "count": 30,
-                        "label": "30 seconds"
+                        period: "ss",
+                        count: 30,
+                        label: "30 seconds"
                       }, {
-                        "period": "ss",
-                        "count": 60,
-                        "label": "60 seconds"
+                        period: "ss",
+                        count: 60,
+                        label: "60 seconds"
                       }, {
-                        "period": "MAX",
-                        "label": "Show all",
-                        "selected": true
+                        period: "MAX",
+                        label: "Show all",
+                        selected: true
                       } ]
                     }
                 });
@@ -707,54 +710,49 @@
             function getFilteredData(len)
             {
               //console.log("filter value: " + len);
-              //console.log("filter value: " + parseInt(len));
+              console.log("filter value: " + parseInt(len));
               var newData = [];
-              //console.log("# of dataSets: " + mChart.dataSets.length);
-              //console.log("# of datapoints: " + mChart.dataSets[2].dataProvider.length);
 
-              //console.log("# of datapionts: " + silenceData.length);
-              //console.log("test: " + silenceData[0].time + ",  data: " + silenceData[0].data);
-
-              var filteredIndex = [];
-
-              for(var i=1; i < silenceData.length; i++)
+              var cnt = 0;
+              for(var i=0; i < silenceData.length; i++)
               {
-                if(parseInt(silenceData[i].data)===1 && parseInt(silenceData[i-1].data)===1)
+                //console.log("duration: ", parseInt(silenceData[i].duration));
+                if(parseInt(silenceData[i].data) === 2 && parseInt(silenceData[i].duration) >= parseInt(len) * 1000)
                 {
-                  var silence_length = parseInt(silenceData[i].time) - parseInt(silenceData[i-1].time);
+                  cnt ++;
+                  //chartData.push({"time": start, "data":0, "color": undefined, "label": "undefined"});
+                  newData.push({
+                    "time": silenceData[i].time,
+                    "data": 2,
+                    "duration": silenceData[i].duration,
+                    "legendColor": AmCharts.randomColor(), //silenceData[i].color,
+                    "label": silenceData[i].label
+                  });
                   //console.log("silence length: " + len);
-
-                  if(parseInt(silence_length) >= parseInt(len) * 1000)
-                  {
-                    //console.log("silence length: " + parseInt(silence_length));
-                    //console.log("timestamp: " + mChart.dataSets[2].dataProvider[i].time);
-                    filteredIndex.push(i-1);
-                    filteredIndex.push(i);
-                }
+               }
+               else {
+                 newData.push({
+                   "time": silenceData[i].time,
+                   "data": 1,
+                   "duration": silenceData[i].duration,
+                   "legendColor": AmCharts.randomColor(), // silenceData[i].color,
+                   "label": silenceData[i].label
+                 });
                }
              }
-
-             for(var i = 0; i < silenceData.length; i++)
-             {
-               newData.push({
-                 "data": 0,
-                 "time": silenceData[i].time
-               });
-             }
-
-             for(var i = 0; i < filteredIndex.length; i++)
-             {
-               newData[parseInt(filteredIndex[i])].data = 1;
-             }
-
-            return newData;
+             console.log("AmCharts.randomColor(): " + AmCharts.randomColor());
+             console.log("# of data points: " + cnt);
+             return newData;
           }
 
          //filter the length of the audio duration
          function applyFilters(len){
            //assume that the silence data panel comes the last in the three features
            //reminder: the value "2" must be changed accordingly
-           if(parseInt(len) === 0)
+           var data = getFilteredData(len);
+           mChart.dataSets[2].dataProvider = data;
+           /*
+           if(parseInt(len) === 1)
            {
              mChart.dataSets[2].dataProvider = silenceData;
            }
@@ -762,6 +760,7 @@
              var data = getFilteredData(len);
              mChart.dataSets[2].dataProvider = data;
            }
+           */
            mChart.validateData();
          }
 
