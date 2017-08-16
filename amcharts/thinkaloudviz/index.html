@@ -31,12 +31,12 @@
           <form action="">
             <fieldset style="display: inline-block;">
             Silence Filter (s):
-              <input type="radio" name="filter" value="0" onclick="applyFilters(this.value)">show all
-              <input type="radio" name="filter" value="1" onclick="applyFilters(this.value)">>=1s
-              <input type="radio" name="filter" value="3" onclick="applyFilters(this.value)">>=3s
-              <input type="radio" name="filter" value="5" onclick="applyFilters(this.value)">>=5s
-              <input type="radio" name="filter" value="10" onclick="applyFilters(this.value)">>=10s
-              <input type="radio" name="filter" value="15" onclick="applyFilters(this.value)">>=15s
+              <input type="radio" name="filter" value="0" onclick="applySilenceLengthFilters(this.value)">show all
+              <input type="radio" name="filter" value="1" onclick="applySilenceLengthFilters(this.value)">>=1s
+              <input type="radio" name="filter" value="3" onclick="applySilenceLengthFilters(this.value)">>=3s
+              <input type="radio" name="filter" value="5" onclick="applySilenceLengthFilters(this.value)">>=5s
+              <input type="radio" name="filter" value="10" onclick="applySilenceLengthFilters(this.value)">>=10s
+              <input type="radio" name="filter" value="15" onclick="applySilenceLengthFilters(this.value)">>=15s
           </fieldset>
           </form>
         </div>
@@ -45,10 +45,10 @@
           <form>
             <fieldset style="display: inline-block;">
               Categories:
-              <input  type="checkbox" name="labelcategory1" value="reading" onclick="applyCategoryFilters(this.value)" checked>reading
-              <input  type="checkbox" name="labelcategory2" value="procedure" onclick="applyCategoryFilters(this.value)" checked>procedure
-              <input  type="checkbox" name="labelcategory3" value="observation" onclick="applyCategoryFilters(this.value)" checked>observation
-              <input  type="checkbox" name="labelcategory4" value="explanation" onclick="applyCategoryFilters(this.value)" checked>explanation
+              <input  type="checkbox" id="labelcategory1" value="Reading" onclick="applyCategoryFilters()" checked>reading
+              <input  type="checkbox" id="labelcategory2" value="Procedure" onclick="applyCategoryFilters()" checked>procedure
+              <input  type="checkbox" id="labelcategory3" value="Observation" onclick="applyCategoryFilters()" checked>observation
+              <input  type="checkbox" id="labelcategory4" value="Explanation" onclick="applyCategoryFilters()" checked>explanation
             </fieldset>
           </form>
         </div>
@@ -98,7 +98,7 @@
               var pitchData = loadChartData("thinkaloud_pitch.json");
               var silenceData = loadSilenceData("thinkaloud_aligned.json");
 
-              var categoryData = loadCategoryData2("categorydata.json");
+              var categoryData = loadCategoryData("categorydata.json");
               var sentimentData = loadSentimentData("thinkaloud_sentiment.json");
 
 
@@ -142,7 +142,8 @@
                         //console.log("time: " + millseconds + "; data: " + value);
                         //chartData.push({"time": startDate, "data":1});
                         //chartData.push({"time": endDate, "word":1});
-                        for (var j = 0; j < end-start; j++){
+                        //sample some data points between start and end
+                        for (var j = 0; j < end-start; j+=50){
                           chartData.push({"time": start+j, "data":2, "duration": end-start, "legendColor": AmCharts.randomColor, "label": "undefined"});
                         //chartData.push({"time": end-1, "data":1, "duration": end-start, "color": undefined, "label": "undefined"});
                         }
@@ -197,41 +198,7 @@
                 return  chartData;
               }
 
-
               function loadCategoryData(dataset_url) {
-                var chartData = [];
-                AmCharts.loadFile(dataset_url, {}, function(data) {
-                   inputdata = AmCharts.parseJSON(data);
-                    for(var i = 0; i < inputdata.length; i++){
-                      var start = parseInt(parseFloat(inputdata[i].start_time) * 1000);
-                      var end = parseInt(parseFloat(inputdata[i].end_time) * 1000);
-                      console.log("startTime:" + start + " , endTime: " + end);
-                      var label = inputdata[i].label;
-                      console.log("label: " + String(label).trim());
-                      var color = "#FF0F00";
-                      switch(String(label).trim()){
-                        case "Reading":
-                          color = "#3498DB";
-                          break;
-                        case "Procedure":
-                          color = "#1ABC9C";
-                          break;
-                        case "Observation":
-                          color = "#F1C40F";
-                          break;
-                        case "Explanation":
-                          color = "#D35400";
-                          break;
-                        default:
-                          break;
-                      }
-                      chartData.push({"startTime": start, "endTime": end, "label":String(label).trim(), "legendColor": color});
-                    }
-                });
-                return  chartData;
-              }
-
-              function loadCategoryData2(dataset_url) {
                 var chartData = [];
                 AmCharts.loadFile(dataset_url, {}, function(data) {
                    inputdata = AmCharts.parseJSON(data);
@@ -263,8 +230,13 @@
                         default:
                           break;
                       }
-                      chartData.push({"time": start, "data":data, "legendColor": color, "label": String(label).trim()});
-                      chartData.push({"time": end-1000, "data":data, "legendColor": color, "label": String(label).trim()});
+                      for(var j = 0; j < end-start; j+=50){
+                        chartData.push({"time": start+j, "data":data, "duration": end-start, "legendColor": color, "label": String(label).trim()});
+
+                        //chartData.push({"time": start, "data":data, "legendColor": color, "label": String(label).trim()});
+                        //chartData.push({"time": end-1000, "data":data, "legendColor": color, "label": String(label).trim()});
+                      }
+
                     }
                 });
                 return  chartData;
@@ -338,6 +310,10 @@
                             {
                                 fromField: "label",
                                 toField: "label1"
+                            },
+                            {
+                                fromField: "legendColor",
+                                toField: "legendColor"
                             }
                             ],
                             dataProvider: loudnessData,
@@ -351,6 +327,10 @@
                             {
                                 fromField: "label",
                                 toField: "label2"
+                            },
+                            {
+                                fromField: "legendColor",
+                                toField: "legendColor"
                             }
                             ],
                             dataProvider: pitchData,
@@ -365,6 +345,10 @@
                             {
                                 fromField: "label",
                                 toField: "label3"
+                            },
+                            {
+                                fromField: "legendColor",
+                                toField: "legendColor"
                             }
                             ],
                             dataProvider: silenceData,
@@ -379,6 +363,10 @@
                             {
                                 fromField: "label",
                                 toField: "label4"
+                            },
+                            {
+                                fromField: "legendColor",
+                                toField: "legendColor"
                             }
                           ],
                             dataProvider: categoryData,
@@ -392,13 +380,16 @@
                                 toField: "data5"
                             },
                             {
+                                fromField: "label",
+                                toField: "label5"
+                            },
+                            {
                                 fromField: "legendColor",
                                 toField: "legendColor"
                             }
                             ],
                             dataProvider: sentimentData,
                             categoryField: "time",
-
                             compared: true
                         },
                     ],
@@ -686,7 +677,7 @@
                     document.getElementById("end").value = parseFloat((event.end+1)/1000); //convert the miliseconds into seconds
                   }
                 }
-
+                /*
                 for(var x in mChart.dataSets){
                   for(var j in mChart.dataSets[x].dataProvider){
                       var datapoint = mChart.dataSets[x].dataProvider[j];
@@ -694,15 +685,17 @@
                       {
                         //console.log("selected point");
                         //console.log("datapoint: " + datapoint.time + ", value: " + datapoint.data + ", color: " + datapoint.lineColor + ", label: " + datapoint.label);
-                        datapoint.lineColor = "#00CC00";
+                        datapoint.lengendColor = "#00CC00";
                       }
                       else
                       {
-                          datapoint.lineColor = "#FF6600";
+                          datapoint.lengendColor = "#FF6600";
                       }
                   }
                 }
+
                 mChart.validateData();
+                */
               }
 
 
@@ -746,62 +739,109 @@
           }
 
          //filter the length of the audio duration
-         function applyFilters(len){
-           //assume that the silence data panel comes the last in the three features
-           //reminder: the value "2" must be changed accordingly
-           var data = getFilteredData(len);
-           mChart.dataSets[2].dataProvider = data;
-           /*
-           if(parseInt(len) === 1)
-           {
-             mChart.dataSets[2].dataProvider = silenceData;
-           }
-           else {
-             var data = getFilteredData(len);
-             mChart.dataSets[2].dataProvider = data;
-           }
-           */
+         function applySilenceLengthFilters(len){
+             //assume that the silence data panel comes the last in the three features
+             //reminder: the value "2" must be changed accordingly
+             console.log("filter value: " + parseInt(len));
+             var newData = [];
+
+             var cnt = 0;
+             for(var i=0; i < silenceData.length; i++)
+             {
+               //console.log("duration: ", parseInt(silenceData[i].duration));
+               if(parseInt(silenceData[i].data) === 2 && parseInt(silenceData[i].duration) >= parseInt(len) * 1000)
+               {
+                 cnt ++;
+                 //chartData.push({"time": start, "data":0, "color": undefined, "label": "undefined"});
+                 newData.push({
+                   "time": silenceData[i].time,
+                   "data": 2,
+                   "duration": silenceData[i].duration,
+                   "legendColor": AmCharts.randomColor(), //silenceData[i].color,
+                   "label": silenceData[i].label
+                 });
+                 //console.log("silence length: " + len);
+              }
+              else {
+                newData.push({
+                  "time": silenceData[i].time,
+                  "data": 1,
+                  "duration": silenceData[i].duration,
+                  "legendColor": AmCharts.randomColor(), // silenceData[i].color,
+                  "label": silenceData[i].label
+                });
+              }
+            }
+            console.log("AmCharts.randomColor(): " + AmCharts.randomColor());
+            console.log("# of data points: " + cnt);
+
+           mChart.dataSets[2].dataProvider = newData;
            mChart.validateData();
          }
 
 
-        function applyCategoryFilters(category){
+        function applyCategoryFilters(){
             var newData = [];
-            //console.log("# of dataSets: " + mChart.dataSets.length);
-            //console.log("# of datapoints: " + mChart.dataSets[2].dataProvider.length);
+            var categories = [];
 
-            //console.log("# of datapionts: " + silenceData.length);
-            //console.log("test: " + silenceData[0].time + ",  data: " + silenceData[0].data);
+            if (document.getElementById("labelcategory1").checked){
+              categories.push(document.getElementById("labelcategory1").value);
+              console.log("still chosen categories: " + document.getElementById("labelcategory1").value);
+            }
 
-            var filteredIndex = [];
+            if (document.getElementById("labelcategory2").checked){
+              categories.push(document.getElementById("labelcategory2").value);
+              console.log("still chosen categories: " + document.getElementById("labelcategory2").value);
+            }
 
-            for(var i=1; i < categoryData.length; i++)
+            if (document.getElementById("labelcategory3").checked){
+              categories.push(document.getElementById("labelcategory3").value);
+              console.log("still chosen categories: " + document.getElementById("labelcategory3").value);
+            }
+
+            if (document.getElementById("labelcategory4").checked){
+              categories.push(document.getElementById("labelcategory4").value);
+              console.log("still chosen categories: " + document.getElementById("labelcategory4").value);
+            }
+
+            for(var i = 0; i < categoryData.length; i++)
             {
-              if(categoryData[i].label === category)
+              var chosen = false;
+              for (var k = 0; k < categories.length; k++)
               {
-                var silence_length = parseInt(silenceData[i].time) - parseInt(silenceData[i-1].time);
-                //console.log("silence length: " + len);
-
-                if(parseInt(silence_length) >= parseInt(len) * 1000)
-                {
-                  filteredIndex.push(i);
+                if(String(categoryData[i].label).trim().localeCompare(categories[k]) === 0){
+                  chosen = true;
+                  break;
+                }
               }
+
+              if(chosen)
+              {
+                newData.push({
+                  "time": categoryData[i].time,
+                  "data": categoryData[i].data,
+                  "duration": categoryData[i].duration,
+                  "legendColor": categoryData[i].color, //silenceData[i].color,
+                  "label": categoryData[i].label,
+                });
+                //console.log("silence length: " + len);
              }
+             /*
+             else {
+               newData.push({
+                 "time": categoryData[i].time,
+                 "data": -1,
+                 "duration": categoryData[i].duration,
+                 "legendColor": categoryData[i].color, //silenceData[i].color,
+                 "label": categoryData[i].label,
+               });
+             }
+             */
            }
 
-           for(var i = 0; i < silenceData.length; i++)
-           {
-             newData.push({
-               "data": 0,
-               "time": silenceData[i].time
-             });
-           }
-
-           for(var i = 0; i < filteredIndex.length; i++)
-           {
-             newData.push ({"data": categoryData[parseInt(filteredIndex[i])].data,
-                            "time": categoryData[parseInt(filteredIndex[i])].time, });
-           }
+           //based on the assumption that the sentiment data is the 5th panel
+           mChart.dataSets[3].dataProvider = newData;
+           mChart.validateData();
         }
         </script>
     </body>
