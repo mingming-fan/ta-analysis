@@ -36,6 +36,32 @@ h2 {
 }
 
 
+#loudnesschartdiv {
+  width: 90%;
+  height: 200px;
+	margin: auto;
+}
+
+
+#pitchchartdiv {
+  width: 90%;
+  height: 200px;
+	margin: auto;
+}
+
+
+#silencechartdiv {
+  width: 90%;
+  height: 200px;
+	margin: auto;
+}
+
+#sentimentchartdiv {
+  width: 90%;
+  height: 200px;
+	margin: auto;
+}
+
 #chartdiv2 {
   width: 90%;
   height: 750px;

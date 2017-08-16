@@ -17,7 +17,15 @@
        <div id="audiodiv">
        <audio id="audiocontrol" src = "thinkaloud.wav" type="audio/wav" preload = "auto" controls>Your browser does not support this audio element. </audio>
        </div>
+       <br/>
+        <div id="loudnesschartdiv"></div>
+       <br/>
+        <div id="pitchchartdiv"></div>
         <br/>
+         <div id="silencechartdiv"></div>
+         <br/>
+          <div id="sentimentchartdiv"></div>
+         <br/>
         <div id="chartdiv"></div>
         <!--div id="chartdiv2"></div-->
         <div>
@@ -263,8 +271,12 @@
                 {
                   console.log("data is ready");
                   mChart = drawCharts();
-
                   //mChart2 = drawCategoryChart();
+                  loudnssChart = drawLoudnessChart();
+                  //console.log("after calling the drawLoudnessChart function");
+                  pitchChart = drawPitchChart();
+                  silenceChart = drawSilenceChart();
+                  sentimentChart = drawSentimentChart();
                 }
                 else {
                   setTimeout(myTimer, 500);
@@ -308,6 +320,463 @@
                 return chart;
               }
 
+              function drawLoudnessChart(){
+                var chart = null;
+                chart = AmCharts.makeChart("loudnesschartdiv",{
+                  "type": "stock",
+                  "theme": "light",
+                  "dataSets": [{
+                          "title": "Loudness",
+                          "fieldMappings": [{
+                              "fromField": "data",
+                              "toField": "data1"
+                          },
+                          {
+                              "fromField": "color",
+                              "toField": "color1"
+                          },
+                          {
+                              "fromField": "label",
+                              "toField": "label1"
+                          }
+                          ],
+                          "dataProvider": loudnessData,
+                          "colorField": "color",
+                          "categoryField": "time"
+                      }],
+                      "panels": [ {
+                          "showCategoryAxis": false,
+                          "title": "Loudness",
+                          "allowTurningOff": false,
+                          "stockGraphs": [ {
+                            "id": "g1",
+                            "type":"smoothedLine",
+                            "valueField": "data1",
+                            "comparable": false,
+                          } ],
+                          "stockLegend": {
+                            "markType": "none",
+                            "markSize": 0
+                          }
+                        }],
+                  "categoryAxesSettings": {
+                    "groupToPeriods": [ 'fff', 'ss' ], // specify period grouping
+                    "parseDates": true,
+                    "boldPeriodBeginning": false,
+                    "autoGridCount": false,
+                    "dateFormats": [{
+                      "period": "fff",
+                      "format": "JJ:NN:SS"
+                    }, {
+                      "period": "ss",
+                      "format": "JJ:NN:SS"
+                    }, {
+                      "period": "mm",
+                      "format": "JJ:NN:SS"
+                    }, {
+                      "period": "hh",
+                      "format": "JJ:NN:SS"
+                    }, {
+                      "period": "DD",
+                      "format": "MMM DD"
+                    }, {
+                      "period": "WW",
+                      "format": "MMM DD"
+                    }, {
+                      "period": "MM",
+                      "format": "MMM"
+                    }, {
+                      "period": "YYYY",
+                      "format": "YYYY"
+                    }],
+                    //"equalSpacing": true,
+                    "minPeriod": "fff"
+                  },
+                   "chartScrollbarSettings": {
+                      "graph": "g1",
+                      "usePeriod": "fff",
+                      "position": "top",
+                      "dragIcon": "dragIconRectSmall",
+                    },
+                    "chartCursor":{
+                      "categoryBalloonDateFormat": "JJ:NN:SS",
+                    },
+                    "chartCursorSettings": {
+                      "valueBalloonsEnabled": true,
+                      "fullWidth":false,
+                      "cursorAlpha":0.6,
+                      "selectWithoutZooming": true
+                    },
+                    "periodSelector": {
+                      "position": "top",
+                      "dateFormat": "JJ:NN:SS", // date format with milliseconds "NN:SS:QQQ"
+                      "inputFieldsEnabled": true,
+                      "inputFieldWidth": 100,
+                      "periods": [{
+                        "period": "ss",
+                        "count": 15,
+                        "label": "15 seconds"
+                      }, {
+                        "period": "ss",
+                        "count": 30,
+                        "label": "30 seconds"
+                      }, {
+                        "period": "ss",
+                        "count": 60,
+                        "label": "60 seconds"
+                      }, {
+                        "period": "MAX",
+                        "label": "Show all",
+                        "selected": true
+                      } ]
+                    }
+                });
+                return chart;
+              }
+
+
+                            function drawPitchChart(){
+                              var chart = null;
+                              chart = AmCharts.makeChart("pitchchartdiv",{
+                                "type": "stock",
+                                "theme": "light",
+                                "dataSets": [{
+                                        "title": "Pitch",
+                                        "fieldMappings": [{
+                                            "fromField": "data",
+                                            "toField": "data1"
+                                        },
+                                        {
+                                            "fromField": "color",
+                                            "toField": "color1"
+                                        },
+                                        {
+                                            "fromField": "label",
+                                            "toField": "label1"
+                                        }
+                                        ],
+                                        "dataProvider": pitchData,
+                                        "colorField": "color",
+                                        "categoryField": "time"
+                                    }],
+                                    "panels": [ {
+                                        "showCategoryAxis": false,
+                                        "title": "Loudness",
+                                        "allowTurningOff": false,
+                                        "stockGraphs": [ {
+                                          "id": "g1",
+                                          "type":"smoothedLine",
+                                          "valueField": "data1",
+                                          "comparable": false,
+                                        } ],
+                                        "stockLegend": {
+                                          "markType": "none",
+                                          "markSize": 0
+                                        }
+                                      }],
+                                "categoryAxesSettings": {
+                                  "groupToPeriods": [ 'fff', 'ss' ], // specify period grouping
+                                  "parseDates": true,
+                                  "boldPeriodBeginning": false,
+                                  "autoGridCount": false,
+                                  "dateFormats": [{
+                                    "period": "fff",
+                                    "format": "JJ:NN:SS"
+                                  }, {
+                                    "period": "ss",
+                                    "format": "JJ:NN:SS"
+                                  }, {
+                                    "period": "mm",
+                                    "format": "JJ:NN:SS"
+                                  }, {
+                                    "period": "hh",
+                                    "format": "JJ:NN:SS"
+                                  }, {
+                                    "period": "DD",
+                                    "format": "MMM DD"
+                                  }, {
+                                    "period": "WW",
+                                    "format": "MMM DD"
+                                  }, {
+                                    "period": "MM",
+                                    "format": "MMM"
+                                  }, {
+                                    "period": "YYYY",
+                                    "format": "YYYY"
+                                  }],
+                                  //"equalSpacing": true,
+                                  "minPeriod": "fff"
+                                },
+                                 "chartScrollbarSettings": {
+                                    "graph": "g1",
+                                    "usePeriod": "fff",
+                                    "position": "top",
+                                    "dragIcon": "dragIconRectSmall",
+                                  },
+                                  "chartCursor":{
+                                    "categoryBalloonDateFormat": "JJ:NN:SS",
+                                  },
+                                  "chartCursorSettings": {
+                                    "valueBalloonsEnabled": true,
+                                    "fullWidth":false,
+                                    "cursorAlpha":0.6,
+                                    "selectWithoutZooming": true
+                                  },
+                                  "periodSelector": {
+                                    "position": "top",
+                                    "dateFormat": "JJ:NN:SS", // date format with milliseconds "NN:SS:QQQ"
+                                    "inputFieldsEnabled": true,
+                                    "inputFieldWidth": 100,
+                                    "periods": [{
+                                      "period": "ss",
+                                      "count": 15,
+                                      "label": "15 seconds"
+                                    }, {
+                                      "period": "ss",
+                                      "count": 30,
+                                      "label": "30 seconds"
+                                    }, {
+                                      "period": "ss",
+                                      "count": 60,
+                                      "label": "60 seconds"
+                                    }, {
+                                      "period": "MAX",
+                                      "label": "Show all",
+                                      "selected": true
+                                    } ]
+                                  }
+                              });
+                              return chart;
+                            }
+
+
+                            function drawSilenceChart(){
+                              var chart = null;
+                              chart = AmCharts.makeChart("silencechartdiv",{
+                                "type": "stock",
+                                "theme": "light",
+                                "dataSets": [{
+                                        "title": "silence",
+                                        "fieldMappings": [{
+                                            "fromField": "data",
+                                            "toField": "data1"
+                                        },
+                                        {
+                                            "fromField": "color",
+                                            "toField": "color1"
+                                        },
+                                        {
+                                            "fromField": "label",
+                                            "toField": "label1"
+                                        }
+                                        ],
+                                        "dataProvider": silenceData,
+                                        "colorField": "color",
+                                        "categoryField": "time"
+                                    }],
+                                    "panels": [ {
+                                        "showCategoryAxis": false,
+                                        "title": "Silence",
+                                        "allowTurningOff": false,
+                                        "stockGraphs": [ {
+                                          "id": "g1",
+                                          "type":"step",
+                                          "valueField": "data1",
+                                          "comparable": false,
+                                        } ],
+                                        "stockLegend": {
+                                          "markType": "none",
+                                          "markSize": 0
+                                        }
+                                      }],
+                                "categoryAxesSettings": {
+                                  "groupToPeriods": [ 'fff', 'ss' ], // specify period grouping
+                                  "parseDates": true,
+                                  "boldPeriodBeginning": false,
+                                  "autoGridCount": false,
+                                  "dateFormats": [{
+                                    "period": "fff",
+                                    "format": "JJ:NN:SS"
+                                  }, {
+                                    "period": "ss",
+                                    "format": "JJ:NN:SS"
+                                  }, {
+                                    "period": "mm",
+                                    "format": "JJ:NN:SS"
+                                  }, {
+                                    "period": "hh",
+                                    "format": "JJ:NN:SS"
+                                  }, {
+                                    "period": "DD",
+                                    "format": "MMM DD"
+                                  }, {
+                                    "period": "WW",
+                                    "format": "MMM DD"
+                                  }, {
+                                    "period": "MM",
+                                    "format": "MMM"
+                                  }, {
+                                    "period": "YYYY",
+                                    "format": "YYYY"
+                                  }],
+                                  //"equalSpacing": true,
+                                  "minPeriod": "fff"
+                                },
+                                 "chartScrollbarSettings": {
+                                    "graph": "g1",
+                                    "usePeriod": "fff",
+                                    "position": "top",
+                                    "dragIcon": "dragIconRectSmall",
+                                  },
+                                  "chartCursor":{
+                                    "categoryBalloonDateFormat": "JJ:NN:SS",
+                                  },
+                                  "chartCursorSettings": {
+                                    "valueBalloonsEnabled": true,
+                                    "fullWidth":false,
+                                    "cursorAlpha":0.6,
+                                    "selectWithoutZooming": true
+                                  },
+                                  "periodSelector": {
+                                    "position": "top",
+                                    "dateFormat": "JJ:NN:SS", // date format with milliseconds "NN:SS:QQQ"
+                                    "inputFieldsEnabled": true,
+                                    "inputFieldWidth": 100,
+                                    "periods": [{
+                                      "period": "ss",
+                                      "count": 15,
+                                      "label": "15 seconds"
+                                    }, {
+                                      "period": "ss",
+                                      "count": 30,
+                                      "label": "30 seconds"
+                                    }, {
+                                      "period": "ss",
+                                      "count": 60,
+                                      "label": "60 seconds"
+                                    }, {
+                                      "period": "MAX",
+                                      "label": "Show all",
+                                      "selected": true
+                                    } ]
+                                  }
+                              });
+                              return chart;
+                            }
+
+                            function drawSentimentChart(){
+                              var chart = null;
+                              chart = AmCharts.makeChart("sentimentchartdiv",{
+                                "type": "stock",
+                                "theme": "light",
+                                "dataSets": [{
+                                        "title": "sentiment",
+                                        "fieldMappings": [{
+                                            "fromField": "data",
+                                            "toField": "data1"
+                                        },
+                                        {
+                                            "fromField": "color",
+                                            "toField": "color1"
+                                        },
+                                        {
+                                            "fromField": "label",
+                                            "toField": "label1"
+                                        }
+                                        ],
+                                        "dataProvider": sentimentData,
+                                        "colorField": "color",
+                                        "categoryField": "time"
+                                    }],
+                                    "panels": [ {
+                                        "showCategoryAxis": false,
+                                        "title": "sentiment",
+                                        "allowTurningOff": false,
+                                        "stockGraphs": [ {
+                                          "id": "g1",
+                                          "type":"step",
+                                          "valueField": "data1",
+                                          "comparable": false,
+                                        } ],
+                                        "stockLegend": {
+                                          "markType": "none",
+                                          "markSize": 0
+                                        }
+                                      }],
+                                "categoryAxesSettings": {
+                                  "groupToPeriods": [ 'fff', 'ss' ], // specify period grouping
+                                  "parseDates": true,
+                                  "boldPeriodBeginning": false,
+                                  "autoGridCount": false,
+                                  "dateFormats": [{
+                                    "period": "fff",
+                                    "format": "JJ:NN:SS"
+                                  }, {
+                                    "period": "ss",
+                                    "format": "JJ:NN:SS"
+                                  }, {
+                                    "period": "mm",
+                                    "format": "JJ:NN:SS"
+                                  }, {
+                                    "period": "hh",
+                                    "format": "JJ:NN:SS"
+                                  }, {
+                                    "period": "DD",
+                                    "format": "MMM DD"
+                                  }, {
+                                    "period": "WW",
+                                    "format": "MMM DD"
+                                  }, {
+                                    "period": "MM",
+                                    "format": "MMM"
+                                  }, {
+                                    "period": "YYYY",
+                                    "format": "YYYY"
+                                  }],
+                                  //"equalSpacing": true,
+                                  "minPeriod": "fff"
+                                },
+                                 "chartScrollbarSettings": {
+                                    "graph": "g1",
+                                    "usePeriod": "fff",
+                                    "position": "top",
+                                    "dragIcon": "dragIconRectSmall",
+                                  },
+                                  "chartCursor":{
+                                    "categoryBalloonDateFormat": "JJ:NN:SS",
+                                  },
+                                  "chartCursorSettings": {
+                                    "valueBalloonsEnabled": true,
+                                    "fullWidth":false,
+                                    "cursorAlpha":0.6,
+                                    "selectWithoutZooming": true
+                                  },
+                                  "periodSelector": {
+                                    "position": "top",
+                                    "dateFormat": "JJ:NN:SS", // date format with milliseconds "NN:SS:QQQ"
+                                    "inputFieldsEnabled": true,
+                                    "inputFieldWidth": 100,
+                                    "periods": [{
+                                      "period": "ss",
+                                      "count": 15,
+                                      "label": "15 seconds"
+                                    }, {
+                                      "period": "ss",
+                                      "count": 30,
+                                      "label": "30 seconds"
+                                    }, {
+                                      "period": "ss",
+                                      "count": 60,
+                                      "label": "60 seconds"
+                                    }, {
+                                      "period": "MAX",
+                                      "label": "Show all",
+                                      "selected": true
+                                    } ]
+                                  }
+                              });
+                              return chart;
+                            }
 
               //console.log("after checking if the data is ready");
               function drawCharts(){
@@ -424,7 +893,6 @@
                           "comparable": true,
                         } ],
                         "stockLegend": {
-                            "enabled": true,
                           "markType": "none",
                           "markSize": 0
                         }
@@ -442,13 +910,12 @@
                             "lineColorField": "lineColor",
                         } ],
                         "stockLegend": {
-                            "enabled": true,
                           "markType": "none",
                           "markSize": 0
                         }
                       },
                       {
-                        "showCategoryAxis": false,
+                        "showCategoryAxis": true,
                         "title": "Silence",
                         "allowTurningOff": false,
                         "stockGraphs": [ {
@@ -463,13 +930,12 @@
                             "lineColorField": "lineColor",
                         } ],
                         "stockLegend": {
-                            "enabled": true,
                           "markType": "none",
                           "markSize": 0
                         }
                       },
                       {
-                        "showCategoryAxis": false,
+                        "showCategoryAxis": true,
                         "title": "Category",
                         "allowTurningOff": false,
                         "stockGraphs": [ {
@@ -488,7 +954,6 @@
                             //"compareGraphLineColor": "color4",
                         } ],
                         "stockLegend": {
-                            "enabled": true,
                           "markType": "none",
                           "markSize": 0
                         }
@@ -513,16 +978,11 @@
                             //"compareGraphLineColor": "color4",
                         } ],
                         "stockLegend": {
-                          "enabled": false,
                           "markType": "none",
                           "markSize": 0
                         }
                       }
                     ],
-                    "valueAxesSettings":{
-                      "labelsEnabled": false,
-                      
-                    },
                     "categoryAxesSettings": {
                       "groupToPeriods": [ 'fff', 'ss' ], // specify period grouping
                       "parseDates": true,
@@ -557,7 +1017,6 @@
                       "minPeriod": "fff"
                     },
                     "chartScrollbarSettings": {
-                      "enabled": false,
                       "graph": "g1",
                       "usePeriod": "fff",
                       "position": "top",
@@ -572,12 +1031,7 @@
                       "cursorAlpha":0.6,
                       "selectWithoutZooming": true
                     },
-                    "legend":{
-                      "enabled":false
-                    }
-                    ,
                     "periodSelector": {
-                      "labelStyle": 'hidden',
                       "position": "top",
                       "dateFormat": "JJ:NN:SS", // date format with milliseconds "NN:SS:QQQ"
                       "inputFieldsEnabled": true,

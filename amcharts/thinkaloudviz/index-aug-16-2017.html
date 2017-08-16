@@ -17,7 +17,7 @@
        <div id="audiodiv">
        <audio id="audiocontrol" src = "thinkaloud.wav" type="audio/wav" preload = "auto" controls>Your browser does not support this audio element. </audio>
        </div>
-        <br/>
+              <br/>
         <div id="chartdiv"></div>
         <!--div id="chartdiv2"></div-->
         <div>
@@ -83,13 +83,13 @@
               };
 
               //console.log("loading loudness data...")
-              var loudnessData = loadChartData("thinkaloud_loudness.json");
+              var chartData1 = loadChartData("thinkaloud_loudness.json");
               //console.log("loading pitch data...")
-              var pitchData = loadChartData("thinkaloud_pitch.json");
-              var silenceData = loadSilenceData("thinkaloud_aligned.json");
+              var chartData2 = loadChartData("thinkaloud_pitch.json");
+              var chartData3 = loadSilenceData("thinkaloud_aligned.json");
 
-              var categoryData = loadCategoryData2("categorydata.json");
-              var sentimentData = loadSentimentData("thinkaloud_sentiment.json");
+              var chartData4 = loadCategoryData2("categorydata.json");
+              var chartData5 = loadSentimentData("thinkaloud_sentiment.json");
 
 
               //load the data from the external sources
@@ -97,7 +97,7 @@
                 var chartData = [];
                 AmCharts.loadFile(dataset_url, {}, function(data) {
                    inputdata = AmCharts.parseJSON(data);
-                    //console.log(pitchData); // this will output an array
+                    //console.log(chartData1); // this will output an array
                     for(var i = 0; i < inputdata.length; i++){
                       //var seconds = parseInt(Math.floor(parseFloat(inputdata[i].time)));
                       //var millseconds = parseInt(parseFloat(inputdata[i].time) * 1000 - seconds * 1000);
@@ -259,11 +259,10 @@
               //console.log("after calling the loadChartData function");
               setTimeout(myTimer, 500);
               function myTimer() {
-                if( pitchData.length != 0 && pitchData.length != 0)
+                if( chartData1.length != 0 && chartData2.length != 0)
                 {
                   console.log("data is ready");
                   mChart = drawCharts();
-
                   //mChart2 = drawCategoryChart();
                 }
                 else {
@@ -277,7 +276,7 @@
                 chart = AmCharts.makeChart("chartdiv2",{
                   "type": "serial",
                   "theme": "light",
-                  "dataProvider": categoryData,
+                  "dataProvider": chartData4,
                   "valueAxes": [{
                       "axisAlpha": 0,
                       "gridAlpha": 0.1
@@ -308,7 +307,6 @@
                 return chart;
               }
 
-
               //console.log("after checking if the data is ready");
               function drawCharts(){
                 var chart = null;
@@ -330,7 +328,7 @@
                                 "toField": "label1"
                             }
                             ],
-                            "dataProvider": loudnessData,
+                            "dataProvider": chartData1,
                             "colorField": "color",
                             "categoryField": "time"
                         },
@@ -349,7 +347,7 @@
                                 "toField": "label2"
                             }
                             ],
-                            "dataProvider": pitchData,
+                            "dataProvider": chartData2,
                             "categoryField": "time",
                             "colorField": "color",
                             "compared": true
@@ -369,7 +367,7 @@
                                 "toField": "label3"
                             }
                             ],
-                            "dataProvider": silenceData,
+                            "dataProvider": chartData3,
                             "categoryField": "time",
                             "colorField": "color",
                             "compared": true
@@ -389,7 +387,7 @@
                                 "toField": "label4"
                             }
                           ],
-                            "dataProvider": categoryData,
+                            "dataProvider": chartData4,
                             "categoryField": "time",
                             "compared": true,
                             "lineColorField": "lineColor",
@@ -407,7 +405,7 @@
                             },
 
                             ],
-                            "dataProvider": sentimentData,
+                            "dataProvider": chartData5,
                             "categoryField": "time",
                             "colorField": "color",
                             "compared": true
@@ -424,7 +422,6 @@
                           "comparable": true,
                         } ],
                         "stockLegend": {
-                            "enabled": true,
                           "markType": "none",
                           "markSize": 0
                         }
@@ -442,13 +439,12 @@
                             "lineColorField": "lineColor",
                         } ],
                         "stockLegend": {
-                            "enabled": true,
                           "markType": "none",
                           "markSize": 0
                         }
                       },
                       {
-                        "showCategoryAxis": false,
+                        "showCategoryAxis": true,
                         "title": "Silence",
                         "allowTurningOff": false,
                         "stockGraphs": [ {
@@ -463,13 +459,12 @@
                             "lineColorField": "lineColor",
                         } ],
                         "stockLegend": {
-                            "enabled": true,
                           "markType": "none",
                           "markSize": 0
                         }
                       },
                       {
-                        "showCategoryAxis": false,
+                        "showCategoryAxis": true,
                         "title": "Category",
                         "allowTurningOff": false,
                         "stockGraphs": [ {
@@ -488,7 +483,6 @@
                             //"compareGraphLineColor": "color4",
                         } ],
                         "stockLegend": {
-                            "enabled": true,
                           "markType": "none",
                           "markSize": 0
                         }
@@ -513,16 +507,11 @@
                             //"compareGraphLineColor": "color4",
                         } ],
                         "stockLegend": {
-                          "enabled": false,
                           "markType": "none",
                           "markSize": 0
                         }
                       }
                     ],
-                    "valueAxesSettings":{
-                      "labelsEnabled": false,
-                      
-                    },
                     "categoryAxesSettings": {
                       "groupToPeriods": [ 'fff', 'ss' ], // specify period grouping
                       "parseDates": true,
@@ -557,7 +546,6 @@
                       "minPeriod": "fff"
                     },
                     "chartScrollbarSettings": {
-                      "enabled": false,
                       "graph": "g1",
                       "usePeriod": "fff",
                       "position": "top",
@@ -572,12 +560,7 @@
                       "cursorAlpha":0.6,
                       "selectWithoutZooming": true
                     },
-                    "legend":{
-                      "enabled":false
-                    }
-                    ,
                     "periodSelector": {
-                      "labelStyle": 'hidden',
                       "position": "top",
                       "dateFormat": "JJ:NN:SS", // date format with milliseconds "NN:SS:QQQ"
                       "inputFieldsEnabled": true,
@@ -712,16 +695,16 @@
               //console.log("# of dataSets: " + mChart.dataSets.length);
               //console.log("# of datapoints: " + mChart.dataSets[2].dataProvider.length);
 
-              //console.log("# of datapionts: " + silenceData.length);
-              //console.log("test: " + silenceData[0].time + ",  data: " + silenceData[0].data);
+              //console.log("# of datapionts: " + chartData3.length);
+              //console.log("test: " + chartData3[0].time + ",  data: " + chartData3[0].data);
 
               var filteredIndex = [];
 
-              for(var i=1; i < silenceData.length; i++)
+              for(var i=1; i < chartData3.length; i++)
               {
-                if(parseInt(silenceData[i].data)===1 && parseInt(silenceData[i-1].data)===1)
+                if(parseInt(chartData3[i].data)===1 && parseInt(chartData3[i-1].data)===1)
                 {
-                  var silence_length = parseInt(silenceData[i].time) - parseInt(silenceData[i-1].time);
+                  var silence_length = parseInt(chartData3[i].time) - parseInt(chartData3[i-1].time);
                   //console.log("silence length: " + len);
 
                   if(parseInt(silence_length) >= parseInt(len) * 1000)
@@ -734,11 +717,11 @@
                }
              }
 
-             for(var i = 0; i < silenceData.length; i++)
+             for(var i = 0; i < chartData3.length; i++)
              {
                newData.push({
                  "data": 0,
-                 "time": silenceData[i].time
+                 "time": chartData3[i].time
                });
              }
 
@@ -756,7 +739,7 @@
            //reminder: the value "2" must be changed accordingly
            if(parseInt(len) === 0)
            {
-             mChart.dataSets[2].dataProvider = silenceData;
+             mChart.dataSets[2].dataProvider = chartData3;
            }
            else {
              var data = getFilteredData(len);
@@ -771,16 +754,16 @@
             //console.log("# of dataSets: " + mChart.dataSets.length);
             //console.log("# of datapoints: " + mChart.dataSets[2].dataProvider.length);
 
-            //console.log("# of datapionts: " + silenceData.length);
-            //console.log("test: " + silenceData[0].time + ",  data: " + silenceData[0].data);
+            //console.log("# of datapionts: " + chartData3.length);
+            //console.log("test: " + chartData3[0].time + ",  data: " + chartData3[0].data);
 
             var filteredIndex = [];
 
-            for(var i=1; i < categoryData.length; i++)
+            for(var i=1; i < chartData4.length; i++)
             {
-              if(categoryData[i].label === category)
+              if(chartData4[i].label === category)
               {
-                var silence_length = parseInt(silenceData[i].time) - parseInt(silenceData[i-1].time);
+                var silence_length = parseInt(chartData3[i].time) - parseInt(chartData3[i-1].time);
                 //console.log("silence length: " + len);
 
                 if(parseInt(silence_length) >= parseInt(len) * 1000)
@@ -790,18 +773,18 @@
              }
            }
 
-           for(var i = 0; i < silenceData.length; i++)
+           for(var i = 0; i < chartData3.length; i++)
            {
              newData.push({
                "data": 0,
-               "time": silenceData[i].time
+               "time": chartData3[i].time
              });
            }
 
            for(var i = 0; i < filteredIndex.length; i++)
            {
-             newData.push ({"data": categoryData[parseInt(filteredIndex[i])].data,
-                            "time": categoryData[parseInt(filteredIndex[i])].time, });
+             newData.push ({"data": chartData4[parseInt(filteredIndex[i])].data,
+                            "time": chartData4[parseInt(filteredIndex[i])].time, });
            }
         }
         </script>
