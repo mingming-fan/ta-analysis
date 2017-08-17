@@ -175,13 +175,14 @@ function loadCategoryData(dataset_url) {
         default:
         break;
       }
+
+      chartData.push({"time": start, "data":data, "legendColor": color, "label": String(label).trim()});
+      chartData.push({"time": end, "data":data, "legendColor": color, "label": String(label).trim()});
+      /*
       for(var j = 0; j < end-start; j+=50){
         chartData.push({"time": start+j, "data":data, "duration": end-start, "legendColor": color, "label": String(label).trim()});
-
-        //chartData.push({"time": start, "data":data, "legendColor": color, "label": String(label).trim()});
-        //chartData.push({"time": end-1000, "data":data, "legendColor": color, "label": String(label).trim()});
       }
-
+      */
     }
   });
   return  chartData;
