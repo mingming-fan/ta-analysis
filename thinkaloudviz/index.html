@@ -664,21 +664,30 @@
                 var transcript = "";
                 for(var i in transcriptData){
                   var value = transcriptData[i].label;
-                  if(String(value).trim().localeCompare("sp") != 0){
-                    var start = parseFloat(transcriptData[i].start);
-                    var end = parseFloat(transcriptData[i].end);
-                    if (timestamp >= start && timestamp < end)
-                    {
+                  var start = parseFloat(transcriptData[i].start);
+                  var end = parseFloat(transcriptData[i].end);
+                  //console.log("timestamp: " + e.chart.chartCursor.timestamp + " , start: " + start + ", end: " + end + " , word: " + value);
+                  if (timestamp >= start && timestamp <= end)
+                  {
+                    if(String(value).trim().localeCompare("sp") != 0){
                       transcript += "<span class='highlight'>" + String(value).trim() + " " + "</span>";
                     }
-                    else {
-                      transcript += String(value).trim() + " ";
+                    else{
+                      if(i > 0)
+                      {
+                        var value2 = transcriptData[i-1].label;
+                        transcript += "<span class='highlight'>" + String(value2).trim() + " " + "</span>";
+                      }
                     }
+                  }
+                  else {
+                      if(String(value).trim().localeCompare("sp") != 0){
+                        transcript += String(value).trim() + " ";
+                      }
                   }
                 }
                 var x = document.getElementById("transcriptdiv");
                 x.innerHTML = transcript;
-
               }
 
 
