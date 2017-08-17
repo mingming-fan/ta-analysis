@@ -29,12 +29,22 @@ h2 {
   text-align: center;
 }
 
+.highlight
+{
+background-color:yellow;
+}
+
 #chartdiv {
   width: 90%;
   height: 750px;
 	margin: auto;
 }
 
+#transcriptdiv {
+  width: 90%;
+  height: auto;
+	margin: auto;
+}
 
 #loudnesschartdiv {
   width: 90%;

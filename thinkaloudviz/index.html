@@ -20,6 +20,7 @@
         <br/>
         <div id="chartdiv"></div>
         <!--div id="chartdiv2"></div-->
+
         <div>
           <form action="">
             <fieldset style="display: inline-block;">
@@ -46,6 +47,7 @@
           </form>
         </div>
         <br/>
+        <div id="transcriptdiv"></div>
         <br/>
         <br/>
         <div name="analysis">
@@ -89,7 +91,9 @@
               var loudnessData = loadChartData("./p1/t1/thinkaloud_loudness.json");
               //console.log("loading pitch data...")
               var pitchData = loadChartData("./p1/t1/thinkaloud_pitch.json");
-              var silenceData = loadSilenceData("./p1/t1/thinkaloud_aligned.json");
+              var allData = loadSilenceData("./p1/t1/thinkaloud_aligned.json");
+              var transcriptData = allData[0];
+              var silenceData = allData[1];
 
               var categoryData = loadCategoryData("./coders/1/1/categorydata.json");
               var sentimentData = loadSentimentData("./p1/t1/thinkaloud_sentiment.json");
@@ -119,6 +123,7 @@
 
               function loadSilenceData(dataset_url) {
                 var chartData = [];
+                var chartDataSampled = [];
                 AmCharts.loadFile(dataset_url, {}, function(data) {
                    inputdata = AmCharts.parseJSON(data);
                     for(var i = 0; i < inputdata.length; i++){
@@ -130,6 +135,8 @@
                       //console.log("diff: " + diff);
                       //if( String(value).trim().localeCompare("sp") == 0 && end - start > 1000)
                       //longer than 1 seconds
+                      chartData.push({"start": start, "end": end, "label": String(value).trim()});
+
                       if( String(value).trim().localeCompare("sp") === 0)
                       {
                         //console.log("time: " + millseconds + "; data: " + value);
@@ -137,7 +144,7 @@
                         //chartData.push({"time": endDate, "word":1});
                         //sample some data points between start and end
                         for (var j = 0; j < end-start; j+=50){
-                          chartData.push({"time": start+j, "data":2, "duration": end-start, "legendColor": AmCharts.randomColor, "label": "undefined"});
+                          chartDataSampled.push({"time": start+j, "data":2, "duration": end-start, "legendColor": AmCharts.randomColor, "label": String(value).trim()});
                         //chartData.push({"time": end-1, "data":1, "duration": end-start, "color": undefined, "label": "undefined"});
                         }
                       }
@@ -145,16 +152,18 @@
                         //chartData.push({"time": startDate, "data":0});
                         //chartData.push({"time": endDate, "word":0});
                           for (var j = 0; j < end-start; j+=50){
-                            chartData.push({"time": start+j, "data":1, "duration": end-start, "legendColor": AmCharts.randomColor, "label": "undefined"});
+                            chartDataSampled.push({"time": start+j, "data":1, "duration": end-start, "legendColor": AmCharts.randomColor, "label": String(value).trim()});
                             //chartData.push({"time": end-1, "data":0, "duration": end-start, "color": undefined, "label": "undefined"});
                           }
                       }
                     }
                 });
-                return  chartData;
+                return  [chartData, chartDataSampled];
               }
 
+              //whether to discrete the sentiment into just three classes: positive, neutral, negative
               var threshold_sentiment = false;
+
               function loadSentimentData(dataset_url) {
                 var chartData = [];
                 AmCharts.loadFile(dataset_url, {}, function(data) {
@@ -265,7 +274,7 @@
                 {
                   console.log("data is ready");
                   mChart = drawCharts();
-
+                  drawTranscript();
                   //mChart2 = drawCategoryChart();
                 }
                 else {
@@ -429,7 +438,11 @@
                             enabled: true,
                           markType: "none",
                           markSize: 0
-                        }
+                        },
+                        listeners:[{
+                          event: "changed",
+                          method: handleMousemove,
+                        }],
                       },
                       {
                         showCategoryAxis: false,
@@ -451,7 +464,11 @@
                             enabled: true,
                           markType: "none",
                           markSize: 0
-                        }
+                        },
+                        listeners:[{
+                          event: "changed",
+                          method: handleMousemove,
+                        }],
                       },
                       {
                         showCategoryAxis: false,
@@ -473,7 +490,11 @@
                             enabled: true,
                           markType: "none",
                           markSize: 0
-                        }
+                        },
+                        listeners:[{
+                          event: "changed",
+                          method: handleMousemove,
+                        }],
                       },
                       {
                         showCategoryAxis: false,
@@ -500,7 +521,11 @@
                             enabled: true,
                           markType: "none",
                           markSize: 0
-                        }
+                        },
+                        listeners:[{
+                          event: "changed",
+                          method: handleMousemove,
+                        }],
                       },
                       {
                         showCategoryAxis: true,
@@ -519,22 +544,25 @@
                             useDataSetColors: true,
                             colorField: "lengendColor",
                             lineColor: "lengendColor", //"#1ABC9C",
-
                         } ],
                         stockLegend: {
                           enabled: true,
                           markType: "none",
                           markSize: 0
-                        }
+                        },
+                        listeners:[{
+                          event: "changed",
+                          method: handleMousemove,
+                        }],
                       }
                     ],
+
                     valueAxesSettings:{
                       labelsEnabled: false,
                     },
                     categoryAxesSettings: {
                       groupToPeriods: [ 'fff', 'ss' ], // specify period grouping
                       parseDates: true,
-
                       autoGridCount: false,
                       dateFormats: [{
                         period: "fff",
@@ -612,6 +640,47 @@
                 });
                 return chart;
               }
+
+              function drawTranscript(){
+                //loop through silenceData
+                // three data fields: start, end, label
+                var transcript = [];
+                for(var i in transcriptData){
+                  var value = transcriptData[i].label
+                  if(String(value).trim().localeCompare("sp") != 0){
+                    transcript.push(String(value).trim());
+                  }
+                }
+
+               var x = document.getElementById("transcriptdiv");
+               x.innerHTML = transcript.join(" ");
+              }
+
+
+              function handleMousemove(e){
+                //finally get the timestamp information: it is hided really deeply...
+                //console.log(e.chart.chartCursor.timestamp);
+                var timestamp = parseFloat(e.chart.chartCursor.timestamp);
+                var transcript = "";
+                for(var i in transcriptData){
+                  var value = transcriptData[i].label;
+                  if(String(value).trim().localeCompare("sp") != 0){
+                    var start = parseFloat(transcriptData[i].start);
+                    var end = parseFloat(transcriptData[i].end);
+                    if (timestamp >= start && timestamp < end)
+                    {
+                      transcript += "<span class='highlight'>" + String(value).trim() + " " + "</span>";
+                    }
+                    else {
+                      transcript += String(value).trim() + " ";
+                    }
+                  }
+                }
+                var x = document.getElementById("transcriptdiv");
+                x.innerHTML = transcript;
+
+              }
+
 
               setTimeout(myTimer2, 500);
 
@@ -708,9 +777,8 @@
                       }
                   }
                 }
-
-                mChart.validateData();
                 */
+                mChart.validateData();
               }
 
 
