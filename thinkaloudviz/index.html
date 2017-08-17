@@ -3,26 +3,19 @@
     <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
       <link rel="stylesheet" href="style2.css" type="text/css">
-      <!--script type="text/javascript" src="https://www.amcharts.com/lib/3/amcharts.js"></script>
-<script type="text/javascript" src="https://www.amcharts.com/lib/3/serial.js"></script>
-<script type="text/javascript" src="https://www.amcharts.com/lib/3/themes/light.js"></script>
-<script type="text/javascript" src="https://www.amcharts.com/lib/3/amstock.js"></script>
-<script src="https://www.amcharts.com/lib/3/plugins/dataloader/dataloader.min.js"></script>
-<script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script-->
-
-      <script src="../amcharts/amcharts.js"></script>
-      <script src="../amcharts/serial.js"></script>
-      <script src="../amcharts/themes/light.js"></script>
-      <script src="../../amstockchart/amcharts/amstock.js"></script>
-      <script src="../amcharts/plugins/dataloader/dataloader.min.js"></script>
-      <script src="../amcharts/plugins/export/export.min.js"></script>
+      <script src="../amcharts/amcharts/amcharts.js"></script>
+      <script src="../amcharts/amcharts/serial.js"></script>
+      <script src="../amcharts/amcharts/themes/light.js"></script>
+      <script src="../amstockchart/amcharts/amstock.js"></script>
+      <script src="../amcharts/amcharts/plugins/dataloader/dataloader.min.js"></script>
+      <script src="../amcharts/amcharts/plugins/export/export.min.js"></script>
     </head>
     <body>
        <div>
          <h1>Think-Aloud Usability Analysis</h1>
        </div>
        <div id="audiodiv">
-       <audio id="audiocontrol" src = "thinkaloud.wav" type="audio/wav" preload = "auto" controls>Your browser does not support this audio element. </audio>
+       <audio id="audiocontrol" src = "./p1/t1/thinkaloud.wav" type="audio/wav" preload = "auto" controls>Your browser does not support this audio element. </audio>
        </div>
         <br/>
         <div id="chartdiv"></div>
@@ -93,13 +86,13 @@
               };
 
               //console.log("loading loudness data...")
-              var loudnessData = loadChartData("../thinkaloud_loudness.json");
+              var loudnessData = loadChartData("./p1/t1/thinkaloud_loudness.json");
               //console.log("loading pitch data...")
-              var pitchData = loadChartData("thinkaloud_pitch.json");
-              var silenceData = loadSilenceData("thinkaloud_aligned.json");
+              var pitchData = loadChartData("./p1/t1/thinkaloud_pitch.json");
+              var silenceData = loadSilenceData("./p1/t1/thinkaloud_aligned.json");
 
-              var categoryData = loadCategoryData("categorydata.json");
-              var sentimentData = loadSentimentData("thinkaloud_sentiment.json");
+              var categoryData = loadCategoryData("./coders/1/1/categorydata.json");
+              var sentimentData = loadSentimentData("./p1/t1/thinkaloud_sentiment.json");
 
 
               //load the data from the external sources
@@ -572,7 +565,7 @@
                       minPeriod: "fff"
                     },
                     chartScrollbarSettings: {
-                      enabled: false,
+                      enabled: true,
                       graph: "g1",
                       usePeriod: "fff",
                       position: "top",

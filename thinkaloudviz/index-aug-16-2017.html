@@ -3,19 +3,19 @@
     <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
       <link rel="stylesheet" href="style2.css" type="text/css">
-      <script src="../amcharts/amcharts.js"></script>
-      <script src="../amcharts/serial.js"></script>
-      <script src="../amcharts/themes/light.js"></script>
-      <script src="../../amstockchart/amcharts/amstock.js"></script>
-      <script src="../amcharts/plugins/dataloader/dataloader.min.js"></script>
-      <script src="../amcharts/plugins/export/export.min.js"></script>
+      <script src="../amcharts/amcharts/amcharts.js"></script>
+      <script src="../amcharts/amcharts/serial.js"></script>
+      <script src="../amcharts/amcharts/themes/light.js"></script>
+      <script src="../amstockchart/amcharts/amstock.js"></script>
+      <script src="../amcharts/amcharts/plugins/dataloader/dataloader.min.js"></script>
+      <script src="../amcharts/amcharts/plugins/export/export.min.js"></script>
     </head>
     <body>
        <div>
          <h1>Think-Aloud Usability Analysis</h1>
        </div>
        <div id="audiodiv">
-       <audio id="audiocontrol" src = "thinkaloud.wav" type="audio/wav" preload = "auto" controls>Your browser does not support this audio element. </audio>
+       <audio id="audiocontrol" src = "./p1/t1/thinkaloud.wav" type="audio/wav" preload = "auto" controls>Your browser does not support this audio element. </audio>
        </div>
               <br/>
         <div id="chartdiv"></div>
@@ -83,13 +83,13 @@
               };
 
               //console.log("loading loudness data...")
-              var chartData1 = loadChartData("thinkaloud_loudness.json");
+              var chartData1 = loadChartData("./p1/t1/thinkaloud_loudness.json");
               //console.log("loading pitch data...")
-              var chartData2 = loadChartData("thinkaloud_pitch.json");
-              var chartData3 = loadSilenceData("thinkaloud_aligned.json");
+              var chartData2 = loadChartData("./p1/t1/thinkaloud_pitch.json");
+              var chartData3 = loadSilenceData("./p1/t1/thinkaloud_aligned.json");
 
-              var chartData4 = loadCategoryData2("categorydata.json");
-              var chartData5 = loadSentimentData("thinkaloud_sentiment.json");
+              var chartData4 = loadCategoryData2("./coders/1/1/categorydata.json");
+              var chartData5 = loadSentimentData("./p1/t1/thinkaloud_sentiment.json");
 
 
               //load the data from the external sources
