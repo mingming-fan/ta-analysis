@@ -3,9 +3,16 @@ var silenceBubbleText = ["","","silence"];
 var mAudio = null;
 AmCharts.useUTC = true;
 var mChart = null;
+var audioDuration;
 window.onload = function(){
   //load the audio when the UI is displayed
   mAudio = document.getElementById("audiocontrol");
+  mAudio.addEventListener('loadedmetadata', function() {
+    audioDuration = mAudio.duration;
+
+    loadRawCategoryData("./coders/1/1/categorydata.json");
+  });
+
 };
 
 //console.log("loading loudness data...")
@@ -18,7 +25,6 @@ var silenceData = allData[1];
 
 var categoryData = loadCategoryData("./coders/1/1/categorydata.json");
 var sentimentData = loadSentimentData("./p1/t1/thinkaloud_sentiment.json");
-
 
 //load the data from the external sources
 function loadChartData(dataset_url) {
@@ -185,10 +191,31 @@ function loadCategoryData(dataset_url) {
       */
     }
   });
-  return  chartData;
+  return chartData;
 }
 
 
+function loadRawCategoryData (dataset_url) {
+  var label_color = {
+    Reading: '#0275d8',
+    Procedure: '#5cb85c',
+    Observation: '#f0ad4e',
+    Explanation: '#d9534f'
+  }
+
+  $.getJSON(dataset_url, function(data) {
+    data = _.sortBy(data, 'start_time');
+    _.each(data, function (label) {
+      label.width = ((label.end_time - label.start_time)/audioDuration) * 100 + '%';
+      label.start = (label.start_time/audioDuration) * 100 + '%';
+      $('.timeline-outline').append("<span class='timeline-element' style='"+
+      "width:" + label.width +';left:' + label.start + ';background-color:' + label_color[label.label]
+      + "' title="+ label.label+"></span>")
+    });
+
+    Tipped.create('.timeline-element');
+  });
+}
 //console.log("after calling the loadChartData function");
 setTimeout(myTimer, 500);
 function myTimer() {

@@ -2,7 +2,8 @@
 <html>
     <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-      <link rel="stylesheet" href="style2.css" type="text/css">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/tipped/4.0.10/css/tipped/tipped.css">
+      <link rel="stylesheet" href="style.css" type="text/css">
     </head>
     <body>
        <div>
@@ -42,6 +43,23 @@
         </div>
         <br/>
         <div id="transcriptdiv"></div>
+        <div class="timeline">
+          <div class="timeline-outline">
+            <!-- <span class="timeline-element" ng-repeat="block in labels_view"
+            style="width: {{block.width}}; left: {{block.start}}; background-color: {{block.color}}"
+             ng-mouseover="mouseOverBlock($index)"
+             ng-mouseleave="mouseLeaveBlock($index)"
+             ng-click="jumpToIndex($index)">
+              <span ng-show="block.label" class="label_text">{{block.label}}</span>
+            </span> -->
+          </div>
+          <div class="timeline-notes">
+            <!-- <span class="timeline-element" ng-repeat="block in labels_view"
+            style="width: {{block.width}}; left: {{block.start}}">
+              <span ng-show="block.display">{{block.note}}</span>
+            </span> -->
+          </div>
+        </div>
         <br/>
         <br/>
         <div name="analysis">
@@ -71,6 +89,9 @@
           </form>
         </div>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
+        <script src="https://cdn.jsdelivr.net/tipped/4.0.10/js/tipped/tipped.js"></script>
         <script src="../amcharts/amcharts/amcharts.js"></script>
         <script src="../amcharts/amcharts/serial.js"></script>
         <script src="../amcharts/amcharts/themes/light.js"></script>

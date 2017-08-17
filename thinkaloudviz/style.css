@@ -1,26 +1,135 @@
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+}
+
+
+h1 {
+	display: block;
+	font-size: 2em;
+	margin-top: 0.67em;
+	margin-bottom: 0.67em;
+	font-weight: bold;
+	text-align: center;
+}
+
+div {
+  width: auto;
+  margin: auto;
+}
+
+form {
+  	text-align: center;
+    width: 100%;
+}
+
+h2 {
+  display: block;
+  text-align: center;
+}
+
+.highlight
+{
+background-color:yellow;
+}
+
 #chartdiv {
-	width	: 100%;
-	height	: 500px;
+  width: 90%;
+  height: 750px;
+	margin: auto;
+}
+
+#transcriptdiv {
+  width: 90%;
+  height: auto;
+	margin: auto;
+}
+
+#loudnesschartdiv {
+  width: 90%;
+  height: 200px;
+	margin: auto;
 }
 
 
-#charLoudnessdiv {
-	width	: 100%;
-	height	: 500px;
+#pitchchartdiv {
+  width: 90%;
+  height: 200px;
+	margin: auto;
 }
 
-#charPitchdiv {
-	width	: 100%;
-	height	: 500px;
+
+#silencechartdiv {
+  width: 90%;
+  height: 200px;
+	margin: auto;
 }
 
-body {
-	font-family: Tahoma,Arial,Verdana;
-	font-size: 12px;
-	color: black;
+#sentimentchartdiv {
+  width: 90%;
+  height: 200px;
+	margin: auto;
 }
 
-a:link {color: #84c4e2;}
-a:visited {color:#84c4e2;}
-a:hover {color: #cd82ad;}
-a:active {color: #84c4e2;}
+#chartdiv2 {
+  width: 90%;
+  height: 750px;
+	margin: auto;
+}
+
+#audiodiv {
+  width: 90%;
+  height: 50px;
+	margin: auto;
+}
+
+
+#audiocontrol {
+  width: 100%;
+  height: 100%;
+	margin: auto;
+}
+
+.category1{
+  margin-top: 5px;
+  background-color: #3498DB;
+}
+
+.category2{
+  margin-top: 5px;
+  background-color: #1ABC9C;
+}
+
+.category3{
+  margin-top: 5px;
+  background-color: #F1C40F;
+}
+
+.category4{
+  margin-top: 5px;
+  background-color: #D35400;
+}
+
+.timeline {
+  width: 90%;
+}
+
+.timeline-outline {
+  height: 30px;
+  border: 1px black solid;
+  border-radius: 3px;
+  position: relative;
+}
+.timeline-notes {
+  position: relative;
+}
+.timeline-element {
+  height: 29px;
+  position: absolute;
+  display: inline-block;
+  text-align: center;
+}
+.timeline-element .label_text {
+  color: white;
+}
