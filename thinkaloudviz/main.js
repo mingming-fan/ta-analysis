@@ -589,7 +589,7 @@ function handleMousemove(e){
     var start = parseFloat(transcriptData[i].start);
     var end = parseFloat(transcriptData[i].end);
     //console.log("timestamp: " + e.chart.chartCursor.timestamp + " , start: " + start + ", end: " + end + " , word: " + value);
-    if (timestamp >= start && timestamp <= end)
+    if (timestamp >= start && timestamp < end)
     {
       if(String(value).trim().localeCompare("sp") != 0){
         transcript += "<span class='highlight'>" + String(value).trim() + " " + "</span>";
@@ -598,7 +598,13 @@ function handleMousemove(e){
         if(i > 0)
         {
           var value2 = transcriptData[i-1].label;
-          transcript += "<span class='highlight'>" + String(value2).trim() + " " + "</span>";
+          //console.log(transcript);
+          var data = transcript.split(" ");
+          transcript = "";
+          for(var k = 0; k < data.length-2; k++)
+            transcript += data[k] + " ";
+          //console.log("after" + transcript);
+          transcript += "<span class='highlight'>" + String(value2).trim() + " " + "</span> ";
         }
       }
     }
