@@ -18,33 +18,25 @@
     </head>
     <body>
         <h1>Think-aloud Session</h1>
-        <!--
         <p>
             <video></video>
         </p><hr />
-
         <div>
             <label id="percentage">0%</label>
             <progress id="progress-bar" value=0></progress><br />
         </div>
-
-        <hr />
-      -->
-        <div id="instructions">
-        </div>
-
         <hr/>
-
+        <br/>
         <div>
-            <button id="btn-start-recording">Start</button>
-            <button id="btn-stop-recording" disabled="">Stop</button>
+          Participant ID: <input type="text" id="participantid"><br>
+          Task ID: <input type="text" id="taskid"><br>
         </div>
         <hr/>
-
         <div>
-            <button id="btn-previous" disabled="">Previous</button>
-            <button id="btn-next" disabled="">Next</button>
+            <button id="btn-start-recording" >Start</button>
+            <button id="btn-stop-recording" disabled = "">Stop</button>
         </div>
+        <hr/>
 
         <script src="/node_modules/recordrtc/RecordRTC.js"> </script>
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"

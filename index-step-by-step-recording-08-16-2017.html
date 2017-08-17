@@ -1,0 +1,58 @@
+<!--
+// recording part is used source code from WebRTC:  MIT License   - www.WebRTC-Experiment.com/licence
+//
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Think-aloud-Session</title>
+        <script>
+            if (location.href.indexOf('file:') == 0) {
+                document.write('<h1 style="color:red;">Please load this HTML file on HTTP or HTTPS.</h1>');
+            }
+        </script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+        <link rel="stylesheet" href="main.css">
+    </head>
+    <body>
+        <h1>Think-aloud Session</h1>
+        <!--
+        <p>
+            <video></video>
+        </p><hr />
+
+        <div>
+            <label id="percentage">0%</label>
+            <progress id="progress-bar" value=0></progress><br />
+        </div>
+
+        <hr />
+      -->
+        <div id="instructions">
+        </div>
+
+        <hr/>
+
+        <div>
+            <button id="btn-start-recording">Start</button>
+            <button id="btn-stop-recording" disabled="">Stop</button>
+        </div>
+        <hr/>
+
+        <div>
+            <button id="btn-previous" disabled="">Previous</button>
+            <button id="btn-next" disabled="">Next</button>
+        </div>
+
+        <script src="/node_modules/recordrtc/RecordRTC.js"> </script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+                integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+                crossorigin="anonymous"></script>
+        <script src="main_script-step-by-step-recording-08-16-2017.js"></script>
+
+        <footer style="width:100%;position: fixed; right: 0; text-align: center;color:red;">
+        </footer>
+    </body>
+</html>

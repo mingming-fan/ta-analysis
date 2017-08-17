@@ -80,12 +80,12 @@
     padding: 0;
   }
 </style>
-<h1 class="center" id="headline">Think-Aloud Sessions' Speech Recognition</h1>
+<h1 class="center" id="headline">Speech Recognition on a Think-Aloud Session</h1>
 
 
 <div id="info">
   <p id="info_start">Click on the microphone icon and begin speaking.</p>
-  <p id="info_speak_now">Speak now.</p>
+  <p id="info_speak_now">Playing the think-aloud session recording now</p>
   <p id="info_no_speech">No speech was detected. You may need to adjust your
     <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">
       microphone settings</a>.</p>
@@ -114,33 +114,18 @@
     <p>
 </div>
 
-<div class="center">
+<!--div class="center">
   <video width="320" height="240" controls>
-  <source src="./data/Video-8.mp4" type="video/mp4">
+  <source src="/webspeech/data/Video-8.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
-</div>
+</div-->
 
 
 <div class="center">
   <div class = "center">
-    <button id="save_button"  onclick="saveButton()">
+    <button id="save_button"  class="button" onclick="saveButton()">
       Save</button>
-  </div>
-  <div class="sidebyside" style="text-align:right">
-    <button id="copy_button" class="button" onclick="copyButton()">
-      Copy and Paste</button>
-    <div id="copy_info" class="info">
-      Press Control-C to copy text.<br>(Command-C on Mac.)
-    </div>
-  </div>
-  <div class="sidebyside">
-    <button id="email_button" class="button" onclick="emailButton()">
-      Create Email</button>
-    <div id="email_info" class="info">
-      Text sent to default email application.<br>
-      (See chrome://settings/handlers to change.)
-    </div>
   </div>
   <p>
 
@@ -150,7 +135,7 @@
     <select id="select_dialect"></select>
   </div>
 </div>
-<script src = "./FileSaver.js"> </script>
+<script src = "/webspeech/FileSaver.js"> </script>
 <script>
 var langs =
 [['Afrikaans',       ['af-ZA']],
@@ -377,33 +362,11 @@ function createEmail() {
 
 function saveButton() {
   var text = final_span.innerHTML
-  var filename = "trascripts.txt"
+  var filename = "thinkaloud-transcript.txt"
   var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
   saveAs(blob, filename);
 }
 
-function copyButton() {
-  if (recognizing) {
-    recognizing = false;
-    recognition.stop();
-  }
-  copy_button.style.display = 'none';
-  copy_info.style.display = 'inline-block';
-  showInfo('');
-}
-
-function emailButton() {
-  if (recognizing) {
-    create_email = true;
-    recognizing = false;
-    recognition.stop();
-  } else {
-    createEmail();
-  }
-  email_button.style.display = 'none';
-  email_info.style.display = 'inline-block';
-  showInfo('');
-}
 
 function startButton(event) {
   if (recognizing) {
@@ -441,9 +404,6 @@ function showButtons(style) {
     return;
   }
   current_style = style;
-  copy_button.style.display = style;
-  email_button.style.display = style;
-  copy_info.style.display = 'none';
-  email_info.style.display = 'none';
+  save_button.style.display = style;
 }
 </script>

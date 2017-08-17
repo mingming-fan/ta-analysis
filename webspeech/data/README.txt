@@ -1,0 +1,1 @@
+After running the web speech recogntion service, the transcribed text will be saved in the thinkaloud.txt file here in this folder.
