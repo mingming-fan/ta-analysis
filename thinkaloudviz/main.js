@@ -4,14 +4,16 @@ var mAudio = null;
 AmCharts.useUTC = true;
 var mChart = null;
 var audioDuration;
+
+var rawCategoryData = [];
+var loaded = false;
 window.onload = function(){
   //load the audio when the UI is displayed
   mAudio = document.getElementById("audiocontrol");
-  mAudio.addEventListener('loadedmetadata', function() {
+  mAudio.ondurationchange = function() {
     audioDuration = mAudio.duration;
-
     loadRawCategoryData("./coders/1/1/categorydata.json");
-  });
+  };
 
 };
 
@@ -194,17 +196,16 @@ function loadCategoryData(dataset_url) {
   return chartData;
 }
 
-
 function loadRawCategoryData (dataset_url) {
-  var label_color = {
-    Reading: '#0275d8',
-    Procedure: '#5cb85c',
-    Observation: '#f0ad4e',
-    Explanation: '#d9534f'
-  }
+  $.getJSON(dataset_url, function (data) {
+    console.log(audioDuration, data);
+    var label_color = {
+      Reading: '#0275d8',
+      Procedure: '#5cb85c',
+      Observation: '#f0ad4e',
+      Explanation: '#d9534f'
+    }
 
-  $.getJSON(dataset_url, function(data) {
-    data = _.sortBy(data, 'start_time');
     _.each(data, function (label) {
       label.width = ((label.end_time - label.start_time)/audioDuration) * 100 + '%';
       label.start = (label.start_time/audioDuration) * 100 + '%';
@@ -214,8 +215,10 @@ function loadRawCategoryData (dataset_url) {
     });
 
     Tipped.create('.timeline-element');
+    loaded = true;
   });
 }
+
 //console.log("after calling the loadChartData function");
 setTimeout(myTimer, 500);
 function myTimer() {
@@ -616,7 +619,7 @@ function handleMousemove(e){
     var start = parseFloat(transcriptData[i].start);
     var end = parseFloat(transcriptData[i].end);
     //console.log("timestamp: " + e.chart.chartCursor.timestamp + " , start: " + start + ", end: " + end + " , word: " + value);
-    if (timestamp >= start && timestamp < end)
+    if (timestamp >= start && timestamp <= end)
     {
       if(String(value).trim().localeCompare("sp") != 0){
         transcript += "<span class='highlight'>" + String(value).trim() + " " + "</span>";
@@ -625,13 +628,7 @@ function handleMousemove(e){
         if(i > 0)
         {
           var value2 = transcriptData[i-1].label;
-          //console.log(transcript);
-          var data = transcript.split(" ");
-          transcript = "";
-          for(var k = 0; k < data.length-2; k++)
-            transcript += data[k] + " ";
-          //console.log("after" + transcript);
-          transcript += "<span class='highlight'>" + String(value2).trim() + " " + "</span> ";
+          transcript += "<span class='highlight'>" + String(value2).trim() + " " + "</span>";
         }
       }
     }
