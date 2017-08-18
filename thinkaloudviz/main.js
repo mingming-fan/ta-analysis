@@ -3,17 +3,25 @@ var silenceBubbleText = ["","","silence"];
 var mAudio = null;
 AmCharts.useUTC = true;
 var mChart = null;
-var audioDuration;
+var audioDuration = 0;
+
 window.onload = function(){
   //load the audio when the UI is displayed
   mAudio = document.getElementById("audiocontrol");
-  mAudio.addEventListener('loadedmetadata', function() {
-    audioDuration = mAudio.duration;
+  mAudio.addEventListener('loadedmetadata', processAudio);
 
-    loadRawCategoryData("./coders/1/1/categorydata.json");
-  });
-
+  if (mAudio.readyState >= 2) {
+        processAudio();
+  }
 };
+
+function processAudio() {
+  audioDuration = mAudio.duration;
+  console.log(mAudio.duration);
+  loadRawCategoryData("./coders/1/1/categorydata.json");
+}
+
+
 
 //console.log("loading loudness data...")
 var loudnessData = loadChartData("./p1/t1/thinkaloud_loudness.json");
@@ -210,12 +218,14 @@ function loadRawCategoryData (dataset_url) {
       label.start = (label.start_time/audioDuration) * 100 + '%';
       $('.timeline-outline').append("<span class='timeline-element' style='"+
       "width:" + label.width +';left:' + label.start + ';background-color:' + label_color[label.label]
-      + "' title="+ label.label+"></span>")
+      + "' title="+ label.note+"></span>")
     });
+    //console.log(data);
 
     Tipped.create('.timeline-element');
   });
 }
+
 //console.log("after calling the loadChartData function");
 setTimeout(myTimer, 500);
 function myTimer() {
