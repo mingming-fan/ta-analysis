@@ -2,95 +2,116 @@
 <html>
     <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/tipped/4.0.10/css/tipped/tipped.css">
       <link rel="stylesheet" href="style.css" type="text/css">
     </head>
     <body>
-       <div>
-         <h1>Think-Aloud Usability Analysis</h1>
-       </div>
-       <div id="audiodiv">
-       <audio id="audiocontrol" src = "./p1/t1/thinkaloud.wav" type="audio/wav" preload = "auto" controls>Your browser does not support this audio element. </audio>
-       </div>
-        <br/>
-        <div id="chartdiv"></div>
-        <!--div id="chartdiv2"></div-->
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-4">
+            <h2>Transcript (with sentiment color-coded)</h2>
+            <div id="transcriptdiv"></div>
+          </div>
+          <div class="col-md-8">
+            <div id="audiodiv">
+              <audio id="audiocontrol" src = "./p1/t1/thinkaloud.wav" type="audio/wav" preload = "auto" controls>Your browser does not support this audio element. </audio>
+            </div>
+            <h1>Think-Aloud Usability Analysis</h1>
+            <div id="chartdiv"></div>
+            <div>
+              <form action="">
+                <fieldset style="display: inline-block;">
+                Silence Filter (s):
+                  <input type="radio" name="filter" value="0" onclick="applySilenceLengthFilters(this.value)">show all
+                  <input type="radio" name="filter" value="1" onclick="applySilenceLengthFilters(this.value)">>=1s
+                  <input type="radio" name="filter" value="3" onclick="applySilenceLengthFilters(this.value)">>=3s
+                  <input type="radio" name="filter" value="5" onclick="applySilenceLengthFilters(this.value)">>=5s
+                  <input type="radio" name="filter" value="10" onclick="applySilenceLengthFilters(this.value)">>=10s
+                  <input type="radio" name="filter" value="15" onclick="applySilenceLengthFilters(this.value)">>=15s
+              </fieldset>
+              </form>
+            </div>
+            <br/>
+            <div>
+              <form>
+                <fieldset style="display: inline-block;">
+                  Categories:
+                  <input  type="checkbox" id="labelcategory1" value="Reading" onclick="applyCategoryFilters()" checked>reading
+                  <input  type="checkbox" id="labelcategory2" value="Procedure" onclick="applyCategoryFilters()" checked>procedure
+                  <input  type="checkbox" id="labelcategory3" value="Observation" onclick="applyCategoryFilters()" checked>observation
+                  <input  type="checkbox" id="labelcategory4" value="Explanation" onclick="applyCategoryFilters()" checked>explanation
+                </fieldset>
+              </form>
+            </div>
+            <h2>Category Timeline</h2>
+            <div class="timeline">
+              <div id="labels_timeline" class="timeline-outline"></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <h2>Notes Timeline</h2>
+          </div>
+          <div class="timeline">
+            <div id="notes_timeline" class="timeline-outline"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <table class="table">
+              <thead>
+                <th>Start</th>
+                <th>End</th>
+                <th>Features</th>
+                <th>Note</th>
+              </thead>
+              <tbody id="note-table">
 
-        <div>
-          <form action="">
-            <fieldset style="display: inline-block;">
-            Silence Filter (s):
-              <input type="radio" name="filter" value="0" onclick="applySilenceLengthFilters(this.value)">show all
-              <input type="radio" name="filter" value="1" onclick="applySilenceLengthFilters(this.value)">>=1s
-              <input type="radio" name="filter" value="3" onclick="applySilenceLengthFilters(this.value)">>=3s
-              <input type="radio" name="filter" value="5" onclick="applySilenceLengthFilters(this.value)">>=5s
-              <input type="radio" name="filter" value="10" onclick="applySilenceLengthFilters(this.value)">>=10s
-              <input type="radio" name="filter" value="15" onclick="applySilenceLengthFilters(this.value)">>=15s
-          </fieldset>
-          </form>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-6" name="analysis">
+            <h2>
+              Create Analysis Notes
+            </h2>
+            <form>
+              The selected audio segment's start time (s): <input type="text" id="start" size="4"> , stop time (s): <input type="text" id="end" size="4">
+              <br/>
+              <br/>
+              <fieldset id="audio-features-fieldset" style="display: inline-block;" >
+                  <legend>Features to include as evidence</legend>
+                  <input class="featureCheckbox" type="checkbox" name="silence" value="silence"/>Silence
+                  <input class="featureCheckbox" type="checkbox" name="loudness" value="loudness"/>Loudness
+                  <input class="featureCheckbox" type="checkbox" name="pitch" value="pitch"/>Pitch
+                  <input class="featureCheckbox" type="checkbox" name="category" value="category"/>Category
+                  <input class="featureCheckbox" type="checkbox" name="category" value="category"/>Sentiment<br/>
+              </fieldset>
+              <br/>
+              <br/>
+              Describe this analysis note: <br/>
+              <textarea type="text" id= "annotation" style = "width:75%; text-align="center"" rows = "5" placeholder="describe anything that you think is worth mentioning"></textarea>
+              <br/>
+              <br/>
+              <button type="button" id="addNote">Add a Note</button>
+              <br/>
+            </form>
+          </div>
         </div>
-        <br/>
-        <div>
-          <form>
-            <fieldset style="display: inline-block;">
-              Categories:
-              <input  type="checkbox" id="labelcategory1" value="Reading" onclick="applyCategoryFilters()" checked>reading
-              <input  type="checkbox" id="labelcategory2" value="Procedure" onclick="applyCategoryFilters()" checked>procedure
-              <input  type="checkbox" id="labelcategory3" value="Observation" onclick="applyCategoryFilters()" checked>observation
-              <input  type="checkbox" id="labelcategory4" value="Explanation" onclick="applyCategoryFilters()" checked>explanation
-            </fieldset>
-          </form>
-        </div>
-        <br/>
-        <h2>Transcript (with sentiment color-coded)</h2>
-        <div id="transcriptdiv"></div>
-        <h2>Category Timeline</h2>
-        <div class="timeline">
-          <div id="labels_timeline" class="timeline-outline"></div>
-        </div>
-        <br/>
-        <br/>
-        <h2>Notes Timeline</h2>
-        <div class="timeline">
-          <div id="notes_timeline" class="timeline-outline"></div>
-        </div>
-        <div name="analysis">
-          <h2>
-            Create Analysis Notes
-          </h2>
-          <form>
-            The selected audio segment's start time (s): <input type="text" id="start" size="4"> , stop time (s): <input type="text" id="end" size="4">
-            <br/>
-            <br/>
-            <fieldset id="audio-features-fieldset" style="display: inline-block;" >
-                <legend>Features to include as evidence</legend>
-                <input class="featureCheckbox" type="checkbox" name="silence" value="silence"/>Silence
-                <input class="featureCheckbox" type="checkbox" name="loudness" value="loudness"/>Loudness
-                <input class="featureCheckbox" type="checkbox" name="pitch" value="pitch"/>Pitch
-                <input class="featureCheckbox" type="checkbox" name="category" value="category"/>Category
-                <input class="featureCheckbox" type="checkbox" name="category" value="category"/>Sentiment<br/>
-            </fieldset>
-            <br/>
-            <br/>
-            Describe this analysis note: <br/>
-            <textarea type="text" id= "annotation" style = "width:50%; text-align="center"" rows = "5" placeholder="describe anything that you think is worth mentioning"></textarea>
-            <br/>
-            <br/>
-            <button type="button" id="addNote">Add a Note</button>
-            <br/>
-          </form>
-        </div>
+      </div>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
-        <script src="https://cdn.jsdelivr.net/tipped/4.0.10/js/tipped/tipped.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.js"></script>
-        <script src="../amcharts/amcharts/amcharts.js"></script>
-        <script src="../amcharts/amcharts/serial.js"></script>
-        <script src="../amcharts/amcharts/themes/light.js"></script>
-        <script src="../amstockchart/amcharts/amstock.js"></script>
-        <script src="../amcharts/amcharts/plugins/dataloader/dataloader.min.js"></script>
-        <script src="../amcharts/amcharts/plugins/export/export.min.js"></script>
-        <script src="main.js"></script>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
+      <script src="https://cdn.jsdelivr.net/tipped/4.0.10/js/tipped/tipped.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.js"></script>
+      <script src="../amcharts/amcharts/amcharts.js"></script>
+      <script src="../amcharts/amcharts/serial.js"></script>
+      <script src="../amcharts/amcharts/themes/light.js"></script>
+      <script src="../amstockchart/amcharts/amstock.js"></script>
+      <script src="../amcharts/amcharts/plugins/dataloader/dataloader.min.js"></script>
+      <script src="../amcharts/amcharts/plugins/export/export.min.js"></script>
+      <script src="main.js"></script>
     </body>
 </html>
