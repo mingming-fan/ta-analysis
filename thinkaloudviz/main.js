@@ -14,6 +14,7 @@ var task_data;
 var loudnessData, pitchData, allData, transcriptData, silenceData, sentimentData, disSentimentData;
 
 window.onload = function(){
+  Tipped.create('.legend_element')
 
   $.get('./participant_file.json', function (files) {
     participants_files = files;
@@ -107,6 +108,8 @@ window.onload = function(){
     let x_pos = event.pageX - $("#labels_timeline").parent().offset().left;
 
     let time = (x_pos/width) * audioDuration;
+
+    mAudio.currentTime = time;
 
     var currentDate = new Date(Math.floor(time*1000));
     for(var x in mChart.panels){

@@ -10,12 +10,14 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-4">
-            <form class="form-inline">
-              <label for="participant_sel">Select participant:</label>
-              <select class="form-control" id="participant_sel"></select>
-              <label for="task_sel">Select task:</label>
-              <select class="form-control" id="task_sel"></select>
-            </form>
+            <div class="participant-selection">
+              <form class="form-inline">
+                <label class="sel_label" for="participant_sel">Select participant:</label>
+                <select class="form-control sel_form" id="participant_sel"></select>
+                <label class="sel_label" for="task_sel">Select task:</label>
+                <select class="form-control sel_form" id="task_sel"></select>
+              </form>
+            </div>
             <h2>Transcript (with sentiment color-coded)</h2>
             <ul class="legend">
                 <li><span class="positivelengend"></span>positive</li>
@@ -46,10 +48,10 @@
               </form>
             </div>
             <div class="featurepanelstyle">Category Timeline <ul class="legend">
-                            <li><span class="reading_lengend"></span>reading</li>
-                            <li><span class="procedure_lengend"></span>procedure</li>
-                            <li><span class="observation_lengend"></span>observation</li>
-                            <li><span class="explanation_lengend"></span>explanation</li>
+                            <li><span class="legend_element reading_legend" title="Participant is reading of words, phrases, or sentences directly from the device, instructions"></span>reading</li>
+                            <li><span class="legend_element procedure_legend" title="The participant is describing his/her current or future actions"></span>procedure</li>
+                            <li><span class="legend_element observation_legend" title="The participant is making remarks about the device, instructions or their behavior"></span>observation</li>
+                            <li><span class="legend_element explanation_legend" title="The participant includes the motivations for participants' behavior."></span>explanation</li>
                         </ul>
             </div>
             <div class="timeline">
