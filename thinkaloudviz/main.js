@@ -36,22 +36,56 @@ window.onload = function(){
     note.color = randomColor();
     note.annotation = $('#annotation').val();
 
+    let timestamp = new Date().valueOf();;
+
+    note.id = timestamp;
+
     note_array.push(note);
 
-    $('#notes_timeline').append("<span class='timeline-element' style='"+
+    $('#notes_timeline').append("<span class='timeline-element note_" + note.id +"' style='"+
     "width:" + note.width +';left:' + note.start + ';background-color:' + note.color
     + "'></span>")
 
     $('#note-table').append(
-      "<tr><td>" + note.startTime + '</td>' +
+      "<tr class=note_"+ note.id + "><td>" + note.startTime + '</td>' +
       "<td>" + note.endTime + '</td>' +
       "<td>" + note.features.join() + '</td>' +
-      "<td>" + note.annotation + '</td></tr>'
+      "<td>" + note.annotation + '</td>' +
+      "<td><i class='fa fa-trash-o delete-note' aria-hidden='true'></i></tr>"
     )
+
+    $('.note_' + note.id + '> td > i').on('click', function() {
+      $('.note_' + note.id).remove();
+      _.remove(note_array, function (n) {
+        return n.id == note.id;
+      });
+    });
+
+    $('span.note_' + note.id).mouseover(function() {
+      $('tr.note_' + note.id).css({'background-color': 'yellow'});
+    });
+
+    $('span.note_' + note.id).mouseout(function() {
+      $('tr.note_' + note.id).css({'background-color': ''});
+    });
 
     $('#start').val("");
     $('#end').val("");
     $('#annotation').val("");
+    $(".featureCheckbox").prop("checked", false);
+  });
+
+  $("#labels_timeline").on('click', function (event){
+    let width = $(this).width();
+    let x_pos = event.pageX - $("#labels_timeline").parent().offset().left;
+
+    let time = (x_pos/width) * audioDuration;
+
+    var currentDate = new Date(Math.floor(time*1000));
+    for(var x in mChart.panels){
+      mChart.panels[x].chartCursor.showCursorAt(currentDate);
+    }
+    mChart.validateData();
   });
 };
 
