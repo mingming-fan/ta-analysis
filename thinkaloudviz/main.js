@@ -684,12 +684,15 @@ function setTranscriptSelectionEventListener()
 
   transcript.addEventListener('mouseup', function(){
      //console.log("selection test...");
-      if (this.selectionStart != this.selectionEnd){ // check the user has selected some text inside field
-          var selectedtext = this.value.substring(this.selectionStart, this.selectionEnd);
-          console.log(selectedtext);
-          writtenNote.innerHTML = writtenNote.innerHTML + "  \"" + selectedtext + "\"\n";
-      }
-  }, false);
+     var text = "";
+     if (window.getSelection) {
+         text = window.getSelection().toString();
+         console.log(text);
+     } else if (document.selection && document.selection.type != "Control") {
+         text = document.selection.createRange().text;
+     }
+     writtenNote.value = writtenNote.value + "  \"" + text + "\"\n";
+    }, false);
 }
 
 
