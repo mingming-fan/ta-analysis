@@ -7,14 +7,41 @@ var audioDuration;
 
 var note_array = [];
 
+var participants_files = [];
+
+var task_data;
+
+var loudnessData, pitchData, allData, transcriptData, silenceData, sentimentData, disSentimentData;
+
 window.onload = function(){
-  //load the audio when the UI is displayed
-  mAudio = document.getElementById("audiocontrol");
-  mAudio.addEventListener('loadedmetadata', processAudio);
-  //check audio's loading status. if it is not ready, load it again
-  if (mAudio.readyState >= 2) {
-        processAudio();
-  }
+
+  $.get('./participant_file.json', function (files) {
+    participants_files = files;
+    participants = _.map(files,'id');
+    _.each(participants, function(participant) {
+      $('#participant_sel').append("<option value="+ participant +">" + participant + "</option>");
+    });
+    $("#participant_sel").val("");
+  });
+
+  $('#participant_sel').on('change', function() {
+    $('#task_sel').empty();
+
+    let participant = $('#participant_sel').val();
+    let tasks = _.find(participants_files, {'id': parseInt(participant)}).tasks;
+    _.each(tasks, function (task) {
+      $('#task_sel').append("<option value="+ task.id +">" + task.id + "</option>");
+    });
+    $("#task_sel").val("");
+  });
+
+  $('#task_sel').on('change', function () {
+    let participant = $('#participant_sel').val();
+    let task = $('#task_sel').val();
+
+    task_data = _.find(_.find(participants_files, {'id': parseInt(participant)}).tasks, {'id': parseInt(task)});
+    loadTaskData(task_data);
+  });
 
   $('#addNote').on('click', function () {
     let note = {}
@@ -91,22 +118,47 @@ window.onload = function(){
   setTranscriptSelectionEventListener();
 };
 
+function loadTaskData () {  //load the audio when the UI is displayed
+  mAudio = document.getElementById("audiocontrol");
+  mAudio.src = task_data.audio;
+  mAudio.addEventListener('loadedmetadata', processAudio);
+  //check audio's loading status. if it is not ready, load it again
+  if (mAudio.readyState >= 2) {
+    processAudio();
+  }
+
+  //console.log("loading loudness data...")
+  loudnessData = loadChartData(task_data.loudness);
+  //console.log("loading pitch data...")
+  pitchData = loadChartData(task_data.pitch);
+  allData = loadSilenceData(task_data.transcript);
+  transcriptData = allData[0];
+  silenceData = allData[1];
+  sentimentData = loadSentimentData(task_data.sentiment);
+  disSentimentData = loadDiscreteSentimentData(task_data.sentiment);
+
+
+  setTimeout(myTimer, 500);
+  function myTimer() {
+    if( pitchData.length != 0 && pitchData.length != 0)
+    {
+      console.log("data is ready");
+      mChart = drawCharts();
+      drawTranscript();
+      //drawTranscript2();
+    }
+    else {
+      setTimeout(myTimer, 500);
+    }
+  }
+
+};
+
 function processAudio() {
   audioDuration = mAudio.duration;
   //console.log(mAudio.duration);
-  loadRawCategoryData("./coders/1/1/categorydata.json");
+  loadRawCategoryData(task_data.category);
 }
-
-//console.log("loading loudness data...")
-var loudnessData = loadChartData("./p1/t1/thinkaloud_loudness.json");
-//console.log("loading pitch data...")
-var pitchData = loadChartData("./p1/t1/thinkaloud_pitch.json");
-var allData = loadSilenceData("./p1/t1/thinkaloud_aligned.json");
-var transcriptData = allData[0];
-var silenceData = allData[1];
-var sentimentData = loadSentimentData("./p1/t1/thinkaloud_sentiment.json");
-var disSentimentData = loadDiscreteSentimentData("./p1/t1/thinkaloud_sentiment.json");
-
 
 //load the data from the external sources
 function loadChartData(dataset_url) {
@@ -316,21 +368,6 @@ function loadRawCategoryData (dataset_url) {
     Tipped.create('.timeline-element');
     loaded = true;
   });
-}
-
-
-setTimeout(myTimer, 500);
-function myTimer() {
-  if( pitchData.length != 0 && pitchData.length != 0)
-  {
-    console.log("data is ready");
-    mChart = drawCharts();
-    drawTranscript();
-    //drawTranscript2();
-  }
-  else {
-    setTimeout(myTimer, 500);
-  }
 }
 
 //console.log("after checking if the data is ready");
