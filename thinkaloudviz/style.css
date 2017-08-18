@@ -34,6 +34,21 @@ h2 {
 font-weight: bold
 }
 
+.positive
+{
+  background-color: #28B463
+}
+
+.negative
+{
+  background-color: #CB4335
+}
+
+.neutral
+{
+  background-color: #F4F6F7
+}
+
 #chartdiv {
   width: 90%;
   height: 750px;

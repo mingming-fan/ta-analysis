@@ -39,6 +39,8 @@ window.onload = function(){
     "width:" + note.width +';left:' + note.start + ';background-color:' + note.color
     + "'></span>")
 
+    $('#start').val("0");
+    $('#end').val("0");
   });
 };
 
@@ -58,6 +60,7 @@ var silenceData = allData[1];
 
 var categoryData = loadCategoryData("./coders/1/1/categorydata.json");
 var sentimentData = loadSentimentData("./p1/t1/thinkaloud_sentiment.json");
+var disSentimentData = loadDiscreteSentimentData("./p1/t1/thinkaloud_sentiment.json");
 
 //load the data from the external sources
 function loadChartData(dataset_url) {
@@ -161,12 +164,6 @@ function loadSentimentData(dataset_url) {
 }
 
 
-var sentiment_color = {
-  Negative: '#CB4335',
-  Neutral: '#BDC3C7',
-  Positive: '#229954'
-}
-
 function loadDiscreteSentimentData(dataset_url) {
   var chartData = [];
   AmCharts.loadFile(dataset_url, {}, function(data) {
@@ -175,18 +172,16 @@ function loadDiscreteSentimentData(dataset_url) {
     for(var i = 0; i < inputdata.length; i++){
       var start = parseInt(parseFloat(inputdata[i].start) * 1000);
       var end = parseInt(parseFloat(inputdata[i].end) * 1000);
-      if(threshold_sentiment){
-        var sentiment = "Neutral";
-        if(parseFloat(inputdata[i].data) >= 0.5){
-          sentiment = "Positive";
-        }
-        else if(parseFloat(inputdata[i].data <= -0.5)){
-          sentiment = "Negative";
-        }
+      var sentiment = "Neutral";
+      if(parseFloat(inputdata[i].data) >= 0.5){
+        sentiment = "Positive";
+      }
+      else if(parseFloat(inputdata[i].data <= -0.5)){
+        sentiment = "Negative";
+      }
 
-        chartData.push({"time": start, "data": sentiment, "end": end, "legendColor": AmCharts.randomColor, "label": "undefined"});
-    }
-  });
+      chartData.push({"time": start, "end": end, "data": sentiment,  "rawdata": inputdata[i].data});
+    }});
   return  chartData;
 }
 
@@ -659,11 +654,15 @@ return chart;
 function drawTranscript(){
   //loop through silenceData
   // three data fields: start, end, label
+  //chartData.push({"time": start, "end": end, "data": sentiment,  "rawdata": inputdata[i].data});
   var transcript = [];
   for(var i in transcriptData){
-    var value = transcriptData[i].label
+    var value = transcriptData[i].label;
+    var start = parseFloat(transcriptData[i].start);
+    var end = parseFloat(transcriptData[i].end);
     if(String(value).trim().localeCompare("sp") != 0){
       transcript.push(String(value).trim());
+      
     }
   }
 
