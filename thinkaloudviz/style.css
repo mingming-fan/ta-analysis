@@ -165,3 +165,8 @@ background-color: #F4D03F
 .legend .positivelengend { background-color: #28B463; }
 .legend .neutrallengend { background-color: #F4F6F7; }
 .legend .negativelengend { background-color: #CB4335; }
+
+.legend .reading_lengend { background-color: #0275d8; }
+.legend .procedure_lengend { background-color: #5cb85c; }
+.legend .observation_lengend { background-color: #f0ad4e; }
+.legend .explanation_lengend { background-color: #d9534f; }

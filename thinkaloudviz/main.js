@@ -466,32 +466,6 @@ panels: [ {
 },
 {
   showCategoryAxis: false,
-  title: "Silence",
-  allowTurningOff: false,
-  stockGraphs: [ {
-    id: "g3",
-    compareGraphType:"step",
-    valueField: "data3",
-    compareField: "data3",
-    comparable: true,
-    visibleInLegend: true,
-    useDataSetColors: false,
-    lineColor: "legendColor",
-    legendColorField: "legendColor",
-    lineColorField: "legendColor",
-  } ],
-  stockLegend: {
-    enabled: true,
-    markType: "none",
-    markSize: 0
-  },
-  listeners:[{
-    event: "changed",
-    method: handleMousemove,
-  }],
-},
-{
-  showCategoryAxis: true,
   title: "Sentiment",
   allowTurningOff: false,
   stockGraphs: [ {
@@ -507,6 +481,32 @@ panels: [ {
     useDataSetColors: true,
     colorField: "lengendColor",
     lineColor: "lengendColor", //"#1ABC9C",
+  } ],
+  stockLegend: {
+    enabled: true,
+    markType: "none",
+    markSize: 0
+  },
+  listeners:[{
+    event: "changed",
+    method: handleMousemove,
+  }],
+},
+{
+  showCategoryAxis: true,
+  title: "Silence",
+  allowTurningOff: false,
+  stockGraphs: [ {
+    id: "g3",
+    compareGraphType:"step",
+    valueField: "data3",
+    compareField: "data3",
+    comparable: true,
+    visibleInLegend: true,
+    useDataSetColors: false,
+    lineColor: "legendColor",
+    legendColorField: "legendColor",
+    lineColorField: "legendColor",
   } ],
   stockLegend: {
     enabled: true,
@@ -629,7 +629,6 @@ function drawTranscript(){
       transcript += "<span class='" + sentiment + "'>" + String(value).trim() + " " + "</span>";
     }
   }
-
   var x = document.getElementById("transcriptdiv");
   x.innerHTML = transcript;
 }
@@ -676,7 +675,7 @@ function drawTranscript2(){
   x.innerHTML = transcript;
 }
 
-
+//this function is to get the selected text and past it into the analysis note textarea as a quote.
 function setTranscriptSelectionEventListener()
 {
   var transcript = document.getElementById('transcriptdiv');
@@ -695,7 +694,6 @@ function setTranscriptSelectionEventListener()
     }, false);
 }
 
-
 //synchronize the mouse cursor with the transcript
 function handleMousemove(e){
   //finally get the timestamp information: it is hided really deeply...
@@ -705,6 +703,7 @@ function handleMousemove(e){
   //updateTranscript2(timestamp);
 }
 
+//this function is to sync the transcript with the viz panels when the mouse moves over the viz panels
 function updateTranscript(currentTimeInMS){
   var transcript = "";
 
@@ -981,7 +980,7 @@ function applySilenceLengthFilters(len){
   }
   //console.log("AmCharts.randomColor(): " + AmCharts.randomColor());
   //console.log("# of data points: " + cnt);
-
+  //the number 3 below assumes that the silence data panel is the 4th panel in the div
   mChart.dataSets[2].dataProvider = newData;
   mChart.validateData();
 }
