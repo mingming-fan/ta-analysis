@@ -87,6 +87,8 @@ window.onload = function(){
     }
     mChart.validateData();
   });
+
+  setTranscriptSelectionEventListener();
 };
 
 function processAudio() {
@@ -324,6 +326,7 @@ function myTimer() {
     console.log("data is ready");
     mChart = drawCharts();
     drawTranscript();
+    //drawTranscript2();
   }
   else {
     setTimeout(myTimer, 500);
@@ -631,12 +634,72 @@ function drawTranscript(){
   x.innerHTML = transcript;
 }
 
+
+function drawTranscript2(){
+  // three data fields: start, end, label
+  //chartData.push({"time": start, "end": end, "data": sentiment,  "rawdata": inputdata[i].data});
+  var transcript = "";
+  var value = "";
+  var start = 0;
+  var end = 0;
+  var sentiment = "neutral";
+  for(var i = 0; i < transcriptData.length-1; i++){
+    //read in two at a time
+    //the first one is the word and the second one is the gap between two words, the so called "sp"
+    value = transcriptData[i].label;
+    start = parseFloat(transcriptData[i].start);
+    end = parseFloat(transcriptData[i].end);
+    sentiment = "neutral";
+    var next_value = transcriptData[i+1].label;
+    if(String(next_value).trim().localeCompare("sp") === 0){
+      i = i + 1;
+      end = parseFloat(transcriptData[i].end);
+    }
+
+    //check the sentiment of the word
+    for(var j in disSentimentData){
+      var senti_start = parseFloat(disSentimentData[j].start);
+      var senti_end = parseFloat(disSentimentData[j].end);
+      if(start >= senti_start && end <= senti_end){
+        sentiment = disSentimentData[j].data;
+        //console.log("sentiment: " + sentiment);
+        break;
+      }
+    }
+
+    if(String(value).trim().localeCompare("sp") != 0){
+      transcript += "<span class='" + sentiment + "'>" + String(value).trim() + " " + "</span>";
+    }
+  }
+
+  var x = document.getElementById("transcriptdiv");
+  x.innerHTML = transcript;
+}
+
+
+function setTranscriptSelectionEventListener()
+{
+  var transcript = document.getElementById('transcriptdiv');
+  var writtenNote = document.getElementById('annotation');
+
+  transcript.addEventListener('mouseup', function(){
+     //console.log("selection test...");
+      if (this.selectionStart != this.selectionEnd){ // check the user has selected some text inside field
+          var selectedtext = this.value.substring(this.selectionStart, this.selectionEnd);
+          console.log(selectedtext);
+          writtenNote.innerHTML = writtenNote.innerHTML + "  \"" + selectedtext + "\"\n";
+      }
+  }, false);
+}
+
+
 //synchronize the mouse cursor with the transcript
 function handleMousemove(e){
   //finally get the timestamp information: it is hided really deeply...
   //console.log(e.chart.chartCursor.timestamp);
   var timestamp = parseFloat(e.chart.chartCursor.timestamp);
   updateTranscript(timestamp);
+  //updateTranscript2(timestamp);
 }
 
 function updateTranscript(currentTimeInMS){
@@ -667,6 +730,7 @@ function updateTranscript(currentTimeInMS){
         transcript += "<span class='highlight'>" + String(value).trim() + " " + "</span>";
       }
       else{
+          //thjs logic is used to solve the duplicate last word issue
         if(i > 0)
         {
           var words = transcript.split(" ");
@@ -689,6 +753,67 @@ function updateTranscript(currentTimeInMS){
   var x = document.getElementById("transcriptdiv");
   x.innerHTML = transcript;
 }
+
+
+function updateTranscript2(currentTimeInMS){
+  var transcript = "";
+  for(var i = 0; i < transcriptData.length-1; i++){
+    //read in two at a time
+    //the first one is the word and the second one is the gap between two words, the so called "sp"
+    var value = transcriptData[i].label;
+    var start = parseFloat(transcriptData[i].start);
+    var end = parseFloat(transcriptData[i].end);
+    var sentiment = "neutral";
+    var next_value = transcriptData[i+1].label;
+    if(String(next_value).trim().localeCompare("sp") === 0){
+      i = i + 1;
+      end = parseFloat(transcriptData[i].end);
+    }
+
+    //check the sentiment of the word
+    for(var j in disSentimentData){
+      var senti_start = parseFloat(disSentimentData[j].start);
+      var senti_end = parseFloat(disSentimentData[j].end);
+      if(start >= senti_start && end <= senti_end){
+        sentiment = disSentimentData[j].data;
+        //console.log("sentiment: " + sentiment);
+        break;
+      }
+    }
+
+    if (currentTimeInMS >= start && currentTimeInMS <= end)
+    {
+      if(String(value).trim().localeCompare("sp") != 0){
+        transcript += "<span class='highlight'>" + String(value).trim() + " " + "</span>";
+      }
+      else{
+        //thjs logic is used to solve the duplicate last word issue
+        if(i > 0)
+        {
+          var words = transcript.split(" ");
+          var transcript = "";
+          for(var k = 0; k < words.length -2; k++)
+          {
+            transcript += words[k] + " "
+          }
+          var value2 = transcriptData[i-1].label;
+          transcript += "<span class='highlight'>" + String(value2).trim() + " " + "</span>";
+        }
+      }
+    }
+    else {
+      //if the insepcted word is NOT a highlighted word, then just display normal sentiment
+      if(String(value).trim().localeCompare("sp") != 0){
+        transcript += "<span class='" + sentiment + "'>" + String(value).trim() + " " + "</span>";
+      }
+    }
+  }
+
+  var x = document.getElementById("transcriptdiv");
+  x.innerHTML = transcript;
+}
+
+
 
 
 setTimeout(myTimer2, 500);
@@ -714,9 +839,9 @@ function connectAudioCharts(){
     }
     mChart.validateData();
 
-    //update the position in the transcript
+    //update the highlight position in the transcript
     updateTranscript(Math.floor(e.target.currentTime * 1000))
-
+    //updateTranscript2(Math.floor(e.target.currentTime * 1000));
   });
 }
 

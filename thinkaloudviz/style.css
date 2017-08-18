@@ -148,3 +148,11 @@ background-color: #F4D03F
 .timeline-element .label_text {
   color: white;
 }
+
+.featurepanelstyle {
+  font-family: verdana;
+  font-size: 70%;
+  color:black;
+  font-weight: bold;
+  width: 90%;
+}

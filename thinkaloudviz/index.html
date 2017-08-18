@@ -14,10 +14,10 @@
             <div id="transcriptdiv"></div>
           </div>
           <div class="col-md-8">
+            <h1>Think-Aloud Analysis Tool</h1>
             <div id="audiodiv">
               <audio id="audiocontrol" src = "./p1/t1/thinkaloud.wav" type="audio/wav" preload = "auto" controls>Your browser does not support this audio element. </audio>
             </div>
-            <h1>Think-Aloud Usability Analysis</h1>
             <div id="chartdiv"></div>
             <div>
               <form action="">
@@ -33,12 +33,15 @@
               </form>
             </div>
             <br/>
-            <h2>Category Timeline</h2>
+            <div class="featurepanelstyle">Category Timeline</div>
             <div class="timeline">
               <div id="labels_timeline" class="timeline-outline"></div>
             </div>
           </div>
         </div>
+        <br/>
+        <br/>
+        <div class="col-md-4"><h2>Create Analysis Notes</h2></div>
         <div class="row">
           <div>
             <h2>Notes Timeline</h2>
@@ -61,20 +64,18 @@
             </table>
           </div>
           <div class="col-md-6" name="analysis">
-            <h2>
-              Create Analysis Notes
-            </h2>
             <form>
               The selected audio segment's start time (s): <input type="text" id="start" size="4"> , stop time (s): <input type="text" id="end" size="4">
               <br/>
               <br/>
               <fieldset id="audio-features-fieldset" style="display: inline-block;" >
                   <legend>Features to include as evidence</legend>
-                  <input class="featureCheckbox" type="checkbox" name="silence" value="silence"/>Silence
                   <input class="featureCheckbox" type="checkbox" name="loudness" value="loudness"/>Loudness
                   <input class="featureCheckbox" type="checkbox" name="pitch" value="pitch"/>Pitch
+                  <input class="featureCheckbox" type="checkbox" name="silence" value="silence"/>Silence
                   <input class="featureCheckbox" type="checkbox" name="category" value="category"/>Category
-                  <input class="featureCheckbox" type="checkbox" name="category" value="category"/>Sentiment<br/>
+                  <input class="featureCheckbox" type="checkbox" name="sentiment" value="sentiment"/>Sentiment
+                  <input class="featureCheckbox" type="checkbox" name="transcript" value="transcript"/>Transcript<br/>
               </fieldset>
               <br/>
               <br/>
