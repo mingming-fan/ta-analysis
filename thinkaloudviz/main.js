@@ -68,10 +68,9 @@ var pitchData = loadChartData("./p1/t1/thinkaloud_pitch.json");
 var allData = loadSilenceData("./p1/t1/thinkaloud_aligned.json");
 var transcriptData = allData[0];
 var silenceData = allData[1];
-
-var categoryData = loadCategoryData("./coders/1/1/categorydata.json");
 var sentimentData = loadSentimentData("./p1/t1/thinkaloud_sentiment.json");
 var disSentimentData = loadDiscreteSentimentData("./p1/t1/thinkaloud_sentiment.json");
+
 
 //load the data from the external sources
 function loadChartData(dataset_url) {
@@ -254,11 +253,6 @@ function loadCategoryData(dataset_url) {
 
       chartData.push({"time": start, "data":data, "legendColor": color, "label": String(label).trim()});
       chartData.push({"time": end, "data":data, "legendColor": color, "label": String(label).trim()});
-      /*
-      for(var j = 0; j < end-start; j+=50){
-        chartData.push({"time": start+j, "data":data, "duration": end-start, "legendColor": color, "label": String(label).trim()});
-      }
-      */
     }
   });
   return chartData;
@@ -289,7 +283,6 @@ function loadRawCategoryData (dataset_url) {
 }
 
 
-//console.log("after calling the loadChartData function");
 setTimeout(myTimer, 500);
 function myTimer() {
   if( pitchData.length != 0 && pitchData.length != 0)
@@ -297,50 +290,11 @@ function myTimer() {
     console.log("data is ready");
     mChart = drawCharts();
     drawTranscript();
-    //mChart2 = drawCategoryChart();
   }
   else {
     setTimeout(myTimer, 500);
   }
 }
-
-
-function drawCategoryChart(){
-  var chart = null;
-  chart = AmCharts.makeChart("chartdiv2",{
-    "type": "serial",
-    "theme": "light",
-    "dataProvider": categoryData,
-    "valueAxes": [{
-      "axisAlpha": 0,
-      "gridAlpha": 0.1
-    }],
-    "startDuration": 1,
-    "graphs": [{
-      "balloonText": "<b>[[category]]</b><br>starts at [[startTime]]<br>ends at [[endTime]]",
-      "colorField": "legendColor",
-      "fillAlphas": 0.8,
-      "lineAlpha": 0,
-      "openField": "startTime",
-      "type": "column",
-      "valueField": "endTime",
-      "xclustered": true,
-      "clustered": true,
-    }],
-    "rotate": true,
-    "columnWidth": 1,
-    "categoryField": "label",
-    "categoryAxis": {
-      "gridPosition": "start",
-      "axisAlpha": 0,
-      "gridAlpha": 0.1,
-      "position": "left"
-    }
-  }
-);
-return chart;
-}
-
 
 //console.log("after checking if the data is ready");
 function drawCharts(){
@@ -400,25 +354,6 @@ function drawCharts(){
 dataProvider: silenceData,
 categoryField: "time",
 compared: true
-},
-{
-  fieldMappings: [{
-    fromField: "data",
-    toField: "data4"
-  },
-  {
-    fromField: "label",
-    toField: "label4"
-  },
-  {
-    fromField: "legendColor",
-    toField: "legendColor"
-  }
-],
-dataProvider: categoryData,
-categoryField: "time",
-compared: true,
-
 },
 {
   fieldMappings: [{
@@ -507,37 +442,6 @@ panels: [ {
     lineColor: "legendColor",
     legendColorField: "legendColor",
     lineColorField: "legendColor",
-  } ],
-  stockLegend: {
-    enabled: true,
-    markType: "none",
-    markSize: 0
-  },
-  listeners:[{
-    event: "changed",
-    method: handleMousemove,
-  }],
-},
-{
-  showCategoryAxis: false,
-  title: "Category",
-  allowTurningOff: false,
-  stockGraphs: [ {
-    id: "g4",
-    compareGraphType:"step",
-
-    fillAlphas: 1,
-    valueField: "data4",
-    compareField: "data4",
-    comparable: true,
-    visibleInLegend: false,
-    useDataSetColors: false,
-    colorField: "lengendColor",
-    legendColorField: "legendColor",
-    lineColorField: "legendColor",
-    lineColor:"lengendColor", //"#FABC9C"
-    //compareGraphFillColors: "lengendColor",
-    //compareGraphLineColor: "lengendColor"
   } ],
   stockLegend: {
     enabled: true,
@@ -693,7 +597,7 @@ function drawTranscript(){
   x.innerHTML = transcript;
 }
 
-
+//synchronize the mouse cursor with the transcript
 function handleMousemove(e){
   //finally get the timestamp information: it is hided really deeply...
   //console.log(e.chart.chartCursor.timestamp);
@@ -828,24 +732,7 @@ function handleSelection(event){
       document.getElementById("end").value = parseFloat((event.end+1)/1000); //convert the miliseconds into seconds
     }
   }
-  /*
-  for(var x in mChart.dataSets){
-  for(var j in mChart.dataSets[x].dataProvider){
-  var datapoint = mChart.dataSets[x].dataProvider[j];
-  if(parseInt(datapoint.time) >= parseInt(event.start)  && parseInt(datapoint.time) < parseInt(event.end))
-  {
-  //console.log("selected point");
-  //console.log("datapoint: " + datapoint.time + ", value: " + datapoint.data + ", color: " + datapoint.lineColor + ", label: " + datapoint.label);
-  datapoint.lengendColor = "#00CC00";
-}
-else
-{
-datapoint.lengendColor = "#FF6600";
-}
-}
-}
-*/
-mChart.validateData();
+  mChart.validateData();
 }
 
 
@@ -926,70 +813,5 @@ function applySilenceLengthFilters(len){
   //console.log("# of data points: " + cnt);
 
   mChart.dataSets[2].dataProvider = newData;
-  mChart.validateData();
-}
-
-
-function applyCategoryFilters(){
-  var newData = [];
-  var categories = [];
-
-  if (document.getElementById("labelcategory1").checked){
-    categories.push(document.getElementById("labelcategory1").value);
-    //console.log("still chosen categories: " + document.getElementById("labelcategory1").value);
-  }
-
-  if (document.getElementById("labelcategory2").checked){
-    categories.push(document.getElementById("labelcategory2").value);
-    //console.log("still chosen categories: " + document.getElementById("labelcategory2").value);
-  }
-
-  if (document.getElementById("labelcategory3").checked){
-    categories.push(document.getElementById("labelcategory3").value);
-    //console.log("still chosen categories: " + document.getElementById("labelcategory3").value);
-  }
-
-  if (document.getElementById("labelcategory4").checked){
-    categories.push(document.getElementById("labelcategory4").value);
-    //console.log("still chosen categories: " + document.getElementById("labelcategory4").value);
-  }
-
-  for(var i = 0; i < categoryData.length; i++)
-  {
-    var chosen = false;
-    for (var k = 0; k < categories.length; k++)
-    {
-      if(String(categoryData[i].label).trim().localeCompare(categories[k]) === 0){
-        chosen = true;
-        break;
-      }
-    }
-
-    if(chosen)
-    {
-      newData.push({
-        "time": categoryData[i].time,
-        "data": categoryData[i].data,
-        "duration": categoryData[i].duration,
-        "legendColor": categoryData[i].color, //silenceData[i].color,
-        "label": categoryData[i].label,
-      });
-      //console.log("silence length: " + len);
-    }
-    /*
-    else {
-    newData.push({
-    "time": categoryData[i].time,
-    "data": -1,
-    "duration": categoryData[i].duration,
-    "legendColor": categoryData[i].color, //silenceData[i].color,
-    "label": categoryData[i].label,
-  });
-}
-*/
-  }
-
-  //based on the assumption that the sentiment data is the 5th panel
-  mChart.dataSets[3].dataProvider = newData;
   mChart.validateData();
 }
