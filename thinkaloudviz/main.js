@@ -172,16 +172,17 @@ function loadDiscreteSentimentData(dataset_url) {
     for(var i = 0; i < inputdata.length; i++){
       var start = parseInt(parseFloat(inputdata[i].start) * 1000);
       var end = parseInt(parseFloat(inputdata[i].end) * 1000);
-      var sentiment = "Neutral";
+      var sentiment = "neutral";
       if(parseFloat(inputdata[i].data) >= 0.5){
-        sentiment = "Positive";
+        sentiment = "positive";
       }
-      else if(parseFloat(inputdata[i].data <= -0.5)){
-        sentiment = "Negative";
+      else if(parseFloat(inputdata[i].data) <= -0.5){
+        sentiment = "negative";
       }
 
-      chartData.push({"time": start, "end": end, "data": sentiment,  "rawdata": inputdata[i].data});
-    }});
+      chartData.push({"start": start, "end": end, "data": sentiment,  "rawdata": inputdata[i].data});
+    }
+  });
   return  chartData;
 }
 
@@ -652,22 +653,33 @@ return chart;
 }
 
 function drawTranscript(){
-  //loop through silenceData
   // three data fields: start, end, label
   //chartData.push({"time": start, "end": end, "data": sentiment,  "rawdata": inputdata[i].data});
-  var transcript = [];
+  var transcript = "";
   for(var i in transcriptData){
     var value = transcriptData[i].label;
     var start = parseFloat(transcriptData[i].start);
     var end = parseFloat(transcriptData[i].end);
+    var sentiment = "neutral";
+
+    //check the sentiment of the word
+    for(var j in disSentimentData){
+      var senti_start = parseFloat(disSentimentData[j].start);
+      var senti_end = parseFloat(disSentimentData[j].end);
+      if(start >= senti_start && end <= senti_end){
+        sentiment = disSentimentData[j].data;
+        //console.log("sentiment: " + sentiment);
+        break;
+      }
+    }
+
     if(String(value).trim().localeCompare("sp") != 0){
-      transcript.push(String(value).trim());
-      
+      transcript += "<span class='" + sentiment + "'>" + String(value).trim() + " " + "</span>";
     }
   }
-
+  
   var x = document.getElementById("transcriptdiv");
-  x.innerHTML = transcript.join(" ");
+  x.innerHTML = transcript;
 }
 
 
@@ -676,10 +688,25 @@ function handleMousemove(e){
   //console.log(e.chart.chartCursor.timestamp);
   var timestamp = parseFloat(e.chart.chartCursor.timestamp);
   var transcript = "";
+
   for(var i in transcriptData){
     var value = transcriptData[i].label;
     var start = parseFloat(transcriptData[i].start);
     var end = parseFloat(transcriptData[i].end);
+    var sentiment = "neutral";
+    //console.log("start: " + start);
+
+    //check the sentiment of the word
+    for(var j in disSentimentData){
+      var senti_start = parseFloat(disSentimentData[j].start);
+      var senti_end = parseFloat(disSentimentData[j].end);
+      if(start >= senti_start && end <= senti_end){
+        sentiment = disSentimentData[j].data;
+        //console.log("sentiment: " + sentiment);
+        break;
+      }
+    }
+
     //console.log("timestamp: " + e.chart.chartCursor.timestamp + " , start: " + start + ", end: " + end + " , word: " + value);
     if (timestamp >= start && timestamp <= end)
     {
@@ -689,6 +716,12 @@ function handleMousemove(e){
       else{
         if(i > 0)
         {
+          var words = transcript.split(" ");
+          var transcript = "";
+          for(var k = 0; k < words.length -2; k++)
+          {
+            transcript += words[k] + " "
+          }
           var value2 = transcriptData[i-1].label;
           transcript += "<span class='highlight'>" + String(value2).trim() + " " + "</span>";
         }
@@ -696,7 +729,7 @@ function handleMousemove(e){
     }
     else {
       if(String(value).trim().localeCompare("sp") != 0){
-        transcript += String(value).trim() + " ";
+        transcript += "<span class='" + sentiment + "'>" + String(value).trim() + " " + "</span>";
       }
     }
   }
