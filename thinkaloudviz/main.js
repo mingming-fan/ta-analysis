@@ -17,7 +17,7 @@ window.onload = function(){
 
 function processAudio() {
   audioDuration = mAudio.duration;
-  console.log(mAudio.duration);
+  //console.log(mAudio.duration);
   loadRawCategoryData("./coders/1/1/categorydata.json");
 }
 
@@ -135,6 +135,36 @@ function loadSentimentData(dataset_url) {
   return  chartData;
 }
 
+
+var sentiment_color = {
+  Negative: '#CB4335',
+  Neutral: '#BDC3C7',
+  Positive: '#229954'
+}
+
+function loadDiscreteSentimentData(dataset_url) {
+  var chartData = [];
+  AmCharts.loadFile(dataset_url, {}, function(data) {
+    inputdata = AmCharts.parseJSON(data);
+    //create some samples between start and end time and add to the chart
+    for(var i = 0; i < inputdata.length; i++){
+      var start = parseInt(parseFloat(inputdata[i].start) * 1000);
+      var end = parseInt(parseFloat(inputdata[i].end) * 1000);
+      if(threshold_sentiment){
+        var sentiment = "Neutral";
+        if(parseFloat(inputdata[i].data) >= 0.5){
+          sentiment = "Positive";
+        }
+        else if(parseFloat(inputdata[i].data <= -0.5)){
+          sentiment = "Negative";
+        }
+
+        chartData.push({"time": start, "data": sentiment, "end": end, "legendColor": AmCharts.randomColor, "label": "undefined"});
+    }
+  });
+  return  chartData;
+}
+
 //load the script data with words and their start and end time
 function loadAlignedTranscriptData(dataset_url) {
   var chartData = [];
@@ -204,7 +234,7 @@ function loadCategoryData(dataset_url) {
 
 function loadRawCategoryData (dataset_url) {
   $.getJSON(dataset_url, function (data) {
-    console.log(audioDuration, data);
+    //console.log(audioDuration, data);
     var label_color = {
       Reading: '#0275d8',
       Procedure: '#5cb85c',
@@ -225,6 +255,7 @@ function loadRawCategoryData (dataset_url) {
     loaded = true;
   });
 }
+
 
 //console.log("after calling the loadChartData function");
 setTimeout(myTimer, 500);
