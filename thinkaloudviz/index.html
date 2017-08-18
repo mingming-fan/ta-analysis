@@ -10,6 +10,12 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-4">
+            <form class="form-inline">
+              <label for="participant_sel">Select participant:</label>
+              <select class="form-control" id="participant_sel"></select>
+              <label for="task_sel">Select task:</label>
+              <select class="form-control" id="task_sel"></select>
+            </form>
             <h2>Transcript (with sentiment color-coded)</h2>
             <ul class="legend">
                 <li><span class="positivelengend"></span>positive</li>
@@ -22,7 +28,7 @@
           <div class="col-md-8">
             <h1>Think-Aloud Analysis Tool</h1>
             <div id="audiodiv">
-              <audio id="audiocontrol" src = "./p1/t1/thinkaloud.wav" type="audio/wav" preload = "auto" controls>Your browser does not support this audio element. </audio>
+              <audio id="audiocontrol" preload = "auto" controls>Your browser does not support this audio element. </audio>
             </div>
             <div id="chartdiv"></div>
             <div>
