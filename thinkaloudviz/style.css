@@ -156,3 +156,12 @@ background-color: #F4D03F
   font-weight: bold;
   width: 90%;
 }
+
+/* basic positioning */
+.legend { list-style: none; }
+.legend li { float: left; margin-right: 10px; }
+.legend span { border: 1px solid #ccc; float: left; width: 12px; height: 12px; margin: 2px; }
+/* your colors */
+.legend .positivelengend { background-color: #28B463; }
+.legend .neutrallengend { background-color: #F4F6F7; }
+.legend .negativelengend { background-color: #CB4335; }
