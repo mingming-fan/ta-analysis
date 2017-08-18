@@ -13,6 +13,33 @@ window.onload = function(){
   if (mAudio.readyState >= 2) {
         processAudio();
   }
+
+  $('#addNote').on('click', function () {
+    let note = {}
+
+    note.startTime = $('#start').val();
+    note.endTime = $('#end').val();
+
+    let checked = $('.featureCheckbox:checked')
+
+    note.features = []
+
+    $.each(checked, function(index) {
+      note.features.push($($('.featureCheckbox:checked')[index]).val());
+    });
+
+    note.width = ((note.endTime - note.startTime)/audioDuration) * 100 + '%';
+    note.start = (note.startTime/audioDuration) * 100 + '%';
+
+    note.color = randomColor();
+
+    console.log(note);
+
+    $('#notes_timeline').append("<span class='timeline-element' style='"+
+    "width:" + note.width +';left:' + note.start + ';background-color:' + note.color
+    + "'></span>")
+
+  });
 };
 
 function processAudio() {
@@ -20,8 +47,6 @@ function processAudio() {
   console.log(mAudio.duration);
   loadRawCategoryData("./coders/1/1/categorydata.json");
 }
-
-
 
 //console.log("loading loudness data...")
 var loudnessData = loadChartData("./p1/t1/thinkaloud_loudness.json");
@@ -215,7 +240,7 @@ function loadRawCategoryData (dataset_url) {
     _.each(data, function (label) {
       label.width = ((label.end_time - label.start_time)/audioDuration) * 100 + '%';
       label.start = (label.start_time/audioDuration) * 100 + '%';
-      $('.timeline-outline').append("<span class='timeline-element' style='"+
+      $('#labels_timeline').append("<span class='timeline-element' style='"+
       "width:" + label.width +';left:' + label.start + ';background-color:' + label_color[label.label]
       + "' title="+ label.note+"></span>")
     });
