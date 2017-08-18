@@ -5,6 +5,8 @@ AmCharts.useUTC = true;
 var mChart = null;
 var audioDuration;
 
+var note_array = [];
+
 window.onload = function(){
   //load the audio when the UI is displayed
   mAudio = document.getElementById("audiocontrol");
@@ -32,15 +34,24 @@ window.onload = function(){
     note.start = (note.startTime/audioDuration) * 100 + '%';
 
     note.color = randomColor();
+    note.annotation = $('#annotation').val();
 
-    console.log(note);
+    note_array.push(note);
 
     $('#notes_timeline').append("<span class='timeline-element' style='"+
     "width:" + note.width +';left:' + note.start + ';background-color:' + note.color
     + "'></span>")
 
-    $('#start').val("0");
-    $('#end').val("0");
+    $('#note-table').append(
+      "<tr><td>" + note.startTime + '</td>' +
+      "<td>" + note.endTime + '</td>' +
+      "<td>" + note.features.join() + '</td>' +
+      "<td>" + note.annotation + '</td></tr>'
+    )
+
+    $('#start').val("");
+    $('#end').val("");
+    $('#annotation').val("");
   });
 };
 
@@ -677,7 +688,7 @@ function drawTranscript(){
       transcript += "<span class='" + sentiment + "'>" + String(value).trim() + " " + "</span>";
     }
   }
-  
+
   var x = document.getElementById("transcriptdiv");
   x.innerHTML = transcript;
 }
