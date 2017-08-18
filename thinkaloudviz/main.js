@@ -636,6 +636,10 @@ function handleMousemove(e){
   //finally get the timestamp information: it is hided really deeply...
   //console.log(e.chart.chartCursor.timestamp);
   var timestamp = parseFloat(e.chart.chartCursor.timestamp);
+  updateTranscript(timestamp);
+}
+
+function updateTranscript(currentTimeInMS){
   var transcript = "";
 
   for(var i in transcriptData){
@@ -657,7 +661,7 @@ function handleMousemove(e){
     }
 
     //console.log("timestamp: " + e.chart.chartCursor.timestamp + " , start: " + start + ", end: " + end + " , word: " + value);
-    if (timestamp >= start && timestamp <= end)
+    if (currentTimeInMS >= start && currentTimeInMS <= end)
     {
       if(String(value).trim().localeCompare("sp") != 0){
         transcript += "<span class='highlight'>" + String(value).trim() + " " + "</span>";
@@ -709,6 +713,10 @@ function connectAudioCharts(){
       mChart.panels[x].chartCursor.showCursorAt(currentDate);
     }
     mChart.validateData();
+
+    //update the position in the transcript
+    updateTranscript(Math.floor(e.target.currentTime * 1000))
+
   });
 }
 
