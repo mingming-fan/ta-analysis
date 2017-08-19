@@ -1,3 +1,4 @@
+
 var recording_status = false;  //whether it is recording now or not
 // fetching DOM references
 var btnStartRecording = document.querySelector('#btn-start-recording');
@@ -51,8 +52,18 @@ function postFiles() {
     var month = currentdate.getMonth() + 1;
     var participantid = document.getElementById("participantid").value;
     var taskid = document.getElementById("taskid").value;
+    var folder1 = './' + participantid;
+    var folder2 = './' + participantid + '/' + taskid;
+    var fs = require('fs');
+    if (!fs.existsSync(folder1)){
+        fs.mkdirSync(folder1);
+        if (!fs.existsSync(folder2)){
+          fs.mkdirSync(folder2);
+        }
+      }
     //console.log("participant id" + participantid + ", task-id: " + taskid);
-    fileName = participantid + "_" + taskid + "_" + currentdate.getFullYear()+'_'+ month +"_" + currentdate.getDate() + "_" + currentdate.getHours() + "_" + currentdate.getMinutes() + "_" + currentdate.getSeconds() + "_" + currentdate.getMilliseconds() + '.mp4';
+    //fileName = participantid + "_" + taskid + "_" + currentdate.getFullYear()+'_'+ month +"_" + currentdate.getDate() + "_" + currentdate.getHours() + "_" + currentdate.getMinutes() + "_" + currentdate.getSeconds() + "_" + currentdate.getMilliseconds() + '.mp4';
+    fileName = folder2 + '/' + currentdate.getFullYear()+'_'+ month +"_" + currentdate.getDate() + "_" + currentdate.getHours() + "_" + currentdate.getMinutes() + "_" + currentdate.getSeconds() + "_" + currentdate.getMilliseconds() + '.mp4';
 
     var file = new File([blob], fileName, {
         type: 'video/mp4'
