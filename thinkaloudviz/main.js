@@ -14,7 +14,7 @@ var task_data;
 var loudnessData, pitchData, allData, transcriptData, silenceData, sentimentData, disSentimentData;
 
 window.onload = function(){
-  Tipped.create('.legend_element')
+  Tipped.create('.legend-label')
 
   $.get('./participant_file.json', function (files) {
     participants_files = files;
@@ -120,6 +120,17 @@ window.onload = function(){
 
   setTranscriptSelectionEventListener();
 };
+
+$("#labels_timeline").on('dblclick', function (event){
+  let width = $(this).width();
+  let x_pos = event.pageX - $("#labels_timeline").parent().offset().left;
+
+  let time = (x_pos/width) * audioDuration;
+
+  mAudio.currentTime = time;
+
+  mAudio.play();
+});
 
 function loadTaskData () {  //load the audio when the UI is displayed
   mAudio = document.getElementById("audiocontrol");
