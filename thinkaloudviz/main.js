@@ -118,6 +118,11 @@ window.onload = function(){
     mChart.validateData();
   });
 
+  $('#confirmFiles').on('click', function (ev) {
+    ev.preventDefault();
+    $('.participant-selection').addClass('hidden');
+  });
+
   setTranscriptSelectionEventListener();
 };
 
