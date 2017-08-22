@@ -484,10 +484,10 @@ compared: true
     toField: "data6"
   }
 ],
-dataProvider: sentimentData,
+dataProvider: speechRateData,
 categoryField: "time",
 compared: true
-},
+}
 ],
 
 panels: [ {
@@ -559,6 +559,32 @@ panels: [ {
     useDataSetColors: true,
     colorField: "lengendColor",
     lineColor: "lengendColor", //"#1ABC9C",
+  } ],
+  stockLegend: {
+    enabled: true,
+    markType: "none",
+    markSize: 0
+  },
+  listeners:[{
+    event: "changed",
+    method: handleMousemove,
+  }],
+},
+{
+  showCategoryAxis: false,
+  title: "speech rate (words/min)",
+  allowTurningOff: false,
+  stockGraphs: [ {
+    id: "g6",
+    compareGraphType:"smoothedLine",
+    valueField: "data6",
+    compareField: "data6",
+    comparable: true,
+    visibleInLegend: true,
+    useDataSetColors: false,
+    lineColor: "legendColor",
+    legendColorField: "legendColor",
+    lineColorField: "legendColor",
   } ],
   stockLegend: {
     enabled: true,
