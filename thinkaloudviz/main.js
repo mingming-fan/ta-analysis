@@ -602,10 +602,11 @@ panels: [ {
   allowTurningOff: false,
   stockGraphs: [ {
     id: "g3",
-    compareGraphType:"step",
+    compareGraphType:"smoothedLine",
     valueField: "data3",
     compareField: "data3",
     comparable: true,
+    fillAlphas: 0.8,
     visibleInLegend: true,
     useDataSetColors: false,
     lineColor: "legendColor",
