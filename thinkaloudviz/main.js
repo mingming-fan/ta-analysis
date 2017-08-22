@@ -119,7 +119,7 @@ window.onload = function(){
   });
 
   $('#confirmFiles').on('click', function (ev) {
-    ev.preventDefault();
+    // ev.preventDefault();
     $('.participant-selection').addClass('hidden');
   });
 
