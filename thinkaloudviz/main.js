@@ -11,7 +11,7 @@ var participants_files = [];
 
 var task_data;
 
-var loudnessData, pitchData, allData, transcriptData, silenceData, sentimentData, disSentimentData;
+var loudnessData, pitchData, allData, transcriptData, silenceData, sentimentData, disSentimentData, speechRateData;
 
 window.onload = function(){
 
@@ -136,6 +136,7 @@ function loadTaskData () {  //load the audio when the UI is displayed
   silenceData = allData[1];
   sentimentData = loadSentimentData(task_data.sentiment);
   disSentimentData = loadDiscreteSentimentData(task_data.sentiment);
+  speechRateData = loadSpeechRateData(task_data.speechrate)
 
 
   setTimeout(myTimer, 500);
@@ -370,6 +371,22 @@ function loadRawCategoryData (dataset_url) {
   });
 }
 
+
+function loadSpeechRateData(dataset_url) {
+  var chartData = [];
+  AmCharts.loadFile(dataset_url, {}, function(data) {
+    inputdata = AmCharts.parseJSON(data);
+    //create some samples between start and end time and add to the chart
+    for(var i = 0; i < inputdata.length; i++){
+      var start = parseInt(parseFloat(inputdata[i].start) * 1000);
+      var end = parseInt(parseFloat(inputdata[i].end) * 1000);
+      var rate = parseFloat(inputdata[i].rate);
+      chartData.push({"time": start, "data": rate, "duration": end-start});
+      }
+    });
+  return  chartData;
+}
+
 //console.log("after checking if the data is ready");
 function drawCharts(){
   var chart = null;
@@ -441,6 +458,16 @@ compared: true
   {
     fromField: "legendColor",
     toField: "legendColor"
+  }
+],
+dataProvider: sentimentData,
+categoryField: "time",
+compared: true
+},
+{
+  fieldMappings: [{
+    fromField: "data",
+    toField: "data6"
   }
 ],
 dataProvider: sentimentData,

@@ -113,18 +113,34 @@ function uploadFile(request, response) {
 
         var originalFileName = file.split('path:')[1].split('\',')[0].split(dir)[1].toString().replace(/\\/g, '').replace('/\//g', '');
 
-        //console.log('original FileName: ', originalFileName);
+        console.log('original FileName: ' + originalFileName);
 
         var FileName = file.split('name:')[1].split('\',')[0].toString().replace(/\\/g, '').replace('\'', '').replace(/\s/g,'');
 
         //var fullFilaName = file.split('path:')[1].split('\',')[0].split(dir)[0].toString().replace('\'', '') + dir + file.split('name:')[1].split('\',')[0].toString().replace(/\\/g, '').replace('\'', '').replace(/\s/g,'');
         // rename the file to resolve the unknown random naming problem
+        console.log("FileName: " + FileName);
+        var res = FileName.split("-");
+        var participantid = res[0];
+        var taskid = res[1];
+        var file = res[2];
+        console.log("dir:" + dir);
+        console.log("participant id: " + participantid + ", task id: " + taskid + ", file: " + file);
+        var folder1 = __dirname + dir + "p" + participantid;
+        var folder2 = __dirname + dir + participantid + '\\t' + taskid;
         var fs = require('fs');
-        fs.rename('./uploads/' + originalFileName, './uploads/' +FileName, function(err) {
+        if (!fs.existsSync(folder1)){
+           fs.mkdirSync(folder1);
+           if (!fs.existsSync(folder2)){
+             fs.mkdirSync(folder2);
+           }
+         }
+
+        fs.rename('./uploads/' + originalFileName, './uploads/p' + participantid + "/t"+ taskid + "/" + file, function(err) {
             if ( err ) console.log('ERROR: ' + err);
         });
 
-       var fileURL = 'http://' + app.address + ':' + port + '/uploads/' + FileName;
+       var fileURL = 'http://' + app.address + ':' + port + '/uploads/p' + participantid + '/t'+ taskid + '/' + file;
 
         console.log('fileURL: ', fileURL);
 
