@@ -22,9 +22,9 @@
             </div>
             <h2>Transcript (with sentiment color-coded)</h2>
             <ul class="legend">
-                <li><span class="positivelengend"></span>positive</li>
-                <li><span class="neutrallengend"></span>neutral</li>
-                <li><span class="negativelengend"></span>negative</li>
+                <li><span class="legend_element positivelengend"></span><span>positive</span></li>
+                <li><span class="legend_element neutrallengend"></span>neutral</li>
+                <li><span class="legend_element negativelengend"></span>negative</li>
             </ul>
             <br/>
             <div id="transcriptdiv"></div>
@@ -37,36 +37,41 @@
             <br/>
             <div id="chartdiv"></div>
             <div>
-              <form action="">
-                <fieldset style="display: inline-block;">
-                Silence Filter (s):
-                  <input type="radio" name="filter" value="0" onclick="applySilenceLengthFilters(this.value)">show all
-                  <input type="radio" name="filter" value="1" onclick="applySilenceLengthFilters(this.value)">>=1s
-                  <input type="radio" name="filter" value="3" onclick="applySilenceLengthFilters(this.value)">>=3s
-                  <input type="radio" name="filter" value="5" onclick="applySilenceLengthFilters(this.value)">>=5s
-                  <input type="radio" name="filter" value="10" onclick="applySilenceLengthFilters(this.value)">>=10s
-                  <input type="radio" name="filter" value="15" onclick="applySilenceLengthFilters(this.value)">>=15s
-              </fieldset>
-              </form>
             </div>
-            <div class="featurepanelstyle">Category Timeline <ul class="legend">
-                            <li><span class="legend_element reading_legend" ></span><span class="legend-label" title="Participant is reading of words, phrases, or sentences directly from the device, instructions">reading</span></li>
-                            <li><span class="legend_element procedure_legend"></span><span class="legend-label" title="The participant is describing his/her current or future actions">procedure</span></li>
-                            <li><span class="legend_element observation_legend"></span><span class="legend-label" title="The participant is making remarks about the device, instructions or their behavior">observation</span></li>
-                            <li><span class="legend_element explanation_legend"></span><span class="legend-label" title="The participant includes the motivations for participants' behavior.">explanation</span></li>
-                        </ul>
+            <div class="featurepanelstyle">Category
+              <ul class="legend">
+                  <li><span class="legend_element reading_legend" ></span><span class="legend-label" title="Participant is reading of words, phrases, or sentences directly from the device, instructions">reading</span></li>
+                  <li><span class="legend_element procedure_legend"></span><span class="legend-label" title="The participant is describing his/her current or future actions">procedure</span></li>
+                  <li><span class="legend_element observation_legend"></span><span class="legend-label" title="The participant is making remarks about the device, instructions or their behavior">observation</span></li>
+                  <li><span class="legend_element explanation_legend"></span><span class="legend-label" title="The participant includes the motivations for participants' behavior.">explanation</span></li>
+              </ul>
             </div>
             <div class="timeline">
               <div id="labels_timeline" class="timeline-outline"></div>
             </div>
-            <div class="featurepanelstyle">Note Timeline</div>
+            <div class="featurepanelstyle">Silence</div>
+            <form action="">
+              <fieldset style="display: inline-block;">
+              Silence Filter (s):
+                <input type="radio" name="filter" value="0" onclick="drawSilenceTimeline(this.value)">show all
+                <input type="radio" name="filter" value="1" onclick="drawSilenceTimeline(this.value)">>=1s
+                <input type="radio" name="filter" value="3" onclick="drawSilenceTimeline(this.value)">>=3s
+                <input type="radio" name="filter" value="5" onclick="drawSilenceTimeline(this.value)">>=5s
+                <input type="radio" name="filter" value="10" onclick="drawSilenceTimeline(this.value)">>=10s
+                <input type="radio" name="filter" value="15" onclick="drawSilenceTimeline(this.value)">>=15s
+            </fieldset>
+            </form>
+            <div class="timeline">
+              <div id="silence_timeline" class="timeline-outline"></div>
+            </div>
+            <div class="featurepanelstyle">Problem</div>
             <div class="timeline">
               <div id="notes_timeline" class="timeline-outline"></div>
             </div>
           </div>
         </div>
         <br/>
-        <div class="col-md-4"><h2>Add Analysis Note</h2></div>
+        <div class="col-md-4"><h2>Add Problem</h2></div>
         <div class="row">
           <div class="col-md-6" style="margin-top: 5px;">
             <table class="table note-table">
@@ -74,6 +79,7 @@
                 <th>Start</th>
                 <th>End</th>
                 <th>Features</th>
+                <th>Problem</th>
                 <th>Note</th>
                 <th>Delete</th>
               </thead>
@@ -87,7 +93,7 @@
                 <input type="text" class="form-control" id="start" size="4">
                 <span class="label">End time (s): </span>
                 <input type="text" class="form-control" id="end" size="4">
-                <span class="label">Features: </span>
+                <span class="label">Evidence: </span>
                 <input class="featureCheckbox" type="checkbox" name="loudness" value="loudness"/> Loudness
                 <input class="featureCheckbox" type="checkbox" name="pitch" value="pitch"/> Pitch
                 <input class="featureCheckbox" type="checkbox" name="silence" value="silence"/> Silence
@@ -96,12 +102,21 @@
                 <input class="featureCheckbox" type="checkbox" name="transcript" value="transcript"/> Transcript<br/>
               </div>
               <div class="note-form">
-                <span class="label">Note</span>
-                <textarea type="text" id= "annotation" class="form-control" style="width:75%; text-align='center'; display: inline-block;" rows = "5" placeholder="describe anything that you think is worth mentioning"></textarea>
+                <div class="form-group row">
+                  <label for="probDescription" class="col-form-label label">Problem</label>
+                  <input class="form-control" type="text" id="probDescription" placeholder="Problem Description" style="width:75%; display: inline-block;">
+                </div>
+                <span class="label">Detail</span>
+                <textarea type="text" id= "annotation" class="form-control" style="width:75%; display: inline-block;" rows = "5" placeholder="describe anything that you think is worth mentioning"></textarea>
                 <button type="button" id="addNote" class="btn">Add a Note</button>
               </div>
               <br/>
             </form>
+          </div>
+        </div>
+        <div class="row">
+          <div class="center">
+            <button class="btn btn-primary" name="button" id="saveFile">Done</button>
           </div>
         </div>
       </div>
