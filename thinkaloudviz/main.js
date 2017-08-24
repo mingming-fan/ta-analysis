@@ -11,7 +11,9 @@ var participants_files = [];
 
 var task_data;
 
-var loudnessData, pitchData, allData, transcriptData, silenceData, sentimentData, disSentimentData, speechRateData;
+var loudnessData, pitchData, allData, transcriptData, silenceData, silenceDataList, sentimentData, disSentimentData, speechRateData;
+
+var silenceColor = randomColor({luminosity: 'dark'});
 
 window.onload = function(){
   Tipped.create('.legend-label')
@@ -63,6 +65,7 @@ window.onload = function(){
 
     note.color = randomColor();
     note.annotation = $('#annotation').val();
+    note.prob = $('#probDescription').val();
 
     let timestamp = new Date().valueOf();;
 
@@ -78,6 +81,7 @@ window.onload = function(){
       "<tr class=note_"+ note.id + "><td>" + note.startTime + '</td>' +
       "<td>" + note.endTime + '</td>' +
       "<td>" + note.features.join() + '</td>' +
+      "<td>" + note.prob + '</td>' +
       "<td>" + note.annotation + '</td>' +
       "<td><i class='fa fa-trash-o delete-note' aria-hidden='true'></i></tr>"
     )
@@ -100,6 +104,7 @@ window.onload = function(){
     $('#start').val("");
     $('#end').val("");
     $('#annotation').val("");
+    $('#probDescription').val("");
     $(".featureCheckbox").prop("checked", false);
   });
 
@@ -123,6 +128,18 @@ window.onload = function(){
     $('.participant-selection').addClass('hidden');
   });
 
+  $('#saveFile').on('click', function (ev) {
+    ev.preventDefault();
+    let jsonData = JSON.stringify(note_array);
+
+    let participant = $('#participant_sel').val();
+    let task = $('#task_sel').val();
+
+    let filename = 'uxproblem_' + participant + '_' + task + '_' + Date.now() + '.json'
+
+    download(jsonData, filename, 'text/plain');
+  });
+
   setTranscriptSelectionEventListener();
 };
 
@@ -136,6 +153,14 @@ $("#labels_timeline").on('dblclick', function (event){
 
   mAudio.play();
 });
+
+function download(text, name, type) {
+    var a = document.createElement("a");
+    var file = new Blob([text], {type: type});
+    a.href = URL.createObjectURL(file);
+    a.download = name;
+    a.click();
+}
 
 function loadTaskData () {  //load the audio when the UI is displayed
   mAudio = document.getElementById("audiocontrol");
@@ -153,10 +178,10 @@ function loadTaskData () {  //load the audio when the UI is displayed
   allData = loadSilenceData(task_data.transcript);
   transcriptData = allData[0];
   silenceData = allData[1];
+  silenceDataList = allData[2];
   sentimentData = loadSentimentData(task_data.sentiment);
   disSentimentData = loadDiscreteSentimentData(task_data.sentiment);
   speechRateData = loadSpeechRateData(task_data.speechrate)
-
 
   setTimeout(myTimer, 500);
   function myTimer() {
@@ -166,6 +191,7 @@ function loadTaskData () {  //load the audio when the UI is displayed
       mChart = drawCharts();
       //mChart2 = drawSilenceChart();
       drawTranscript();
+      drawSilenceTimeline();
       //drawTranscript2();
     }
     else {
@@ -179,6 +205,8 @@ function processAudio() {
   audioDuration = mAudio.duration;
   //console.log(mAudio.duration);
   loadRawCategoryData(task_data.category);
+
+  drawSilenceTimeline();
 }
 
 //load the data from the external sources
@@ -206,6 +234,8 @@ function loadChartData(dataset_url) {
 function loadSilenceData(dataset_url) {
   var chartData = [];
   var chartDataSampled = [];
+  var ist = [];
+  silenceDataList = [];
   AmCharts.loadFile(dataset_url, {}, function(data) {
     inputdata = AmCharts.parseJSON(data);
     for(var i = 0; i < inputdata.length; i++){
@@ -225,6 +255,10 @@ function loadSilenceData(dataset_url) {
         //chartData.push({"time": startDate, "data":1});
         //chartData.push({"time": endDate, "word":1});
         //sample some data points between start and end
+        silenceDataList.push({
+          start_time: start/1000,
+          end_time: end/1000
+        });
         for (var j = 0; j < end-start; j+=50){
           chartDataSampled.push({"time": start+j, "data":2, "duration": end-start, "legendColor": AmCharts.randomColor, "label": String(value).trim()});
           //chartData.push({"time": end-1, "data":1, "duration": end-start, "color": undefined, "label": "undefined"});
@@ -240,7 +274,7 @@ function loadSilenceData(dataset_url) {
       }
     }
   });
-  return  [chartData, chartDataSampled];
+  return  [chartData, chartDataSampled, silenceDataList];
 }
 
 //whether to discrete the sentiment into just three classes: positive, neutral, negative
@@ -281,7 +315,6 @@ function loadSentimentData(dataset_url) {
   });
   return  chartData;
 }
-
 
 function loadDiscreteSentimentData(dataset_url) {
   var chartData = [];
@@ -405,6 +438,20 @@ function loadSpeechRateData(dataset_url) {
       }
     });
   return  chartData;
+}
+
+function drawSilenceTimeline(length = "0") {
+  $('#silence_timeline').empty();
+  _.each(silenceDataList, function (silence) {
+    let duration = silence.end_time - silence.start_time;
+    if (duration > parseInt(length)) {
+      silence.width = ((silence.end_time - silence.start_time)/audioDuration) * 100 + '%';
+      silence.start = (silence.start_time/audioDuration) * 100 + '%';
+      $('#silence_timeline').append("<span class='timeline-element' style='"+
+      "width:" + silence.width +';left:' + silence.start + ';background-color:' + silenceColor
+      + "'></span>")
+    }
+  });
 }
 
 //console.log("after checking if the data is ready");
@@ -992,9 +1039,6 @@ function updateTranscript2(currentTimeInMS){
   var x = document.getElementById("transcriptdiv");
   x.innerHTML = transcript;
 }
-
-
-
 
 setTimeout(myTimer2, 500);
 

@@ -155,6 +155,7 @@ background-color: #F4D03F
   color:black;
   font-weight: bold;
   width: 90%;
+  margin-top: 10px;
 }
 
 .featureCheckbox {
@@ -210,14 +211,18 @@ background-color: #F4D03F
   display: none;
 }
 
+.center {
+  text-align: center;
+}
+
 /* basic positioning */
 .legend { list-style: none; }
 .legend li { float: left; margin-right: 10px; }
 .legend .legend_element { border: 1px solid #ccc; float: left; width: 12px; height: 12px; margin: 2px; }
 /* your colors */
-.legend .positivelengend { background-color: #28B463; }
-.legend .neutrallengend { background-color: #F4F6F7; }
-.legend .negativelengend { background-color: #CB4335; }
+.legend .positivelengend { background-color: #28B463; margin-top: 7px;}
+.legend .neutrallengend { background-color: #F4F6F7; margin-top: 7px;}
+.legend .negativelengend { background-color: #CB4335; margin-top: 7px;}
 
 .legend .reading_legend { background-color: #0275d8; }
 .legend .procedure_legend { background-color: #5cb85c; }
