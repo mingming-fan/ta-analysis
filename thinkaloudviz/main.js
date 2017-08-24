@@ -189,7 +189,6 @@ function loadTaskData () {  //load the audio when the UI is displayed
     {
       console.log("data is ready");
       mChart = drawCharts();
-      //mChart2 = drawSilenceChart();
       drawTranscript();
       drawSilenceTimeline();
       //drawTranscript2();
@@ -498,24 +497,6 @@ function drawCharts(){
 {
   fieldMappings: [{
     fromField: "data",
-    toField: "data3"
-  },
-  {
-    fromField: "label",
-    toField: "label3"
-  },
-  {
-    fromField: "legendColor",
-    toField: "legendColor"
-  }
-],
-dataProvider: silenceData,
-categoryField: "time",
-compared: true
-},
-{
-  fieldMappings: [{
-    fromField: "data",
     toField: "data5"
   },
   {
@@ -648,34 +629,6 @@ panels: [ {
     event: "changed",
     method: handleMousemove,
   }],
-},
-{
-  showCategoryAxis: true,
-  title: "Silence",
-  allowTurningOff: false,
-  stockGraphs: [ {
-    id: "g3",
-    compareGraphType:"column",
-    valueField: "data3",
-    compareField: "data3",
-    comparable: true,
-    fillAlphas: 0.8,
-    graphFillAlpha: 1,
-    visibleInLegend: true,
-    useDataSetColors: false,
-    lineColor: "legendColor",
-    legendColorField: "legendColor",
-    lineColorField: "legendColor",
-  } ],
-  stockLegend: {
-    enabled: true,
-    markType: "none",
-    markSize: 0
-  },
-  listeners:[{
-    event: "changed",
-    method: handleMousemove,
-  }],
 }
 ],
 
@@ -761,72 +714,6 @@ periodSelector: {
 }
 });
 return chart;
-}
-
-
-function drawSilenceChart(){
-  var mChart = null;
-  mChart = AmCharts.makeChart("chartdiv2", {
-    "type": "serial",
-    "theme": "light",
-    "dataProvider": silenceData,
-    "graphs": [{
-        "id": "g10",
-        "fillAlphas": 0.4,
-        "valueField": "data",
-    }],
-    "chartScrollbar": {
-        "graph": "g10",
-        "scrollbarHeight": 80,
-        "backgroundAlpha": 0,
-        "selectedBackgroundAlpha": 0.1,
-        "selectedBackgroundColor": "#888888",
-        "graphFillAlpha": 0,
-        "graphLineAlpha": 0.5,
-        "selectedGraphFillAlpha": 0,
-        "selectedGraphLineAlpha": 1,
-        "autoGridCount": true,
-        "color": "#AAAAAA"
-    },
-    "categoryField": "time",
-    "categoryAxesSettings": {
-      groupToPeriods: [ 'fff', 'ss' ], // specify period grouping
-      parseDates: true,
-      autoGridCount: false,
-      dateFormats: [{
-        period: "fff",
-        format: "JJ:NN:SS"
-      }, {
-        period: "ss",
-        format: "JJ:NN:SS"
-      }, {
-        period: "mm",
-        format: "JJ:NN:SS"
-      }, {
-        period: "hh",
-        format: "JJ:NN:SS"
-      }, {
-        period: "DD",
-        format: "MMM DD"
-      }, {
-        period: "WW",
-        format: "MMM DD"
-      }, {
-        period: "MM",
-        format: "MMM"
-      }, {
-        period: "YYYY",
-        format: "YYYY"
-      }],
-      //"equalSpacing": true,
-      minPeriod: "fff"
-    },
-    "export": {
-        "enabled": true,
-         "dateFormat": "YYYY-MM-DD HH:NN:SS"
-    }
-});
-return mChart;
 }
 
 function drawTranscript(){
@@ -1043,7 +930,7 @@ function updateTranscript2(currentTimeInMS){
 setTimeout(myTimer2, 500);
 
 function myTimer2() {
-  if(mChart != null && mChart2 != null && mAudio != null)
+  if(mChart != null && mAudio != null)
   {
     console.log("charts and the audio control are both ready...");
     connectAudioCharts();

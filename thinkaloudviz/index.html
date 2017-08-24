@@ -34,12 +34,6 @@
             <div id="audiodiv">
               <audio id="audiocontrol" preload = "auto" controls>Your browser does not support this audio element. </audio>
             </div>
-            <br/>
-            <div id="chartdiv"></div>
-            <br/>
-            <!--div id="chartdiv2"></div-->
-            <div>
-            </div>
             <div class="featurepanelstyle">Category
               <ul class="legend">
                   <li><span class="legend_element reading_legend" ></span><span class="legend-label" title="Participant is reading of words, phrases, or sentences directly from the device, instructions">reading</span></li>
@@ -51,6 +45,7 @@
             <div class="timeline">
               <div id="labels_timeline" class="timeline-outline"></div>
             </div>
+            <br/>
             <div class="featurepanelstyle">Silence</div>
             <form action="">
               <fieldset style="display: inline-block;">
@@ -66,6 +61,10 @@
             <div class="timeline">
               <div id="silence_timeline" class="timeline-outline"></div>
             </div>
+            <br/>
+            <div id="chartdiv"></div>
+            <br/>
+
             <div class="featurepanelstyle">Problem</div>
             <div class="timeline">
               <div id="notes_timeline" class="timeline-outline"></div>
@@ -96,11 +95,11 @@
                 <span class="label">End time (s): </span>
                 <input type="text" class="form-control" id="end" size="4">
                 <span class="label">Evidence: </span>
-                <input class="featureCheckbox" type="checkbox" name="loudness" value="loudness"/> Loudness
-                <input class="featureCheckbox" type="checkbox" name="pitch" value="pitch"/> Pitch
                 <input class="featureCheckbox" type="checkbox" name="silence" value="silence"/> Silence
                 <input class="featureCheckbox" type="checkbox" name="category" value="category"/> Category
                 <input class="featureCheckbox" type="checkbox" name="sentiment" value="sentiment"/> Sentiment
+                <input class="featureCheckbox" type="checkbox" name="loudness" value="loudness"/> Loudness
+                <input class="featureCheckbox" type="checkbox" name="pitch" value="pitch"/> Pitch
                 <input class="featureCheckbox" type="checkbox" name="transcript" value="transcript"/> Transcript<br/>
               </div>
               <div class="note-form">
@@ -135,6 +134,6 @@
       <script src="../amstockchart/amcharts/amstock.js"></script>
       <script src="../amcharts/amcharts/plugins/dataloader/dataloader.min.js"></script>
       <script src="../amcharts/amcharts/plugins/export/export.min.js"></script>
-      <script src="main.js?1000"></script>
+      <script src="main.js"></script>
     </body>
 </html>

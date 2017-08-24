@@ -51,7 +51,7 @@ background-color: #F4D03F
 
 #chartdiv {
   width: 90%;
-  height: 750px;
+  height: 600px;
 	margin: auto;
 }
 
@@ -63,27 +63,27 @@ background-color: #F4D03F
 
 #loudnesschartdiv {
   width: 90%;
-  height: 200px;
+  height: 150px;
 	margin: auto;
 }
 
 
 #pitchchartdiv {
   width: 90%;
-  height: 200px;
+  height: 150px;
 	margin: auto;
 }
 
 
 #silencechartdiv {
   width: 90%;
-  height: 200px;
+  height: 150px;
 	margin: auto;
 }
 
 #sentimentchartdiv {
   width: 90%;
-  height: 200px;
+  height: 150px;
 	margin: auto;
 }
 
