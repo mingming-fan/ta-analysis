@@ -143,17 +143,6 @@ window.onload = function(){
   setTranscriptSelectionEventListener();
 };
 
-$("#labels_timeline").on('dblclick', function (event){
-  let width = $(this).width();
-  let x_pos = event.pageX - $("#labels_timeline").parent().offset().left;
-
-  let time = (x_pos/width) * audioDuration;
-
-  mAudio.currentTime = time;
-
-  mAudio.play();
-});
-
 function download(text, name, type) {
     var a = document.createElement("a");
     var file = new Blob([text], {type: type});
@@ -414,11 +403,21 @@ function loadRawCategoryData (dataset_url) {
       label.start = (label.start_time/audioDuration) * 100 + '%';
       $('#labels_timeline').append("<span class='timeline-element' style='"+
       "width:" + label.width +';left:' + label.start + ';background-color:' + label_color[label.label]
-      + "' title="+ label.note+"></span>")
+      + "' title="+ label.note+" value=" + label.start_time + "></span>")
     });
     //console.log(data);
 
     Tipped.create('.timeline-element');
+
+
+    $(".timeline-element").on('dblclick', function (event){
+      let time = $(this).attr('value');
+
+      mAudio.currentTime = time;
+
+      mAudio.play();
+    });
+
     loaded = true;
   });
 }
