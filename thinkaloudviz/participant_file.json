@@ -7,6 +7,7 @@
     "transcript": "./p1/t1/thinkaloud_aligned.json",
     "sentiment": "./p1/t1/thinkaloud_sentiment.json",
     "category": "./coders/1/1/categorydata.json",
+    "filler": "./coders/1/1/filler.json",
     "audio": "./p1/t1/thinkaloud.wav",
     "speechrate": "./p1/t1/speechrate.json"
   }]

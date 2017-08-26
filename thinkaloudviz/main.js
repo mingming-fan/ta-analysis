@@ -193,6 +193,7 @@ function processAudio() {
   audioDuration = mAudio.duration;
   //console.log(mAudio.duration);
   loadRawCategoryData(task_data.category);
+  loadVerbalFillerData(task_data.filler);
 
   drawSilenceTimeline();
 }
@@ -422,6 +423,20 @@ function loadRawCategoryData (dataset_url) {
   });
 }
 
+function loadVerbalFillerData (dataset_url) {
+  $.getJSON(dataset_url, function (data) {
+    //console.log(audioDuration, data);
+    let fill_color = randomColor({luminosity: 'dark'});
+
+    _.each(data, function (filler) {
+      filler.width = ((filler.end_time - filler.start_time)/audioDuration) * 100 + '%';
+      filler.start = (filler.start_time/audioDuration) * 100 + '%';
+      $('#filler_timeline').append("<span class='timeline-element' style='width:"
+      + filler.width +';left:' + filler.start + ';background-color:' + fill_color +
+      "'></span>")
+    });
+  });
+}
 
 function loadSpeechRateData(dataset_url) {
   var chartData = [];
