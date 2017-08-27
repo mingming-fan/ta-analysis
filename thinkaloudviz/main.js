@@ -11,9 +11,15 @@ var participants_files = [];
 
 var task_data;
 
-var loudnessData, pitchData, allData, transcriptData, silenceData, silenceDataList, sentimentData, disSentimentData, speechRateData;
+var timeline_start, timeline_end;
+
+var loudnessData, pitchData, allData, transcriptData, silenceData,
+silenceDataList, sentimentData, disSentimentData, speechRateData, rawCategoryData, verbalFillerData;
 
 var silenceColor = randomColor({luminosity: 'dark'});
+var fillerColor = randomColor({luminosity: 'dark'});
+
+var silenceLength = 0;
 
 window.onload = function(){
   Tipped.create('.legend-label')
@@ -192,6 +198,8 @@ function loadTaskData () {  //load the audio when the UI is displayed
 function processAudio() {
   audioDuration = mAudio.duration;
   //console.log(mAudio.duration);
+  timeline_start = 0;
+  timeline_end = audioDuration;
   loadRawCategoryData(task_data.category);
   loadVerbalFillerData(task_data.filler);
 
@@ -392,49 +400,75 @@ function loadCategoryData(dataset_url) {
 function loadRawCategoryData (dataset_url) {
   $.getJSON(dataset_url, function (data) {
     //console.log(audioDuration, data);
-    var label_color = {
-      Reading: '#0275d8',
-      Procedure: '#5cb85c',
-      Observation: '#f0ad4e',
-      Explanation: '#d9534f'
-    }
-
-    _.each(data, function (label) {
-      label.width = ((label.end_time - label.start_time)/audioDuration) * 100 + '%';
-      label.start = (label.start_time/audioDuration) * 100 + '%';
-      $('#labels_timeline').append("<span class='timeline-element' style='"+
-      "width:" + label.width +';left:' + label.start + ';background-color:' + label_color[label.label]
-      + "' title="+ label.note+" value=" + label.start_time + "></span>")
-    });
-    //console.log(data);
-
-    Tipped.create('.timeline-element');
-
-
-    $(".timeline-element").on('dblclick', function (event){
-      let time = $(this).attr('value');
-
-      mAudio.currentTime = time;
-
-      mAudio.play();
-    });
-
-    loaded = true;
+    rawCategoryData = data;
+    drawCategoryData();
   });
 }
 
+function drawCategoryData () {
+  $('#labels_timeline').empty();
+  var label_color = {
+    Reading: '#0275d8',
+    Procedure: '#5cb85c',
+    Observation: '#f0ad4e',
+    Explanation: '#d9534f'
+  }
+
+  let duration = timeline_end - timeline_start;
+
+  _.each(rawCategoryData, function (label) {
+    let end = ((label.end_time - timeline_start)/duration) * 100;
+    let start = ((label.start_time - timeline_start)/duration) * 100;
+    if (Math.max(start, 0) < Math.min(100, end)) {
+      start = Math.max(0, start);
+      let width = Math.min(100, end) - start;
+      label.start = start + '%';
+      label.width = width + '%';
+      $('#labels_timeline').append("<span class='timeline-element' style='"+
+      "width:" + label.width +';left:' + label.start + ';background-color:' + label_color[label.label]
+      + "' title="+ label.note+" value=" + label.start_time + "></span>")
+    }
+  });
+  //console.log(data);
+
+  Tipped.create('.timeline-element');
+
+
+  $(".timeline-element").on('dblclick', function (event){
+    let time = $(this).attr('value');
+
+    mAudio.currentTime = time;
+
+    mAudio.play();
+  });
+
+}
+
+function drawVerbalFillerData () {
+  $('#filler_timeline').empty();
+
+  let total_duration = timeline_end - timeline_start;
+  _.each(verbalFillerData, function (filler) {
+    let end = ((filler.end_time - timeline_start)/total_duration) * 100;
+    let start = ((filler.start_time - timeline_start)/total_duration) * 100;
+    if (Math.max(start, 0) < Math.min(100, end)) {
+      start = Math.max(0, start);
+      let width = Math.min(100, end) - start;
+      filler.start = start + '%';
+      filler.width = width + '%';
+      $('#filler_timeline').append("<span class='timeline-element' style='width:"
+      + filler.width +';left:' + filler.start + ';background-color:' + fillerColor +
+      "'></span>")
+    }
+  });
+}
+
+
 function loadVerbalFillerData (dataset_url) {
   $.getJSON(dataset_url, function (data) {
-    //console.log(audioDuration, data);
-    let fill_color = randomColor({luminosity: 'dark'});
+    verbalFillerData = data;
 
-    _.each(data, function (filler) {
-      filler.width = ((filler.end_time - filler.start_time)/audioDuration) * 100 + '%';
-      filler.start = (filler.start_time/audioDuration) * 100 + '%';
-      $('#filler_timeline').append("<span class='timeline-element' style='width:"
-      + filler.width +';left:' + filler.start + ';background-color:' + fill_color +
-      "'></span>")
-    });
+    drawVerbalFillerData();
   });
 }
 
@@ -453,13 +487,23 @@ function loadSpeechRateData(dataset_url) {
   return  chartData;
 }
 
-function drawSilenceTimeline(length = "0") {
+function drawSilenceTimeline(length) {
   $('#silence_timeline').empty();
+
+  if (length) {
+    silenceLength = parseInt(length);
+  }
+
+  let total_duration = timeline_end - timeline_start;
   _.each(silenceDataList, function (silence) {
     let duration = silence.end_time - silence.start_time;
-    if (duration > parseInt(length)) {
-      silence.width = ((silence.end_time - silence.start_time)/audioDuration) * 100 + '%';
-      silence.start = (silence.start_time/audioDuration) * 100 + '%';
+    let end = ((silence.end_time - timeline_start)/total_duration) * 100;
+    let start = ((silence.start_time - timeline_start)/total_duration) * 100;
+    if (Math.max(start, 0) < Math.min(100, end) && duration > silenceLength) {
+      start = Math.max(0, start);
+      let width = Math.min(100, end) - start;
+      silence.start = start + '%';
+      silence.width = width + '%';
       $('#silence_timeline').append("<span class='timeline-element' style='"+
       "width:" + silence.width +';left:' + silence.start + ';background-color:' + silenceColor
       + "'></span>")
@@ -562,6 +606,9 @@ panels: [ {
   listeners:[{
     event: "changed",
     method: handleMousemove,
+  },{
+    event: "zoomed",
+    method: handleZoom
   }],
 },
 {
@@ -880,6 +927,15 @@ function updateTranscript(currentTimeInMS){
   }
   var x = document.getElementById("transcriptdiv");
   x.innerHTML = transcript;
+}
+
+function handleZoom(e) {
+  timeline_start = moment.duration(e.startValue).asMilliseconds() / 1000.0;
+  timeline_end = moment.duration(e.endValue).asMilliseconds() / 1000.0;
+
+  drawCategoryData();
+  drawSilenceTimeline();
+  drawVerbalFillerData();
 }
 
 
