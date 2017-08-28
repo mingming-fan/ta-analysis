@@ -287,7 +287,7 @@ function loadSentimentData(dataset_url) {
       var end = parseInt(parseFloat(inputdata[i].end) * 1000);
       if(threshold_sentiment){
         var sentiment = 0;
-        if(parseFloat(inputdata[i].data) >= 0.8){
+        if(parseFloat(inputdata[i].data) >= 0.75){
           sentiment = 1;
         }
         else if(parseFloat(inputdata[i].data <= -0.1)){
@@ -525,6 +525,34 @@ function drawCharts(){
     dataSets: [{
       fieldMappings: [{
         fromField: "data",
+        toField: "data5"
+      },
+      {
+        fromField: "label",
+        toField: "label5"
+      },
+      {
+        fromField: "legendColor",
+        toField: "legendColor"
+      }
+    ],
+    dataProvider: sentimentData,
+    categoryField: "time",
+    compared: false
+    },
+    {
+      fieldMappings: [{
+        fromField: "data",
+        toField: "data6"
+      }
+    ],
+    dataProvider: speechRateData,
+    categoryField: "time",
+    compared: true
+  },
+  {
+      fieldMappings: [{
+        fromField: "data",
         toField: "data1"
       },
       {
@@ -537,7 +565,8 @@ function drawCharts(){
       }
     ],
     dataProvider: loudnessData,
-    categoryField: "time"
+    categoryField: "time",
+    compared: true
   },
   {
     fieldMappings: [{
@@ -556,91 +585,9 @@ function drawCharts(){
   dataProvider: pitchData,
   categoryField: "time",
   compared: true
-},
-{
-  fieldMappings: [{
-    fromField: "data",
-    toField: "data5"
-  },
-  {
-    fromField: "label",
-    toField: "label5"
-  },
-  {
-    fromField: "legendColor",
-    toField: "legendColor"
-  }
-],
-dataProvider: sentimentData,
-categoryField: "time",
-compared: true
-},
-{
-  fieldMappings: [{
-    fromField: "data",
-    toField: "data6"
-  }
-],
-dataProvider: speechRateData,
-categoryField: "time",
-compared: true
 }
 ],
-panels: [ {
-  showCategoryAxis: false,
-  title: "Loudness (dB)",
-  allowTurningOff: false,
-  stockGraphs: [ {
-    id: "g1",
-    type:"smoothedLine",
-    valueField: "data1",
-    comparable: false,
-    compareField: "data1",
-    useDataSetColors: true,
-    colorField: "legendColor",
-    lineColor: "legendColor",
-    legendColorField: "legendColor",
-    lineColorField: "legendColor",
-  } ],
-  stockLegend: {
-    enabled: true,
-    markType: "none",
-    markSize: 0
-  },
-  listeners:[{
-    event: "changed",
-    method: handleMousemove,
-  },{
-    event: "zoomed",
-    method: handleZoom
-  }],
-},
-{
-  showCategoryAxis: false,
-  title: "Pitch (HZ)",
-  allowTurningOff: false,
-  stockGraphs: [ {
-    id: "g2",
-    compareGraphType:"smoothedLine",
-    valueField: "data2",
-    compareField: "data2",
-    comparable: true,
-    useDataSetColors: false,
-    lineColor: "legendColor",
-    legendColorField: "legendColor",
-    lineColorField: "legendColor",
-
-  } ],
-  stockLegend: {
-    enabled: true,
-    markType: "none",
-    markSize: 0
-  },
-  listeners:[{
-    event: "changed",
-    method: handleMousemove,
-  }],
-},
+panels: [
 {
   showCategoryAxis: false,
   title: "Sentiment",
@@ -650,11 +597,7 @@ panels: [ {
     compareGraphType:"smoothedLine",
     valueField: "data5",
     compareField: "data5",
-    comparable: true,
-    useDataSetColors: false,
-    lineColor: "legendColor",
-    colorField: "lengendColor",
-    lineColor: "lengendColor", //"#1ABC9C",
+    comparable: false,
   } ],
   stockLegend: {
     enabled: true,
@@ -677,10 +620,51 @@ panels: [ {
     compareField: "data6",
     comparable: true,
     visibleInLegend: true,
-    useDataSetColors: false,
-    lineColor: "legendColor",
-    legendColorField: "legendColor",
-    lineColorField: "legendColor",
+  } ],
+  stockLegend: {
+    enabled: true,
+    markType: "none",
+    markSize: 0
+  },
+  listeners:[{
+    event: "changed",
+    method: handleMousemove,
+  }],
+},
+{
+  showCategoryAxis: false,
+  title: "Loudness (dB)",
+  allowTurningOff: false,
+  stockGraphs: [ {
+    id: "g1",
+    type:"smoothedLine",
+    valueField: "data1",
+    comparable: true,
+    compareField: "data1",
+  } ],
+  stockLegend: {
+    enabled: true,
+    markType: "none",
+    markSize: 0
+  },
+  listeners:[{
+    event: "changed",
+    method: handleMousemove,
+  },{
+    event: "zoomed",
+    method: handleZoom
+  }],
+},
+{
+  showCategoryAxis: true,
+  title: "Pitch (HZ)",
+  allowTurningOff: false,
+  stockGraphs: [ {
+    id: "g2",
+    compareGraphType:"smoothedLine",
+    valueField: "data2",
+    compareField: "data2",
+    comparable: true,
   } ],
   stockLegend: {
     enabled: true,
