@@ -11,4 +11,101 @@
     "audio": "./p1/t1/thinkaloud.wav",
     "speechrate": "./p1/t1/speechrate.json"
   }]
-}]
+},
+{
+  "id": 3,
+  "tasks": [{
+    "id": 1,
+    "loudness": "./p3/t1/thinkaloud_loudness.json",
+    "pitch": "./p3/t1/thinkaloud_pitch.json",
+    "transcript": "./p3/t1/thinkaloud_aligned.json",
+    "sentiment": "./p3/t1/thinkaloud_sentiment.json",
+    "category": "./coders/3/1/categorydata.json",
+    "filler": "./coders/3/1/filler.json",
+    "audio": "./p3/t1/thinkaloud.wav",
+    "speechrate": "./p3/t1/speechrate.json"
+  }, {
+    "id": 2,
+    "loudness": "./p3/t2/thinkaloud_loudness.json",
+    "pitch": "./p3/t2/thinkaloud_pitch.json",
+    "transcript": "./p3/t2/thinkaloud_aligned.json",
+    "sentiment": "./p3/t2/thinkaloud_sentiment.json",
+    "category": "./coders/3/2/categorydata.json",
+    "filler": "./coders/3/2/filler.json",
+    "audio": "./p3/t2/thinkaloud.wav",
+    "speechrate": "./p3/t2/speechrate.json"
+  }]
+},
+{
+  "id": 4,
+  "tasks": [{
+    "id": 1,
+    "loudness": "./p4/t1/thinkaloud_loudness.json",
+    "pitch": "./p4/t1/thinkaloud_pitch.json",
+    "transcript": "./p4/t1/thinkaloud_aligned.json",
+    "sentiment": "./p4/t1/thinkaloud_sentiment.json",
+    "category": "./coders/4/1/categorydata.json",
+    "filler": "./coders/4/1/filler.json",
+    "audio": "./p4/t1/thinkaloud.wav",
+    "speechrate": "./p4/t1/speechrate.json"
+  },{
+    "id": 2,
+    "loudness": "./p4/t2/thinkaloud_loudness.json",
+    "pitch": "./p4/t2/thinkaloud_pitch.json",
+    "transcript": "./p4/t2/thinkaloud_aligned.json",
+    "sentiment": "./p4/t2/thinkaloud_sentiment.json",
+    "category": "./coders/4/2/categorydata.json",
+    "filler": "./coders/4/2/filler.json",
+    "audio": "./p4/t2/thinkaloud.wav",
+    "speechrate": "./p4/t2/speechrate.json"
+  }]
+},
+{
+  "id": 7,
+  "tasks": [{
+    "id": 1,
+    "loudness": "./p7/t1/thinkaloud_loudness.json",
+    "pitch": "./p7/t1/thinkaloud_pitch.json",
+    "transcript": "./p7/t1/thinkaloud_aligned.json",
+    "sentiment": "./p7/t1/thinkaloud_sentiment.json",
+    "category": "./coders/7/1/categorydata.json",
+    "filler": "./coders/7/1/filler.json",
+    "audio": "./p7/t1/thinkaloud.wav",
+    "speechrate": "./p7/t1/speechrate.json"
+  },{
+    "id": 2,
+    "loudness": "./p7/t2/thinkaloud_loudness.json",
+    "pitch": "./p7/t2/thinkaloud_pitch.json",
+    "transcript": "./p7/t2/thinkaloud_aligned.json",
+    "sentiment": "./p7/t2/thinkaloud_sentiment.json",
+    "category": "./coders/7/2/categorydata.json",
+    "filler": "./coders/7/2/filler.json",
+    "audio": "./p7/t2/thinkaloud.wav",
+    "speechrate": "./p7/t2/speechrate.json"
+  }]
+},
+{
+  "id": 8,
+  "tasks": [{
+    "id": 1,
+    "loudness": "./p8/t1/thinkaloud_loudness.json",
+    "pitch": "./p8/t1/thinkaloud_pitch.json",
+    "transcript": "./p8/t1/thinkaloud_aligned.json",
+    "sentiment": "./p8/t1/thinkaloud_sentiment.json",
+    "category": "./coders/8/1/categorydata.json",
+    "filler": "./coders/8/1/filler.json",
+    "audio": "./p8/t1/thinkaloud.wav",
+    "speechrate": "./p8/t1/speechrate.json"
+  },{
+    "id": 2,
+    "loudness": "./p8/t2/thinkaloud_loudness.json",
+    "pitch": "./p8/t2/thinkaloud_pitch.json",
+    "transcript": "./p8/t2/thinkaloud_aligned.json",
+    "sentiment": "./p8/t2/thinkaloud_sentiment.json",
+    "category": "./coders/8/2/categorydata.json",
+    "filler": "./coders/8/2/filler.json",
+    "audio": "./p8/t2/thinkaloud.wav",
+    "speechrate": "./p8/t2/speechrate.json"
+  }]
+}
+]

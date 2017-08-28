@@ -287,10 +287,10 @@ function loadSentimentData(dataset_url) {
       var end = parseInt(parseFloat(inputdata[i].end) * 1000);
       if(threshold_sentiment){
         var sentiment = 0;
-        if(parseFloat(inputdata[i].data) >= 0.5){
+        if(parseFloat(inputdata[i].data) >= 0.8){
           sentiment = 1;
         }
-        else if(parseFloat(inputdata[i].data <= -0.5)){
+        else if(parseFloat(inputdata[i].data <= -0.1)){
           sentiment = -1
         }
 
@@ -301,11 +301,16 @@ function loadSentimentData(dataset_url) {
         }
       }
       else{
+        /*
         for(var j = 0; j < end-start; j+=50){
           chartData.push({"time": start+j, "data": inputdata[i].data, "duration": end-start, "legendColor": AmCharts.randomColor, "label": "undefined"});
           //chartData.push({"time": start, "data": inputdata[i].data, "duration": end-start, "legendColor": AmCharts.randomColor, "label": "undefined"});
           //chartData.push({"time": end-1, "data":inputdata[i].data, "duration": end-start, "legendColor": AmCharts.randomColor, "label": "undefined"});
         }
+        */
+
+        chartData.push({"time": start, "data": inputdata[i].data, "duration": end-start, "legendColor": AmCharts.randomColor, "label": "undefined"});
+        chartData.push({"time": end-1, "data": inputdata[i].data, "duration": end-start, "legendColor": AmCharts.randomColor, "label": "undefined"});
       }
 
     }
@@ -322,10 +327,10 @@ function loadDiscreteSentimentData(dataset_url) {
       var start = parseInt(parseFloat(inputdata[i].start) * 1000);
       var end = parseInt(parseFloat(inputdata[i].end) * 1000);
       var sentiment = "neutral";
-      if(parseFloat(inputdata[i].data) >= 0.5){
+      if(parseFloat(inputdata[i].data) >= 0.7){
         sentiment = "positive";
       }
-      else if(parseFloat(inputdata[i].data) <= -0.5){
+      else if(parseFloat(inputdata[i].data) <= -0.1){
         sentiment = "negative";
       }
 
@@ -581,7 +586,6 @@ categoryField: "time",
 compared: true
 }
 ],
-
 panels: [ {
   showCategoryAxis: false,
   title: "Loudness (dB)",
@@ -643,15 +647,12 @@ panels: [ {
   allowTurningOff: false,
   stockGraphs: [ {
     id: "g5",
-    compareGraphType:"step",
-    lineThickness: 3,
-    showBalloon: true,
-    fillAlphas: 1,
+    compareGraphType:"smoothedLine",
     valueField: "data5",
     compareField: "data5",
     comparable: true,
-    visibleInLegend: false,
-    useDataSetColors: true,
+    useDataSetColors: false,
+    lineColor: "legendColor",
     colorField: "lengendColor",
     lineColor: "lengendColor", //"#1ABC9C",
   } ],

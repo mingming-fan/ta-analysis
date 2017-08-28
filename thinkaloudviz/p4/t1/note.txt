@@ -1,0 +1,2 @@
+total words in the transcript: 1385
+# of sp: 687; # of total words: 2050, # of non-sp words: 1363
