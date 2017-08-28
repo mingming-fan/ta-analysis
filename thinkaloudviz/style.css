@@ -228,3 +228,10 @@ background-color: #F4D03F
 .legend .procedure_legend { background-color: #5cb85c; }
 .legend .observation_legend { background-color: #f0ad4e; }
 .legend .explanation_legend { background-color: #d9534f; }
+
+
+.ScrollStyle
+{
+    max-height: 1000px;
+    overflow-y: scroll;
+}

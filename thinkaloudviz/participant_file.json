@@ -107,5 +107,18 @@
     "audio": "./p8/t2/thinkaloud.wav",
     "speechrate": "./p8/t2/speechrate.json"
   }]
+},{
+  "id": 100,
+  "tasks": [{
+    "id": 1,
+    "loudness": "./p100/t1/thinkaloud_loudness.json",
+    "pitch": "./p100/t1/thinkaloud_pitch.json",
+    "transcript": "./p100/t1/thinkaloud_aligned.json",
+    "sentiment": "./p100/t1/thinkaloud_sentiment.json",
+    "category": "./coders/100/1/categorydata.json",
+    "filler": "./coders/100/1/filler.json",
+    "audio": "./p100/t1/thinkaloud.wav",
+    "speechrate": "./p100/t1/speechrate.json"
+  }]
 }
 ]
