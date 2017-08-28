@@ -919,6 +919,7 @@ function updateTranscript(currentTimeInMS){
       }
     }
   }
+
   var x = document.getElementById("transcriptdiv");
   x.innerHTML = transcript;
 }
