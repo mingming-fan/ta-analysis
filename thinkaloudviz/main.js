@@ -118,7 +118,7 @@ window.onload = function(){
     let width = $(this).width();
     let x_pos = event.pageX - $("#labels_timeline").parent().offset().left;
 
-    let time = (x_pos/width) * audioDuration;
+    let time = (x_pos/width) * (timeline_end - timeline_start) + timeline_start;
 
     mAudio.currentTime = time;
 
@@ -127,6 +127,15 @@ window.onload = function(){
       mChart.panels[x].chartCursor.showCursorAt(currentDate);
     }
     mChart.validateData();
+  });
+
+  $('#silence_timeline').mousemove(function (ev) {
+    let width = $(this).width();
+    let x_pos = event.pageX - $("#labels_timeline").parent().offset().left;
+
+    let time = ((x_pos/width) * (timeline_end - timeline_start) + timeline_start) * 1000;
+    // console.log(time);
+    updateTranscript(time);
   });
 
   $('#confirmFiles').on('click', function (ev) {
@@ -677,7 +686,6 @@ panels: [
   }],
 }
 ],
-
 valueAxesSettings:{
   labelsEnabled: false,
 },

@@ -232,6 +232,6 @@ background-color: #F4D03F
 
 .ScrollStyle
 {
-    max-height: 1000px;
+    max-height: 880px;
     overflow-y: scroll;
 }
