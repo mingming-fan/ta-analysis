@@ -741,18 +741,6 @@ periodSelector: {
   inputFieldsEnabled: false,
   inputFieldWidth: 100,
   periods: [{
-    period: "ss",
-    count: 15,
-    label: "15 seconds"
-  }, {
-    period: "ss",
-    count: 30,
-    label: "30 seconds"
-  }, {
-    period: "ss",
-    count: 60,
-    label: "60 seconds"
-  }, {
     period: "MAX",
     label: "Show all",
     selected: true
