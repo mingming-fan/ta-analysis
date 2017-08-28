@@ -327,7 +327,7 @@ function loadDiscreteSentimentData(dataset_url) {
       var start = parseInt(parseFloat(inputdata[i].start) * 1000);
       var end = parseInt(parseFloat(inputdata[i].end) * 1000);
       var sentiment = "neutral";
-      if(parseFloat(inputdata[i].data) >= 0.8){
+      if(parseFloat(inputdata[i].data) >= 0.75){
         sentiment = "positive";
       }
       else if(parseFloat(inputdata[i].data) <= -0.1){
