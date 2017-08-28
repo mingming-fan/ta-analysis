@@ -21,6 +21,9 @@ var fillerColor = randomColor({luminosity: 'dark'});
 
 var silenceLength = 0;
 
+var segmentPlayStart;
+var logAudio = [];
+
 window.onload = function(){
   Tipped.create('.legend-label')
 
@@ -145,14 +148,17 @@ window.onload = function(){
 
   $('#saveFile').on('click', function (ev) {
     ev.preventDefault();
+    let audioLog = JSON.stringify(logAudio);
     let jsonData = JSON.stringify(note_array);
 
     let participant = $('#participant_sel').val();
     let task = $('#task_sel').val();
 
     let filename = 'uxproblem_' + participant + '_' + task + '_' + Date.now() + '.json'
+    let audioFile = 'audioLog_' + participant + '_' + task + '_' + Date.now() + '.json'
 
     download(jsonData, filename, 'text/plain');
+    download(audioLog, audioFile, 'text/plain');
   });
 
   setTranscriptSelectionEventListener();
@@ -170,6 +176,8 @@ function loadTaskData () {  //load the audio when the UI is displayed
   mAudio = document.getElementById("audiocontrol");
   mAudio.src = task_data.audio;
   mAudio.addEventListener('loadedmetadata', processAudio);
+  mAudio.addEventListener('play', recordStart);
+  mAudio.addEventListener('pause', recordEnd);
   //check audio's loading status. if it is not ready, load it again
   if (mAudio.readyState >= 2) {
     processAudio();
@@ -203,6 +211,15 @@ function loadTaskData () {  //load the audio when the UI is displayed
   }
 
 };
+
+function recordStart(){
+  segmentPlayStart= mAudio.currentTime;
+}
+
+function recordEnd() {
+  let segment = [segmentPlayStart, mAudio.currentTime];
+  logAudio.push(segment);
+}
 
 function processAudio() {
   audioDuration = mAudio.duration;
