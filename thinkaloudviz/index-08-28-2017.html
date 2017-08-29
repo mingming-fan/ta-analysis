@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/tipped/4.0.10/css/tipped/tipped.css">
+      <link rel="stylesheet" href="style.css" type="text/css">
+    </head>
+    <body>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-4 side-panel">
+            <div class="participant-selection">
+              <h2>Select Data Files</h2>
+              <form class="form-inline">
+                <label class="sel_label" for="participant_sel">Select participant:</label>
+                <select class="form-control sel_form" id="participant_sel"></select>
+                <label class="sel_label" for="task_sel">Select task:</label>
+                <select class="form-control sel_form" id="task_sel"></select>
+                <a class="btn btn-warning" id="confirmFiles">Confirm</a>
+              </form>
+            </div>
+            <h2>Transcript (with sentiment color-coded)</h2>
+            <ul class="legend">
+                <li><span class="legend_element positivelengend"></span><span>positive</span></li>
+                <li><span class="legend_element neutrallengend"></span>neutral</li>
+                <li><span class="legend_element negativelengend"></span>negative</li>
+            </ul>
+            <br/>
+            <div id="transcriptdiv" class="ScrollStyle"></div>
+          </div>
+          <div class="col-md-8">
+            <h1>Think-Aloud Analysis Tool</h1>
+            <div id="audiodiv">
+              <audio id="audiocontrol" preload = "auto" controls>Your browser does not support this audio element. </audio>
+            </div>
+            <div class="featurepanelstyle">Category
+              <ul class="legend">
+                  <li><span class="legend_element reading_legend" ></span><span class="legend-label" title="Participant is reading of words, phrases, or sentences directly from the device, instructions">reading</span></li>
+                  <li><span class="legend_element procedure_legend"></span><span class="legend-label" title="The participant is describing his/her current or future actions">procedure</span></li>
+                  <li><span class="legend_element observation_legend"></span><span class="legend-label" title="The participant is making remarks about the device, instructions or their behavior">observation</span></li>
+                  <li><span class="legend_element explanation_legend"></span><span class="legend-label" title="The participant includes the motivations for participants' behavior.">explanation</span></li>
+              </ul>
+            </div>
+            <div class="timeline">
+              <div id="labels_timeline" class="timeline-outline"></div>
+            </div>
+            <br/>
+            <div class="featurepanelstyle">Silence</div>
+            <form action="">
+              <fieldset style="display: inline-block;">
+              Silence Filter (s):
+                <input type="radio" name="filter" value="0" onclick="drawSilenceTimeline(this.value)">show all
+                <input type="radio" name="filter" value="1" onclick="drawSilenceTimeline(this.value)">>=1s
+                <input type="radio" name="filter" value="3" onclick="drawSilenceTimeline(this.value)">>=3s
+                <input type="radio" name="filter" value="5" onclick="drawSilenceTimeline(this.value)">>=5s
+                <input type="radio" name="filter" value="10" onclick="drawSilenceTimeline(this.value)">>=10s
+                <input type="radio" name="filter" value="15" onclick="drawSilenceTimeline(this.value)">>=15s
+            </fieldset>
+            </form>
+            <div class="timeline">
+              <div id="silence_timeline" class="timeline-outline"></div>
+            </div>
+            <br/>
+            <div class="featurepanelstyle">Verbal Filler</div>
+            <div class="timeline">
+              <div id="filler_timeline" class="timeline-outline"></div>
+            </div>
+            <div id="chartdiv"></div>
+            <br/>
+
+            <div class="featurepanelstyle">Problem</div>
+            <div class="timeline">
+              <div id="notes_timeline" class="timeline-outline"></div>
+            </div>
+          </div>
+        </div>
+        <br/>
+        <div class="col-md-4"><h2>Add Problem</h2></div>
+        <div class="row">
+          <div class="col-md-6" style="margin-top: 5px;">
+            <table class="table note-table">
+              <thead>
+                <th>Start</th>
+                <th>End</th>
+                <th>Features</th>
+                <th>Problem</th>
+                <th>Note</th>
+                <th>Delete</th>
+              </thead>
+              <tbody id="note-table"></tbody>
+            </table>
+          </div>
+          <div class="col-md-6 analysis" name="analysis">
+            <form style="margin-left: 10px;">
+              <div class="form-inline">
+                <span class="label">Start time (s): </span>
+                <input type="text" class="form-control" id="start" size="4">
+                <span class="label">End time (s): </span>
+                <input type="text" class="form-control" id="end" size="4">
+              </div>
+              <div style="text-align: left;">
+                <span class="label">Evidence: </span>
+                <input class="featureCheckbox" type="checkbox" name="silence" value="silence"/> Silence
+                <input class="featureCheckbox" type="checkbox" name="category" value="category"/> Category
+                <input class="featureCheckbox" type="checkbox" name="sentiment" value="sentiment"/> Sentiment
+                <input class="featureCheckbox" type="checkbox" name="loudness" value="loudness"/> Loudness
+                <input class="featureCheckbox" type="checkbox" name="pitch" value="pitch"/> Pitch
+                <input class="featureCheckbox" type="checkbox" name="transcript" value="transcript"/> Transcript
+                <input class="featureCheckbox" type="checkbox" name="filler" value="filler"/> Verbal Filler
+              </div>
+              <div class="note-form">
+                <div class="form-group row" style="margin-left: 0;">
+                  <label for="probDescription" class="col-form-label label">Problem</label>
+                  <input class="form-control" type="text" id="probDescription" placeholder="Problem Description" style="width:75%; display: inline-block;">
+                </div>
+                <span class="label">Detail</span>
+                <textarea type="text" id= "annotation" class="form-control" style="width:75%; display: inline-block;" rows = "5" placeholder="describe anything that you think is worth mentioning"></textarea>
+                <button type="button" id="addNote" class="btn">Add a Note</button>
+              </div>
+              <br/>
+            </form>
+          </div>
+        </div>
+        <div class="row">
+          <div class="center">
+            <button class="btn btn-primary" name="button" id="saveFile">Done</button>
+          </div>
+        </div>
+      </div>
+
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
+      <script src="https://cdn.jsdelivr.net/tipped/4.0.10/js/tipped/tipped.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.js"></script>
+      <script src="https://use.fontawesome.com/8a336b2f8c.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
+      <script src="../amcharts/amcharts/amcharts.js"></script>
+      <script src="../amcharts/amcharts/serial.js"></script>
+      <script src="../amcharts/amcharts/themes/light.js"></script>
+      <script src="../amstockchart/amcharts/amstock.js"></script>
+      <script src="../amcharts/amcharts/plugins/dataloader/dataloader.min.js"></script>
+      <script src="../amcharts/amcharts/plugins/export/export.min.js"></script>
+      <script src="main.js"></script>
+    </body>
+</html>
