@@ -1,0 +1,187 @@
+[
+  {
+    "label": "Observation",
+    "start_time": 67.6680952381,
+    "end_time": 89.015600907
+  },
+  {
+    "label": "Observation",
+    "start_time": 444.874943311,
+    "end_time": 469.006893424
+  },
+  {
+    "label": "Observation",
+    "start_time": 178.321269841,
+    "end_time": 192.729251701
+  },
+  {
+    "label": "Reading",
+    "start_time": 130.057346939,
+    "end_time": 148.185328798
+  },
+  {
+    "label": "Procedure",
+    "start_time": 376.840453515,
+    "end_time": 390.037619048
+  },
+  {
+    "label": "Reading",
+    "start_time": 48.5249659864,
+    "end_time": 55.7181405896
+  },
+  {
+    "label": "Reading",
+    "start_time": 103.169931973,
+    "end_time": 123.154217687
+  },
+  {
+    "label": "Reading",
+    "start_time": 247.479229025,
+    "end_time": 269.812879819
+  },
+  {
+    "label": "Observation",
+    "start_time": 123.154217687,
+    "end_time": 130.057346939
+  },
+  {
+    "label": "Observation",
+    "start_time": 192.729251701,
+    "end_time": 201.372675737
+  },
+  {
+    "label": "Procedure",
+    "start_time": 212.829546485,
+    "end_time": 220.950861678
+  },
+  {
+    "label": "Procedure",
+    "start_time": 220.950861678,
+    "end_time": 230.192403628
+  },
+  {
+    "label": "Observation",
+    "start_time": 89.015600907,
+    "end_time": 103.169931973
+  },
+  {
+    "label": "Procedure",
+    "start_time": 0.0,
+    "end_time": 13.2261678005
+  },
+  {
+    "label": "Observation",
+    "start_time": 309.810453515,
+    "end_time": 330.8969161
+  },
+  {
+    "label": "Observation",
+    "start_time": 507.003129252,
+    "end_time": 516.980770975
+  },
+  {
+    "label": "Procedure",
+    "start_time": 291.914512472,
+    "end_time": 309.810453515
+  },
+  {
+    "label": "Observation",
+    "start_time": 487.97600907,
+    "end_time": 507.003129252
+  },
+  {
+    "label": "Procedure",
+    "start_time": 55.7181405896,
+    "end_time": 65.5507482993
+  },
+  {
+    "label": "Reading",
+    "start_time": 230.192403628,
+    "end_time": 247.479229025
+  },
+  {
+    "label": "Observation",
+    "start_time": 201.372675737,
+    "end_time": 212.829546485
+  },
+  {
+    "label": "Observation",
+    "start_time": 13.2261678005,
+    "end_time": 36.2269387755
+  },
+  {
+    "label": "Procedure",
+    "start_time": 390.037619048,
+    "end_time": 401.088435374
+  },
+  {
+    "label": "Observation",
+    "start_time": 401.088435374,
+    "end_time": 430.256553288
+  },
+  {
+    "label": "Procedure",
+    "start_time": 358.596462585,
+    "end_time": 367.094852608
+  },
+  {
+    "label": "Observation",
+    "start_time": 269.812879819,
+    "end_time": 291.914512472
+  },
+  {
+    "label": "Procedure",
+    "start_time": 469.006893424,
+    "end_time": 487.97600907
+  },
+  {
+    "label": "Observation",
+    "start_time": 162.368662132,
+    "end_time": 173.448480726
+  },
+  {
+    "label": "Reading",
+    "start_time": 148.185328798,
+    "end_time": 162.368662132
+  },
+  {
+    "label": "Reading",
+    "start_time": 36.2269387755,
+    "end_time": 48.5249659864
+  },
+  {
+    "label": "Observation",
+    "start_time": 347.081564626,
+    "end_time": 358.596462585
+  },
+  {
+    "label": "Observation",
+    "start_time": 430.256553288,
+    "end_time": 434.288208617
+  },
+  {
+    "label": "Observation",
+    "start_time": 330.8969161,
+    "end_time": 347.081564626
+  },
+  {
+    "label": "Reading",
+    "start_time": 367.094852608,
+    "end_time": 376.840453515
+  },
+  {
+    "label": "Reading",
+    "start_time": 65.5507482993,
+    "end_time": 67.6680952381
+  },
+  {
+    "label": "Procedure",
+    "start_time": 173.448480726,
+    "end_time": 178.321269841
+  },
+  {
+    "label": "Reading",
+    "start_time": 434.288208617,
+    "end_time": 444.874943311
+  }
+]
