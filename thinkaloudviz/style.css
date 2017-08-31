@@ -215,6 +215,10 @@ background-color: #F4D03F
   text-align: center;
 }
 
+.timeline-indicator {
+  border: 1px solid black;
+}
+
 /* basic positioning */
 .legend { list-style: none; }
 .legend li { float: left; margin-right: 10px; }

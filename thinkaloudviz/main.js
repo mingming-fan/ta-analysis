@@ -132,13 +132,8 @@ window.onload = function(){
     mChart.validateData();
   });
 
-  $('#silence_timeline').mousemove(function (ev) {
-    let width = $(this).width();
-    let x_pos = event.pageX - $("#labels_timeline").parent().offset().left;
-
-    let time = ((x_pos/width) * (timeline_end - timeline_start) + timeline_start) * 1000;
-    // console.log(time);
-    updateTranscript(time);
+  $('.timeline-outline').mousemove(function (ev) {
+    updateOnMouseMove(ev);
   });
 
   $('#confirmFiles').on('click', function (ev) {
@@ -161,6 +156,21 @@ window.onload = function(){
   });
 
   setTranscriptSelectionEventListener();
+};
+
+function updateOnMouseMove(ev) {
+  let width = $("#labels_timeline").width();
+  let x_pos = event.pageX - $("#labels_timeline").parent().offset().left;
+
+  let time = ((x_pos/width) * (timeline_end - timeline_start) + timeline_start) * 1000;
+
+  updateTranscript(time);
+  drawTimeIndicator(time);
+  var currentDate = new Date(Math.floor(time));
+  for(var x in mChart.panels){
+    mChart.panels[x].chartCursor.showCursorAt(currentDate);
+  }
+  mChart.validateData();
 };
 
 function download(text, name, type) {
@@ -870,7 +880,28 @@ function handleMousemove(e){
   //console.log(e.chart.chartCursor.timestamp);
   var timestamp = parseFloat(e.chart.chartCursor.timestamp);
   updateTranscript(timestamp);
+  drawTimeIndicator(timestamp);
   //updateTranscript2(timestamp);
+}
+
+function drawTimeIndicator(timestamp) {
+  let time = timestamp/1000;
+  let total_duration = timeline_end - timeline_start;
+  let start = ((time - timeline_start)/total_duration) * 100;
+
+  $('.timeline-indicator').remove();
+
+  if (start < 100 && start > 0) {
+    start = start + '%'
+    $('#labels_timeline').append("<span class='timeline-element timeline-indicator' style='"+
+    "width:0%" +';left:' + start + "'></span>")
+    $('#silence_timeline').append("<span class='timeline-element timeline-indicator' style='"+
+    "width:0%" +';left:' + start + "'></span>")
+    $('#filler_timeline').append("<span class='timeline-element timeline-indicator' style='"+
+    "width:0%" +';left:' + start + "'></span>")
+    $('#notes_timeline').append("<span class='timeline-element timeline-indicator' style='"+
+    "width:0%" +';left:' + start + "'></span>")
+  }
 }
 
 //this function is to sync the transcript with the viz panels when the mouse moves over the viz panels
