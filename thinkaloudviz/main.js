@@ -1037,13 +1037,12 @@ function myTimer2() {
 function connectAudioCharts(){
   mAudio.addEventListener("timeupdate", function(e) {
     //console.log("time: " + e.target.currentTime);
-    /*
+
     var currentDate = new Date(Math.floor(e.target.currentTime * 1000));
-    for(var x in mChart.panels){
-      mChart.panels[x].chartCursor.showCursorAt(currentDate);
-    }
-    mChart.validateData();
-    */
+    mChart.panels[0].chartCursor.showCursorAt(currentDate);
+
+    // mChart.validateData();
+
     //update the highlight position in the transcript
     updateTranscript(Math.floor(e.target.currentTime * 1000))
     //updateTranscript2(Math.floor(e.target.currentTime * 1000));
