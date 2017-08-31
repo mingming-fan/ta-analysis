@@ -58,8 +58,11 @@ window.onload = function(){
   $('#addNote').on('click', function () {
     let note = {}
 
-    note.startTime = $('#start').val();
-    note.endTime = $('#end').val();
+    let start = $('#start').val().split(":");
+    let end = $('#end').val().split(":");
+
+    note.startTime = (parseInt(start[0])*60.) + parseFloat(start[1]);
+    note.endTime = (parseInt(end[0])*60.) + parseFloat(end[1]);
 
     let checked = $('.featureCheckbox:checked')
 
