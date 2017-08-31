@@ -146,8 +146,7 @@ window.onload = function(){
     $('.participant-selection').addClass('hidden');
   });
 
-  $('#saveFile').on('click', function (ev) {
-    ev.preventDefault();
+  $.key('ctrl+shift+s', function() {
     let audioLog = JSON.stringify(logAudio);
     let jsonData = JSON.stringify(note_array);
 
