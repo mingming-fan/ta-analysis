@@ -126,10 +126,7 @@ window.onload = function(){
     mAudio.currentTime = time;
 
     var currentDate = new Date(Math.floor(time*1000));
-    for(var x in mChart.panels){
-      mChart.panels[x].chartCursor.showCursorAt(currentDate);
-    }
-    mChart.validateData();
+    mChart.panels[0].chartCursor.showCursorAt(currentDate);
   });
 
   $('.timeline-outline').mousemove(function (ev) {
@@ -167,10 +164,7 @@ function updateOnMouseMove(ev) {
   updateTranscript(time);
   drawTimeIndicator(time);
   var currentDate = new Date(Math.floor(time));
-  for(var x in mChart.panels){
-    mChart.panels[x].chartCursor.showCursorAt(currentDate);
-  }
-  mChart.validateData();
+  mChart.panels[0].chartCursor.showCursorAt(currentDate);
 };
 
 function download(text, name, type) {
