@@ -778,6 +778,10 @@ periodSelector: {
 return chart;
 }
 
+
+var startTimes = [];
+var transcriptWords = [];
+
 function drawTranscript(){
   // three data fields: start, end, label
   //chartData.push({"time": start, "end": end, "data": sentiment,  "rawdata": inputdata[i].data});
@@ -801,11 +805,14 @@ function drawTranscript(){
 
     if(String(value).trim().localeCompare("sp") != 0){
       transcript += "<span class='" + sentiment + "'>" + String(value).trim() + " " + "</span>";
+      startTimes.push(start);
+      transcriptWords.push(String(value).trim());
     }
   }
   var x = document.getElementById("transcriptdiv");
   x.innerHTML = transcript;
 }
+
 
 
 function drawTranscript2(){
@@ -842,6 +849,8 @@ function drawTranscript2(){
 
     if(String(value).trim().localeCompare("sp") != 0){
       transcript += "<span class='" + sentiment + "'>" + String(value).trim() + " " + "</span>";
+      startTimes.push(start);
+      transcriptWords.push(String(value).trim());
     }
   }
 
@@ -853,15 +862,13 @@ function drawTranscript2(){
 function setTranscriptSelectionEventListener()
 {
   var transcript = document.getElementById('transcriptdiv');
-  var writtenNote = document.getElementById('annotation');
-
   //transcript.onmouseover = mouseoverTransdcriptHandler();
-
   transcript.addEventListener('mouseup', transcriptMouseupHandler, false);
 }
 
 function transcriptMouseupHandler(){
    //console.log("selection test...");
+   var writtenNote = document.getElementById('annotation');
    var text = "";
    if (window.getSelection) {
        text = window.getSelection().toString();
@@ -871,43 +878,37 @@ function transcriptMouseupHandler(){
    }
 
    if(text != ""){
-     //matchText(text);
-     words = text.split(" ");
-     nwords = words.length;
-     console.log("# of words: " + nwords);
-     console.log("text: " + text);
-
-     var transcriptDIV = document.getElementById('transcriptdiv');
-     var transcript = transcriptDIV.innerHTML;
-
-     if(transcript != null)
-     {
-       var i = 0;
-       for(i in transcriptData){
-         console.log(transcriptData[i]);
-         console.log(transcriptData[i].start);
-         console.log(transcriptData[i].label);
-         var value = transcriptData[i].label.toUpperCase();
-         console.log(value + ", " + words[0])
-         var j = 0;
-         for (; j < nwords; j++)
-         {
-           if(transcriptData[j+i].label != words[j])
-           break;
-         }
-         if(j == nwords)
-          break;
-       }
-
-       var start = parseFloat(transcriptData[i].start);
-       var end = parseFloat(transcriptData[i+nwords].end);
-       console.log("start: " + start + ", end: " + end);
-     }
-
-
      writtenNote.value = writtenNote.value + "  \"" + text + "\"\n";
    }
-  }
+
+   words = text.split(" ");
+   nwords = words.length;
+   /*console.log(nwords);
+   console.log(words);
+   console.log(transcriptWords.length);
+   console.log(transcriptWords);*/
+   for(var i = 0; i < transcriptWords.length - nwords; i++){
+     var j = 0;
+     for(; j < nwords; j++){
+       if(words[j] != transcriptWords[i+j])
+        break;
+     }
+     if(j == nwords){
+       console.log("found it");
+       var startTime = parseFloat(startTimes[i]);
+       var endTime = parseFloat(startTimes[i+nwords]);
+       document.getElementById("start").value = parseFloat(startTime/1000); //convert the miliseconds into seconds
+       document.getElementById("end").value = parseFloat(endTime/1000); //convert the miliseconds into seconds
+       var currentDate = new Date(Math.floor(startTime));
+       for(var x in mChart.panels){
+         mChart.panels[x].chartCursor.showCursorAt(currentDate);
+       }
+       break;
+     }
+   }
+}
+
+
 function mouseoverTransdcriptHandler()
 {
   console.log("hover");
@@ -995,6 +996,49 @@ function updateTranscript(currentTimeInMS){
 
   var x = document.getElementById("transcriptdiv");
   x.innerHTML = transcript;
+}
+
+
+//this function is to sync the transcript with the viz panels when the mouse moves over the viz panels
+function updateTranscriptOnSelection(startTime, endTime){
+  var transcript = "";
+
+  for(var i in transcriptData){
+    var value = transcriptData[i].label;
+    var start = parseFloat(transcriptData[i].start);
+    var end = parseFloat(transcriptData[i].end);
+
+    //console.log("timestamp: " + e.chart.chartCursor.timestamp + " , start: " + start + ", end: " + end + " , word: " + value);
+    if (start >= startTime && end <= endTime)
+    {
+      if(String(value).trim().localeCompare("sp") != 0){
+        transcript += "<span class='highlight'>" + String(value).trim() + " " + "</span>";
+      }
+      else{
+          //thjs logic is used to solve the duplicate last word issue
+        if(i > 0)
+        {
+          var words = transcript.split(" ");
+          var transcript = "";
+          for(var k = 0; k < words.length -2; k++)
+          {
+            transcript += words[k] + " "
+          }
+          var value2 = transcriptData[i-1].label;
+          transcript += "<span class='highlight'>" + String(value2).trim() + " " + "</span>";
+        }
+      }
+    }
+    else {
+      if(String(value).trim().localeCompare("sp") != 0){
+        transcript += String(value).trim() + " ";
+      }
+    }
+  }
+
+  var x = document.getElementById("transcriptdiv");
+  x.innerHTML = transcript;
+  highlightTranscript = true;
 }
 
 function handleZoom(e) {
@@ -1124,12 +1168,13 @@ AmCharts.myHandleClick = function(event){
         this.play();
       });
     }
-    mChart.validateData();
+    //mChart.validateData();
   }
   else {
     selection = false;
   }
 }
+
 
 // the logic for mouse selection operation
 function handleSelection(event){
@@ -1149,6 +1194,7 @@ function handleSelection(event){
     }
   }
   mChart.validateData();
+  //updateTranscriptOnSelection(parseFloat(event.start), parseFloat(event.end));
 }
 
 
