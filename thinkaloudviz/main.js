@@ -894,15 +894,26 @@ function transcriptMouseupHandler(){
         break;
      }
      if(j == nwords){
-       console.log("found it");
+       //console.log("found it");
        var startTime = parseFloat(startTimes[i]);
        var endTime = parseFloat(startTimes[i+nwords]);
-       document.getElementById("start").value = parseFloat(startTime/1000); //convert the miliseconds into seconds
-       document.getElementById("end").value = parseFloat(endTime/1000); //convert the miliseconds into seconds
+       //document.getElementById("start").value = parseFloat(startTime/1000); //convert the miliseconds into seconds
+       //document.getElementById("end").value = parseFloat(endTime/1000); //convert the miliseconds into seconds
+       var startInSecs = parseInt(startTime/1000);
+       var endInSecs = parseInt(endTime/1000);
+       var startMins = parseInt(startInSecs / 60);
+       var startSecs = startInSecs - startMins * 60;
+       var endMins = parseInt(endInSecs / 60);
+       var endSecs = endInSecs - endMins * 60;
+       document.getElementById("start").value = startMins + ":" + startSecs; //convert the miliseconds into seconds
+       document.getElementById("end").value = endMins + ":" + endSecs; //convert the miliseconds into seconds
+
        var currentDate = new Date(Math.floor(startTime));
        for(var x in mChart.panels){
          mChart.panels[x].chartCursor.showCursorAt(currentDate);
        }
+       mChart.validateData();
+       drawTimeIndicator(currentDate)
        break;
      }
    }
@@ -1189,8 +1200,19 @@ function handleSelection(event){
       var time = datapoint.time;
       //console.log("date: " + time);
       //console.log("time: " + time.getTime());
-      document.getElementById("start").value = parseFloat(event.start/1000); //convert the miliseconds into seconds
-      document.getElementById("end").value = parseFloat((event.end+1)/1000); //convert the miliseconds into seconds
+      var startInSecs = parseFloat(event.start/1000);
+      var endInSecs = parseFloat((event.end+1)/1000);
+      var startMins = parseInt(startInSecs / 60);
+      var startSecs = startInSecs - startMins * 60;
+
+      var endMins = parseInt(endInSecs / 60);
+      var endSecs = endInSecs - endMins * 60;
+
+      //document.getElementById("start").value = parseFloat(event.start/1000); //convert the miliseconds into seconds
+      //document.getElementById("end").value = parseFloat((event.end+1)/1000); //convert the miliseconds into seconds
+
+      document.getElementById("start").value = startMins + ":" + startSecs; //convert the miliseconds into seconds
+      document.getElementById("end").value = endMins + ":" + endSecs; //convert the miliseconds into seconds
     }
   }
   mChart.validateData();
