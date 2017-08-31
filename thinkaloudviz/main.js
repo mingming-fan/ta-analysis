@@ -129,6 +129,22 @@ window.onload = function(){
     mChart.panels[0].chartCursor.showCursorAt(currentDate);
   });
 
+  $("#filler_timeline").on('click', function (event){
+    let width = $(this).width();
+    let x_pos = event.pageX - $("#labels_timeline").parent().offset().left;
+    let time = (x_pos/width) * (timeline_end - timeline_start) + timeline_start;
+    mAudio.currentTime = time;
+    mAudio.play();
+  });
+
+  $("#silence_timeline").on('click', function (event){
+    let width = $(this).width();
+    let x_pos = event.pageX - $("#labels_timeline").parent().offset().left;
+    let time = (x_pos/width) * (timeline_end - timeline_start) + timeline_start;
+    mAudio.currentTime = time;
+    mAudio.play();
+  });
+
   $('.timeline-outline').mousemove(function (ev) {
     updateOnMouseMove(ev);
   });
