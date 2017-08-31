@@ -196,7 +196,7 @@ function loadTaskData () {  //load the audio when the UI is displayed
 
   setTimeout(myTimer, 500);
   function myTimer() {
-    if( pitchData.length != 0 && pitchData.length != 0)
+    if( pitchData.length != 0 && transcriptData.length != 0)
     {
       console.log("data is ready");
       mChart = drawCharts();
@@ -851,17 +851,62 @@ function setTranscriptSelectionEventListener()
   var transcript = document.getElementById('transcriptdiv');
   var writtenNote = document.getElementById('annotation');
 
-  transcript.addEventListener('mouseup', function(){
-     //console.log("selection test...");
-     var text = "";
-     if (window.getSelection) {
-         text = window.getSelection().toString();
-         console.log(text);
-     } else if (document.selection && document.selection.type != "Control") {
-         text = document.selection.createRange().text;
+  //transcript.onmouseover = mouseoverTransdcriptHandler();
+
+  transcript.addEventListener('mouseup', transcriptMouseupHandler, false);
+}
+
+function transcriptMouseupHandler(){
+   //console.log("selection test...");
+   var text = "";
+   if (window.getSelection) {
+       text = window.getSelection().toString();
+       //console.log(text);
+   } else if (document.selection && document.selection.type != "Control") {
+       text = document.selection.createRange().text;
+   }
+
+   if(text != ""){
+     //matchText(text);
+     words = text.split(" ");
+     nwords = words.length;
+     console.log("# of words: " + nwords);
+     console.log("text: " + text);
+
+     var transcriptDIV = document.getElementById('transcriptdiv');
+     var transcript = transcriptDIV.innerHTML;
+
+     if(transcript != null)
+     {
+       var i = 0;
+       for(i in transcriptData){
+         console.log(transcriptData[i]);
+         console.log(transcriptData[i].start);
+         console.log(transcriptData[i].label);
+         var value = transcriptData[i].label.toUpperCase();
+         console.log(value + ", " + words[0])
+         var j = 0;
+         for (; j < nwords; j++)
+         {
+           if(transcriptData[j+i].label != words[j])
+           break;
+         }
+         if(j == nwords)
+          break;
+       }
+
+       var start = parseFloat(transcriptData[i].start);
+       var end = parseFloat(transcriptData[i+nwords].end);
+       console.log("start: " + start + ", end: " + end);
      }
+
+
      writtenNote.value = writtenNote.value + "  \"" + text + "\"\n";
-    }, false);
+   }
+  }
+function mouseoverTransdcriptHandler()
+{
+  console.log("hover");
 }
 
 //synchronize the mouse cursor with the transcript
