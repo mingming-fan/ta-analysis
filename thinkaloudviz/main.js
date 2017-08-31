@@ -272,7 +272,6 @@ function loadChartData(dataset_url) {
   return  chartData;
 }
 
-
 function loadSilenceData(dataset_url) {
   var chartData = [];
   var chartDataSampled = [];
@@ -493,6 +492,7 @@ function drawCategoryData () {
   });
 
 }
+
 
 function drawVerbalFillerData () {
   $('#filler_timeline').empty();
@@ -1315,3 +1315,15 @@ function applySilenceLengthFilters(len){
   mChart.dataSets[2].dataProvider = newData;
   mChart.validateData();
 }
+
+
+document.addEventListener('keydown', function(e) {
+  if(e.keyCode == 27){
+    if(mAudio != null && mAudio.paused){
+      mAudio.play();
+    }
+    else if(mAudio != null && !mAudio.paused){
+      mAudio.pause();
+    }
+  }
+});
