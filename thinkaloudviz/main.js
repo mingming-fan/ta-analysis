@@ -130,6 +130,12 @@ window.onload = function(){
 
     var currentDate = new Date(Math.floor(time*1000));
     mChart.panels[0].chartCursor.showCursorAt(currentDate);
+    /*
+    for(var x in mChart.panels){
+      mChart.panels[x].chartCursor.showCursorAt(currentDate);
+    }
+    */
+
   });
 
   $("#filler_timeline").on('click', function (event){
@@ -137,7 +143,8 @@ window.onload = function(){
     let x_pos = event.pageX - $("#labels_timeline").parent().offset().left;
     let time = (x_pos/width) * (timeline_end - timeline_start) + timeline_start;
     mAudio.currentTime = time;
-    mAudio.play();
+    //mAudio.play();
+    mAudio.pause();
   });
 
   $("#silence_timeline").on('click', function (event){
@@ -145,7 +152,8 @@ window.onload = function(){
     let x_pos = event.pageX - $("#labels_timeline").parent().offset().left;
     let time = (x_pos/width) * (timeline_end - timeline_start) + timeline_start;
     mAudio.currentTime = time;
-    mAudio.play();
+    //mAudio.play();
+    mAudio.pause();
   });
 
   $('.timeline-outline').mousemove(function (ev) {
@@ -174,7 +182,7 @@ window.onload = function(){
   setTranscriptSelectionEventListener();
 };
 
-function updateOnMouseMove(ev) {
+function updateOnMouseMove(event) {
   let width = $("#labels_timeline").width();
   let x_pos = event.pageX - $("#labels_timeline").parent().offset().left;
 
@@ -183,7 +191,10 @@ function updateOnMouseMove(ev) {
   updateTranscript(time);
   drawTimeIndicator(time);
   var currentDate = new Date(Math.floor(time));
-  mChart.panels[0].chartCursor.showCursorAt(currentDate);
+  if(mChart != null){
+    mChart.panels[0].chartCursor.showCursorAt(currentDate);
+  }
+
 };
 
 function download(text, name, type) {
@@ -646,13 +657,19 @@ panels: [
     valueField: "data5",
     compareField: "data5",
     comparable: false,
+    visibleInLegend: true,
+    showBalloon: false,
   } ],
   stockLegend: {
     enabled: true,
     markType: "none",
     markSize: 0
   },
-  listeners:[{
+  listeners:[
+  {
+    event: "zoomed",
+    method: handleZoom
+  },{
     event: "changed",
     method: handleMousemove,
   }],
@@ -668,13 +685,18 @@ panels: [
     compareField: "data6",
     comparable: true,
     visibleInLegend: true,
+    showBalloon: false,
   } ],
   stockLegend: {
     enabled: true,
     markType: "none",
     markSize: 0
   },
-  listeners:[{
+  listeners:[
+  {
+    event: "zoomed",
+    method: handleZoom
+  },{
     event: "changed",
     method: handleMousemove,
   }],
@@ -685,22 +707,25 @@ panels: [
   allowTurningOff: false,
   stockGraphs: [ {
     id: "g1",
-    type:"smoothedLine",
+    type:"line",
     valueField: "data1",
     comparable: true,
     compareField: "data1",
+    visibleInLegend: true,
+    showBalloon: false,
   } ],
   stockLegend: {
     enabled: true,
     markType: "none",
     markSize: 0
   },
-  listeners:[{
-    event: "changed",
-    method: handleMousemove,
-  },{
+  listeners:[
+  {
     event: "zoomed",
     method: handleZoom
+  },{
+    event: "changed",
+    method: handleMousemove,
   }],
 },
 {
@@ -709,17 +734,23 @@ panels: [
   allowTurningOff: false,
   stockGraphs: [ {
     id: "g2",
-    compareGraphType:"smoothedLine",
+    compareGraphType:"line",
     valueField: "data2",
     compareField: "data2",
     comparable: true,
+    visibleInLegend: true,
+    showBalloon: false,
   } ],
   stockLegend: {
     enabled: true,
     markType: "none",
     markSize: 0
   },
-  listeners:[{
+  listeners:[
+  {
+    event: "zoomed",
+    method: handleZoom
+  },{
     event: "changed",
     method: handleMousemove,
   }],
@@ -797,9 +828,10 @@ periodSelector: {
 return chart;
 }
 
-
 var startTimes = [];
 var transcriptWords = [];
+//whether to use the sentiment to color code the instruction
+var useSentimentColorCode = false;
 
 function drawTranscript(){
   // three data fields: start, end, label
@@ -823,7 +855,14 @@ function drawTranscript(){
     }
 
     if(String(value).trim().localeCompare("sp") != 0){
-      transcript += "<span class='" + sentiment + "'>" + String(value).trim() + " " + "</span>";
+      if(useSentimentColorCode == true){
+        //color code with sentiment
+        //transcript += "<span class='" + sentiment + "'>" + String(value).trim() + " " + "</span>";
+      }
+      else {
+        transcript += String(value).trim() + " ";
+      }
+
       startTimes.push(start);
       transcriptWords.push(String(value).trim());
     }
@@ -896,9 +935,12 @@ function transcriptMouseupHandler(){
        text = document.selection.createRange().text;
    }
 
+   //add text into the Detail box
+   /*
    if(text != ""){
      writtenNote.value = writtenNote.value + "  \"" + text + "\"\n";
    }
+   */
 
    words = text.split(" ");
    nwords = words.length;
@@ -928,9 +970,13 @@ function transcriptMouseupHandler(){
        document.getElementById("end").value = endMins + ":" + endSecs; //convert the miliseconds into seconds
 
        var currentDate = new Date(Math.floor(startTime));
-       for(var x in mChart.panels){
+       mChart.panels[0].chartCursor.showCursorAt(currentDate);
+       /*for(var x in mChart.panels){
          mChart.panels[x].chartCursor.showCursorAt(currentDate);
        }
+       mChart.validateData();*/
+       mAudio.currentTime = startInSecs; //convert the miliseconds into seconds
+       mAudio.pause();
        mChart.validateData();
        drawTimeIndicator(currentDate)
        break;
@@ -1019,7 +1065,12 @@ function updateTranscript(currentTimeInMS){
     }
     else {
       if(String(value).trim().localeCompare("sp") != 0){
-        transcript += "<span class='" + sentiment + "'>" + String(value).trim() + " " + "</span>";
+        if(useSentimentColorCode == true){
+          transcript += "<span class='" + sentiment + "'>" + String(value).trim() + " " + "</span>";
+        }
+        else{
+            transcript += String(value).trim() + " ";
+        }
       }
     }
   }
@@ -1071,9 +1122,9 @@ function updateTranscriptOnSelection(startTime, endTime){
   highlightTranscript = true;
 }
 
-function handleZoom(e) {
-  timeline_start = moment.duration(e.startValue).asMilliseconds() / 1000.0;
-  timeline_end = moment.duration(e.endValue).asMilliseconds() / 1000.0;
+function handleZoom(event) {
+  timeline_start = moment.duration(event.startValue).asMilliseconds() / 1000.0;
+  timeline_end = moment.duration(event.endValue).asMilliseconds() / 1000.0;
 
   drawCategoryData();
   drawSilenceTimeline();
@@ -1158,10 +1209,12 @@ function connectAudioCharts(){
     //console.log("time: " + e.target.currentTime);
 
     var currentDate = new Date(Math.floor(e.target.currentTime * 1000));
-    mChart.panels[0].chartCursor.showCursorAt(currentDate);
 
+    for(var x in mChart.panels){
+      //console.log("set panel  " + x);
+      mChart.panels[x].chartCursor.showCursorAt(currentDate);
+    }
     // mChart.validateData();
-
     //update the highlight position in the transcript
     updateTranscript(Math.floor(e.target.currentTime * 1000))
     //updateTranscript2(Math.floor(e.target.currentTime * 1000));
@@ -1189,14 +1242,19 @@ AmCharts.myHandleMove = function(event) {
 }
 
 AmCharts.myHandleClick = function(event){
+
   if(selection === false)
   {
+    //console.log("clicked");
     for(var x in mChart.panels){
       //console.log("time: " + AmCharts.myCurrentPosition.getTime());
       mAudio.currentTime = AmCharts.myCurrentPosition.getTime()/1000; //convert the miliseconds into seconds
+      mAudio.pause();
+      /*
       mAudio.addEventListener('canplaythrough', function(){
         this.play();
       });
+      */
     }
     //mChart.validateData();
   }
@@ -1208,33 +1266,28 @@ AmCharts.myHandleClick = function(event){
 
 // the logic for mouse selection operation
 function handleSelection(event){
+  //console.log("selected");
   selection = true;
   //console.log("event.start: " + event.start);
   //console.log("event.end: " + event.end);
-  for(var x in mChart.panels){
-    //console.log("dataprovider: " + x.dataProvider);
-    for (var y in mChart.panels[x].dataProvider)
-    {
-      var datapoint = mChart.panels[x].dataProvider[y];
-      var time = datapoint.time;
-      //console.log("date: " + time);
-      //console.log("time: " + time.getTime());
-      var startInSecs = parseFloat(event.start/1000);
-      var endInSecs = parseFloat((event.end+1)/1000);
-      var startMins = parseInt(startInSecs / 60);
-      var startSecs = startInSecs - startMins * 60;
+  var startInSecs = parseFloat(event.start/1000);
+  var endInSecs = parseFloat((event.end+1)/1000);
+  var startMins = parseInt(startInSecs / 60);
+  var startSecs = startInSecs - startMins * 60;
 
-      var endMins = parseInt(endInSecs / 60);
-      var endSecs = endInSecs - endMins * 60;
+  var endMins = parseInt(endInSecs / 60);
+  var endSecs = endInSecs - endMins * 60;
 
-      //document.getElementById("start").value = parseFloat(event.start/1000); //convert the miliseconds into seconds
-      //document.getElementById("end").value = parseFloat((event.end+1)/1000); //convert the miliseconds into seconds
+  //document.getElementById("start").value = parseFloat(event.start/1000); //convert the miliseconds into seconds
+  //document.getElementById("end").value = parseFloat((event.end+1)/1000); //convert the miliseconds into seconds
 
-      document.getElementById("start").value = startMins + ":" + startSecs; //convert the miliseconds into seconds
-      document.getElementById("end").value = endMins + ":" + endSecs; //convert the miliseconds into seconds
-    }
-  }
-  mChart.validateData();
+  document.getElementById("start").value = startMins + ":" + startSecs; //convert the miliseconds into seconds
+  document.getElementById("end").value = endMins + ":" + endSecs; //convert the miliseconds into seconds
+
+  mAudio.currentTime = startInSecs; //convert the miliseconds into seconds
+  mAudio.pause();
+
+  //mChart.validateData();
   //updateTranscriptOnSelection(parseFloat(event.start), parseFloat(event.end));
 }
 
