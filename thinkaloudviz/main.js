@@ -19,6 +19,7 @@ silenceDataList, sentimentData, disSentimentData, speechRateData, rawCategoryDat
 var silenceColor = randomColor({luminosity: 'dark'});
 var fillerColor = randomColor({luminosity: 'dark'});
 
+
 var silenceLength = 0;
 
 var segmentPlayStart;
@@ -507,6 +508,47 @@ function drawCategoryData () {
 
 }
 
+function hightlightCategoryTimeline(startTime, endTime) {
+
+  $('#labels_timeline').empty();
+  var label_color = {
+    Reading: '#0275d8',
+    Procedure: '#5cb85c',
+    Observation: '#f0ad4e',
+    Explanation: '#d9534f'
+  }
+
+  let duration = timeline_end - timeline_start;
+
+  //hight the mouse selected portion's backgroud color
+  let end = ((endTime - timeline_start)/duration) * 100;
+  let start = ((startTime - timeline_start)/duration) * 100;
+  if (Math.max(start, 0) < Math.min(100, end)) {
+    start = Math.max(0, start);
+    let width = Math.min(100, end) - start;
+    highlightStart = start + '%';
+    hightWidth = width + '%';
+    $('#labels_timeline').append("<span class='timeline-element' style='"+
+    "width:" + hightWidth +';left:' + highlightStart + ';background-color: #B0B0B0'
+    + "'></span>")
+  }
+
+  _.each(rawCategoryData, function (label) {
+    let end = ((label.end_time - timeline_start)/duration) * 100;
+    let start = ((label.start_time - timeline_start)/duration) * 100;
+    if (Math.max(start, 0) < Math.min(100, end)) {
+      start = Math.max(0, start);
+      let width = Math.min(100, end) - start;
+      label.start = start + '%';
+      label.width = width + '%';
+      $('#labels_timeline').append("<span class='timeline-element' style='"+
+      "width:" + label.width +';left:' + label.start + ';background-color:' + label_color[label.label]
+      + "' title="+ label.note+" value=" + label.start_time + "></span>")
+    }
+  });
+
+}
+
 
 function drawVerbalFillerData () {
   $('#filler_timeline').empty();
@@ -527,6 +569,39 @@ function drawVerbalFillerData () {
   });
 }
 
+
+function hightlightVerbalFillerTimeline(startTime, endTime) {
+
+  $('#filler_timeline').empty();
+  let total_duration = timeline_end - timeline_start;
+
+  //hight the mouse selected portion's backgroud color
+  let end = ((endTime - timeline_start)/total_duration) * 100;
+  let start = ((startTime - timeline_start)/total_duration) * 100;
+  if (Math.max(start, 0) < Math.min(100, end)) {
+    start = Math.max(0, start);
+    let width = Math.min(100, end) - start;
+    highlightStart = start + '%';
+    hightWidth = width + '%';
+    $('#filler_timeline').append("<span class='timeline-element' style='"+
+    "width:" + hightWidth +';left:' + highlightStart + ';background-color: #B0B0B0'
+    + "'></span>")
+  }
+
+  _.each(verbalFillerData, function (filler) {
+    let end = ((filler.end_time - timeline_start)/total_duration) * 100;
+    let start = ((filler.start_time - timeline_start)/total_duration) * 100;
+    if (Math.max(start, 0) < Math.min(100, end)) {
+      start = Math.max(0, start);
+      let width = Math.min(100, end) - start;
+      filler.start = start + '%';
+      filler.width = width + '%';
+      $('#filler_timeline').append("<span class='timeline-element' style='width:"
+      + filler.width +';left:' + filler.start + ';background-color:' + fillerColor +
+      "'></span>")
+    }
+  });
+}
 
 function loadVerbalFillerData (dataset_url) {
   $.getJSON(dataset_url, function (data) {
@@ -574,6 +649,47 @@ function drawSilenceTimeline(length) {
     }
   });
 }
+
+
+function hightlightSilenceTimeline(startTime, endTime, length) {
+
+  $('#silence_timeline').empty();
+  if (length) {
+    silenceLength = parseInt(length);
+  }
+  let total_duration = timeline_end - timeline_start;
+
+  //hight the mouse selected portion's backgroud color
+  let end = ((endTime - timeline_start)/total_duration) * 100;
+  let start = ((startTime - timeline_start)/total_duration) * 100;
+  if (Math.max(start, 0) < Math.min(100, end)) {
+    start = Math.max(0, start);
+    let width = Math.min(100, end) - start;
+    highlightStart = start + '%';
+    hightWidth = width + '%';
+    $('#silence_timeline').append("<span class='timeline-element' style='"+
+    "width:" + hightWidth +';left:' + highlightStart + ';background-color: #B0B0B0'
+    + "'></span>")
+  }
+
+  //draw the itself
+  _.each(silenceDataList, function (silence) {
+    let duration = silence.end_time - silence.start_time;
+    let end = ((silence.end_time - timeline_start)/total_duration) * 100;
+    let start = ((silence.start_time - timeline_start)/total_duration) * 100;
+    if (Math.max(start, 0) < Math.min(100, end) && duration > silenceLength) {
+      start = Math.max(0, start);
+      let width = Math.min(100, end) - start;
+      silence.start = start + '%';
+      silence.width = width + '%';
+      $('#silence_timeline').append("<span class='timeline-element' style='"+
+      "width:" + silence.width +';left:' + silence.start + ';background-color:' + silenceColor
+      + "'></span>")
+    }
+  });
+}
+
+
 
 //console.log("after checking if the data is ready");
 function drawCharts(){
@@ -1283,6 +1399,10 @@ function handleSelection(event){
 
   document.getElementById("start").value = startMins + ":" + startSecs; //convert the miliseconds into seconds
   document.getElementById("end").value = endMins + ":" + endSecs; //convert the miliseconds into seconds
+
+  hightlightSilenceTimeline(startInSecs,endInSecs, silenceLength);
+  hightlightVerbalFillerTimeline(startInSecs,endInSecs);
+  hightlightCategoryTimeline(startInSecs, endInSecs);
 
   mAudio.currentTime = startInSecs; //convert the miliseconds into seconds
   mAudio.pause();
